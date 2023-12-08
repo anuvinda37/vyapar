@@ -1,0 +1,298 @@
+<!-- create by athul -->
+{% extends 'company/src/html/base.html' %}
+{% block content %}
+{% load static %}
+<style>
+   @media (max-width:768px) {
+        .h1{
+            font-size: 15px;
+            
+            
+        }
+        .img-thumbnail{
+            width: 100% !important;
+        }
+        .h5{
+            font-size: 10px ;
+        }
+        #label{
+            font-size: 12px;
+        }
+        #acol{
+            
+            margin-left: 3px !important;
+            margin-bottom: 0px !important;
+            padding-bottom:0px !important ;
+            width: 100% !important;
+            margin-top: 350px !important;
+        }
+        .form-control{
+            width: 100% !important;
+        }
+        #pcol{
+            margin-left: 3px !important;
+            margin-top: 30px !important;
+            padding-top: 0px !important;
+            width: 100% !important;
+            margin-right: 3px !important;
+        }
+        #scond_main_row{
+           height: 500px;
+        }
+        #btn{
+            margin-top: 900px !important;
+            width: 50% !important;
+        }
+        #cname{
+            margin-top: 30px ;
+        }
+        #panno{
+            margin-bottom: 20px;
+        }
+        /* .container{
+            padding: 10px !important;
+        } */
+       
+    }
+</style> 
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+     
+            <div class="container p-5" >
+                <form action="{% url 'editcompanyprofile_action' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-5" style="height: 300px;" >
+                    <div class="col-md-4" >
+                        {% if staff.company.profile_pic %}
+                        <img   class="img-thumbnail" src="{{ staff.company.profile_pic.url }}" style="width: 100%;height: 65%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" alt="">
+                        {% else %}
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}"  style="width: 100%;height: 65%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+                          class="img-thumbnail">
+                        {% endif %}
+                        <input type="file" id="image" name="image" accept="image/*" class="form-control"
+                                    style="margin-top: 20px; margin-bottom: 20px;background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                    </div>
+                    <div class="col-md-8" id="ccol">
+                        <div class="row p-3" id="cname" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                           
+                                <label for=""><b>Company Name</b></label>
+                                <input type="text" class="form-control" name="cname"  value="{{staff.company.company_name}}" style="border: 1px solid skyblue;" required>
+
+                        </div>
+                        <div class="row mt-3"  style="background-color: rgba(176, 199, 205, 0.4);"></div>
+                        <div class="row mt-2  p-3"  style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col-md-5 mt-2" id="label">Owner</div>
+                            <div class="col">
+                                
+                                <input type="text" class="form-control" name="oname" id="oname" value="{{staff.company.user.first_name}} {{staff.company.user.last_name}}" style="border: 1px solid skyblue;" readonly>
+                            </div>   
+                        </div>
+                        
+                        <div class="row ml-3 p-2" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col-md-5 pt-2" id="label">Email</div>
+                            <div class="col pt-2">
+                                <input type="text" class="form-control" name="email" id="email" value=" {{staff.company.user.email}}" style="border: 1px solid skyblue;" required>
+                                </div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col-md-5 pt-4  pb-3 p-3" id="label">Contact</div>
+                            <div class="col pt-3 pb-3">
+                                <input type="text" class="form-control" name="ph" id="ph" value="{{staff.company.contact}}" style="border: 1px solid skyblue;" required>
+                                </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row mt-5"  id="scond_main_row">
+                    <div class="col-md-5 mt-2 m-3"  id="acol"   style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">Address</div>
+                            <div class="col pt-3">
+                                <input type="text" class="form-control" name="address" id="address" value="{{staff.company.address}}" style="border: 1px solid skyblue;" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">City</div>
+                            <div class="col pt-3">
+                                <input type="text" class="form-control" name="city" id="city" value="{{staff.company.city}}" style="border: 1px solid skyblue;" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">State</div>
+                            <div class="col pt-3">
+                                <select type="text" class="form-control" id="state" name="state"  style="border: 1px solid skyblue;">
+                                    <option value="{{staff.company.state}}" selected>{{staff.company.state}}</option>
+                                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                                    <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                    <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Damn anad Diu">Damn anad Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Predesh">Himachal Predesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Madhya Predesh">Madhya Predesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Predesh">Uttar Predesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Other Territory">Other Territory</option>
+                                </select>
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">Country</div>
+                            <div class="col pt-3">
+                                <input type="text" class="form-control" name="country" id="country" value="{{staff.company.country}}" style="border: 1px solid skyblue;" required>
+                            </div>    
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">Pincode</div>
+                            <div class="col pt-3  pb-3">
+                                <input type="text" class="form-control" name="pincode" id="pincode" value="{{staff.company.pincode}}" style="border: 1px solid skyblue;" required>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2 mb-3 m-4" id="pcol"  style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        <div class="row"  >
+                            <div class="col-md-5 pt-3 pb-3" id="label">Payment Term</div>
+                            <div class="col pt-3">
+                                <select name="select" id="select" class="form-control" style="border: 1px solid skyblue;">
+                                    <option value="{{staff.company.dateperiod.id}}" selected>{{staff.company.dateperiod.payment_terms_number}} {{staff.company.dateperiod.payment_terms_value}}</option>
+
+                                    {% for t in terms %}
+                                    <option value="{{t.id}}" data-terms="{{ t.id}}">{{t.payment_terms_number}}
+                                        {{t.payment_terms_value}}</option>
+                                    {% endfor %}
+                                </select>
+                                
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col pt-3 pb-3" id="label">End date</div>
+                            <div class="col pt-3">
+                                <h5 class="h5"><b>: {{company.End_date}}</b></h5>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">GST Type</div>
+                            <div class="col pt-3">
+                                <select class="form-control" name="gsttype" id="gsttype"
+                                    onselect="hidinput()" style="border: 1px solid skyblue;">
+                                    <option selected value="{{company.gst_type}}">{{staff.company.gst_type}}</option>
+                                    
+                                    <option value="Registered Business - Regular">Registered Business - Regular
+                                        <span><i>(Business that is registered under gst)</i></span>
+                                    </option>
+                                    <option value="Registered Business - Composition">Registered Business - Composition
+                                        (Business that is registered under composition scheme in gst)</option>
+                                    <option value="unregistered Business">Unregistered Business (Business that has not
+                                        been registered under gst)</option>
+                                    <option value="Overseas">Overseas (Import/Export of supply outside india)</option>
+                                    <option value="Consumer">Consumer</option>
+
+                                </select>
+                                
+                            </div>
+                        </div>
+                       
+                        <div class="row" id="gstno">
+                            <div class="col-md-5 pt-3 pb-3" id="label">GST No.</div>
+                            <div class="col pt-3">
+                                {% if staff.company.gst_no != NULL and staff.company.gst_no != ''  %}
+                                <input type="text" name="gstno"  placeholder="Eg:11AAAAA1111A1ZA"
+                                    class="gstno form-control" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" value="{{company.gst_no}}" style="border: 1px solid skyblue;">
+                                {% else %}    
+                                <input type="text" name="gstno"  placeholder="Eg:11AAAAA1111A1ZA"
+                                    class="gstno form-control"  value="NULL" style="border: 1px solid skyblue;">
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="row">
+                            <div class="col-md-5 pt-3 pb-3" id="label">Pan No.</div>
+                            <div class="col pt-3">
+                                <input type="text" class="form-control" name="panno" id="panno" value="{{staff.company.pan_number}}" style="border: 1px solid skyblue;"  required>
+                                <!-- <h5 class="h5"><b>: {{company.pan_number}}</b></h5> -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+               
+
+              <center>
+                <input type="submit" class="btn btn-primary mt-5" id="btn" style="width: 30%;" value="SUBMIT">
+                </center>
+               
+            </form>
+            </div>
+        </div>
+    </div> 
+    <script>
+        function hidinput(){
+            type=document.getElementById("#gsttype").value;
+            if (type == "Registered Business - Regular"){
+                document.getElementById('#gstno').style.display = 'block'
+            }else{
+            document.getElementById('#gstno').style.display = 'none'
+            }
+        }
+
+  
+
+        // $(document).ready(function () {
+        //     $("#gsttype").change(function () {
+        //         var x = $('#gsttype').val();
+        //         if (x == "unregistered Business") {
+        //             $("#gstno").style.display = 'block';
+        //             $("#gstno").addClass('d-none');
+
+        //         }
+        //         else if (x == 'Overseas') {
+        //             $("#gstno").removeClass('d-block');
+        //             $("#gstno").addClass('d-none');
+        //         }
+        //         else if (x == 'Consumer') {
+        //             $("#gstno").removeClass('d-block');
+        //             $("#gstno").addClass('d-none');
+        //         }
+        //         else {
+        //             $("#gstno").removeClass('d-none');
+        //             $("#gstno").addClass('d-block');
+        //         }
+
+        //     });
+        // });
+    </script>       
+</body>
+
+{% endblock %}

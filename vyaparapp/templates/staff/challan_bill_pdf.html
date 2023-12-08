@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VYAPAR</title>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .table2 {
+      text-align: center;
+      padding-top: 6px;
+      font-size: 1.1em;
+      background-color: rgb(221, 247, 247);
+      
+    }
+
+    .table-head {
+      color: rgb(52, 49, 58);
+    }
+    .table2 .tbody tr {
+      margin-bottom: 3px;
+    }
+    .table3 {
+      width: 75px;
+      text-align: right;
+      font-size: 14px;
+    }
+    body {
+      font-size: 14px;
+    }
+  </style>
+
+  <body>
+    <div class="my-5 page" size="A4">
+      <div class="p-5">
+        <div
+          id="ember2512"
+          class="row tooltip-container ember-view ribbon text-ellipsis"
+          style="display: flex; justify-content: space-between;"
+        >
+          <div
+            class="col-md-4 ribbon-inner ribbon-open"
+            style="
+              margin-right: 600px;
+              color: white;
+              text-align: center;
+              padding-top: 10px;
+            "
+          >
+          </div>
+          <div class="col-md-4">
+            <h3>
+              <center class="text-black"><b>DELIVERY CHALLAN</b></center>
+            </h3>
+        </div>
+          <div
+              class="col-md-4 graphic-path"
+              style="
+                text-align: right;
+                padding-top: 10px;
+                margin-left: 550px;
+                text-align: center;
+                color: rgb(0, 0, 0);
+              "
+            >
+            <p>Bill No. <span style="font-weight: bold;">{{bill.challan_no }}</span>
+            <br>
+            Date: <span style="font-weight: bold;">{{bill.date }}</span>
+            <br>
+            Due Date: <span style="font-weight: bold;">{{bill.due_date }}</span>
+            </p>
+            
+            </div>
+        </div>
+        <table class="table1 table-bordered" style="border-color: black;">
+          <tbody>
+            <tr style="font-weight: bolder">
+              <td></td>
+              <td></td>
+              <td>Party</td>
+            </tr>
+            <tr>
+              <td>
+                <h5 class="text-info" style="font-weight: bold; color: rgb(49, 49, 138);">{{company.company_name }}</h5>
+                <p class="address" style="font-weight: bold;color: #000;"> {{company.address}}<br>
+                    {{company.state}},
+                    {{company.country}}<br>
+                    {{company.user.email}}<br>
+                    {{company.contact}}<br>
+                </p> 
+              </td>
+              <td></td>
+              <td>
+                <h5 class="text-info" style="font-weight: bold;"><span style="color: #000;">Name: </span>{{bill.party_name}}</h5>
+                <p class="address" style="font-weight: bold;color: #000;">
+                    <span>Contact: </span>{{bill.contact}}
+                    <br>
+                    <span>Billing Address: </span>{{bill.address}}
+                </p> 
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <hr />
+        <section class="product-area mt-4">
+          <table class="table2 table-hover table-primary">
+            <thead>
+              <tr>
+                <td>ITEM</td>
+                <td>HSN</td>
+                <td>QUANTITY</td>
+                <td>PRICE</td>
+                <td>TAX</td>
+                <td>DISCOUNT</td>
+                <td>TOTAL</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for itm in items %}
+              <tr>
+                <td class="text-center" style="color: #000">{{ itm.name }}</td>
+                <td class="text-center" style="color: #000">{{ itm.hsn }}</td>
+                <td class="text-center" style="color: #000">{{ itm.quantity }}</td>
+                <td class="text-center" style="color: #000">{{ itm.price }}</td>
+                <td class="text-center" style="color: #000">{{ itm.tax }}</td>
+                <td class="text-center" style="color: #000">{{ itm.discount }}</td>
+                <td class="text-center" style="color: #000">{{ itm.total }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+        <hr />
+        <section class="balance-info" style="margin-top: 1rem;">
+          <div class="row my-5">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6" style="width: 50% !important;">
+              <table class="table3 border-0 table-hover">
+                <tr>
+                  <th colspan="3">
+                    <span style="float: right; margin-right: 10px"
+                      >Sub Total :</span
+                    >
+                  </th>
+                  <td style="color: black; font-weight: bold;">
+                    {{bill.subtotal}}
+                  </td>
+                </tr>
+                {% if bill.igst != 0.0 %}
+                <tr id="igstrow">
+                  <th colspan="3">
+                    <span style="float: right; margin-right: 10px">IGST:</span>
+                  </th>
+
+                  <td style="font-weight: bold" id="igst">{{bill.igst}}</td>
+                </tr>
+                {% endif %}
+                {% if bill.cgst != 0.0 %}
+                <tr id="cgstrow">
+                    <th colspan="3">
+                        <span style="float: right; margin-right: 10px">CGST:</span>
+                    </th>
+                    <td style="font-weight: bold" id="igst">{{bill.cgst}}</td>
+                </tr>
+                {% endif %}
+                {% if bill.sgst != 0.0 %}
+                <tr id="sgstrow">
+                    <th colspan="3">
+                        <span style="float: right; margin-right: 10px">SGST:</span>
+                    </th>
+
+                    <td style="font-weight: bold" id="igst">{{bill.sgst}}</td>
+                </tr>
+                {% endif %}
+
+                <tr id="tax_amount_row">
+                    <th colspan="3">
+                        <span style="float: right; margin-right: 10px">Tax:</span>
+                    </th>
+
+                    <td style="font-weight: bold" id="igst">{{bill.tax_amount}}</td>
+                </tr>
+
+                {% if bill.adjustment != None and bill.adjustment != 0.0 %}
+                <tr id="adjstrow">
+                  <th colspan="3">
+                    <span style="float: right; margin-right: 10px"
+                      >Adjustment:</span
+                    >
+                  </th>
+
+                  <td style="font-weight: bold" id="sgst">
+                    {{bill.adjustment}}
+                  </td>
+                </tr>
+                {% endif %}
+                <tfoot>
+                  <tr>
+                    <th colspan="3">
+                      <span style="float: right; margin-right: 14px"
+                        >Grand Total:</span
+                      >
+                    </th>
+                    <td style="color: black; font-weight: bold">
+                      {{bill.total_amount}}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section>
+            <div class="row container-fluid  p-2 m-0" style="margin-top: 4rem;">
+                <div class="col-md-6 col-sm-6 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label><span class="text-dark">_____________________</span></div>
+                <!-- <div class="col-sm-4 m-0 p-0 text-dark">________________________</div> -->
+                <div class="col-md-6 col-sm-6 m-0 p-0"></div>
+            </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

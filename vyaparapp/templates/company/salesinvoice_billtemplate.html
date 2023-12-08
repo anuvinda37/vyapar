@@ -1,0 +1,966 @@
+{% extends 'company/src/html/base.html' %}
+{% block content %}
+ {% load social_share %} 
+{% load static %}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+    body {
+        background-color: var(--body-bg);
+    }
+
+    .page {
+        background: var(--white);
+        background-color: white;
+        display: block;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: var(--pageShadow);
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        overflow: hidden;
+    }
+
+    .top-content {
+        padding-bottom: 15px;
+    }
+
+    .store-user {
+        padding-bottom: 25px;
+    }
+
+    .store-user p {
+        margin: 0;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .store-user .address {
+        font-weight: 400;
+    }
+
+    .store-user h5 {
+        color: var(--themeColor);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    thead {
+        color: var(--white);
+        background: var(--themeColor);
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        text-align: left;
+    }
+
+    .balance-info .table td,
+    .balance-info .table th {
+        padding: 0;
+        border: 0;
+    }
+
+    .balance-info tr td:first-child {
+        font-weight: 600;
+    }
+
+    tfoot {
+        border-top: 2px solid var(--darkWhite);
+    }
+
+    tfoot td {
+        font-weight: 600;
+    }
+
+    .print-only {
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        #printslip{
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .equal-length-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%; /* Make the container fill the height of the column */
+        margin-left: 2vh;
+        margin-right: 2vh;
+    }
+
+    .equal-length-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    #templates, #slip{
+        cursor: pointer;
+    }
+
+    #myDropdown {
+
+            display: none;
+            position: absolute;
+            margin-left: 200px;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Style for the dropdown options (links) */
+        #myDropdown  a {
+            display: block;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        /* Style for the dropdown options on hover */
+        #myDropdown  a:hover {
+            background-color: #ddd;
+        }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+</style>
+
+<div class="body-wrapper">
+    <br><br><br>
+    <div class="row p-0 m-0">
+        <div class="col-12  p-0 m-0">
+            <div class=" bg-light bg-light pb-0 mb-0 p-2" style="height:100%;width:100%">
+                <div class="d-flex justify-content-center pt-4">
+                    <a href="" id="b1" class="btn  text-white"
+                        style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add Sale <i class="fa fa-plus"></i>
+                    </a>
+                    <a href="" id="b2" class="btn  text-white"
+                        style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add Purchase <i class="fa fa-plus"></i>
+                    </a>
+                    <a href="" id="b3" class="btn text-primary"
+                        style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add More <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+                <p></p>
+                <div class="page-content">
+                    <div class="card radius-15">
+                        <div class="card-body bg-light">
+                            <div class=" d-flex">
+                              
+                                    {% comment %} <h3 class="mb-3 mt-2">SALES INVOICE </h3>  {% endcomment %}
+                                    <div class="row pb-0 mb-0 mt-1" style="margin-top:-2vh">
+                                        <div id="templates" class="col text-center pb-2 pt-3"   >
+                                            <a class="fw-bolder fs-4" style="color: gray; text-decoration: none; " >TEMPLATE</a>
+                                        </div>
+                                        <div id="slip" class="col text-center pb-2 pt-3"  >
+                                            <a class="fw-bolder fs-4" style="color: gray; text-decoration: none;" >BILL SLIP</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="ml-auto position-relative"> 
+                                        <a class="btn" onclick="printfun()">
+                                            <img width="30px" src="{% static 'images/printer.png' %}" alt="no img"> <br>Print
+                                        </a>
+                                        <a class="btn ml-4" id="pdflink">
+                                            <img width="20px" src="{% static 'images/PDF_icon.png' %}" alt="no img"><br>Pdf
+                                        </a>
+                                        <a class="btn ml-4" onclick="toggleDropdown()">
+                                            <img width="30px" src="{% static 'images/share.png' %}" alt="no img"><br>Share
+                                        </a>
+                                        <div class="dropdown-content"  style="left: -50%; " id="myDropdown">
+                                            <ul style="margin-bottom: -1px;">{% post_to_whatsapp object_or_url "WhatsApp" %}</ul>
+                                            <ul style="margin-bottom: -1px;">{% send_email object.title "{{object.title}}" object_or_url "Email" %}</ul> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                           
+                            
+                            <div id="templatediv" style=" border-radius: 2vh;">
+                                <div  id="whatToPrint" class="print-only">
+                                    <!-- template1 -->
+                                    <div id="whatToPrint1" class="printTemplates template1">
+                                        <div class="my-5 page" size="A4" >
+                                            <div class="p-4" id="printdiv1">
+                                                <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                                                    <section >
+                                                        <div class="text-center">
+                                                            <h2 class="text-info">SALES INVOICE </h2>
+                                                        </div>
+                                                    </section>
+                                                    <section class="top-content " style="border-bottom: 2px solid #999;">
+                                                        <div class="top-left">
+                                                            <div class="position-relative" style="text-align: left;">
+                                                                <p> Bill No: &nbsp; {{ salesinvoice.id }}</p>
+                                                                <p>Bill Date: <span>{{salesinvoice.date | date:'d-m-Y'}}</span></p>
+
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                    
+                                                    <hr style="color: black;">
+                                                    <br>
+
+                                                    <section class="store-user mt-2" style="border-bottom: 2px solid #999;">
+                                                        <div class="col-12">
+                                                            <div class="row  pb-3">
+                                                                <div class="col-7">
+                                                                    <p><b>FROM</b>,</p>
+                                                                    <h5 class="" style='margin-left: 4vh;'>{{salesinvoice.staff.first_name }} {{salesinvoice.staff.last_name }}</h5>
+                                                                    <p class="address" style="margin-top: -1vh; margin-left: 4vh;"> 
+                                                                        {{salesinvoice.company.company_name }}<br>
+                                                                        {{salesinvoice.company.address}}<br>
+                                                                        {{salesinvoice.company.city}},
+                                                                        {{salesinvoice.company.state}}<br>
+                                                                        {{salesinvoice.company.pincode}}<br>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-5">
+                                                                    <p><b>TO</b>,</p>
+                                                                    <h5 class="" style='margin-left: 4vh;'>{{salesinvoice.party.party_name}}</h5>
+                                                                    <p class="address col-9" style="margin-top: -1vh; margin-left: 4vh;"> {{ salesinvoice.party.address}} </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
+                                                    <hr style="color: black;">
+
+                                                    <section class="product-area mt-4">
+                                                        <table class=" table table-hover table-bordered border-dark" id="table1">
+                                                            <thead class=" bg-info">
+                                                                <tr>
+                                                                    <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                                                    <td style="font-weight:bold; color:black ">HSN</td>
+                                                                    <td style="font-weight:bold; color:black ">Price</td>
+                                                                    <td style="font-weight:bold; color:black">Quantity</td>
+                                                                    <td style="font-weight:bold; color:black">Tax</td>
+                                                                    <td style="font-weight:bold; color:black">Discount</td>
+                                                                    <td style="font-weight:bold; color:black">Total</td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for i in salesinvoiceitem %}
+                                                                <tr>
+                                                                    <td style="color:black; text-align: center;">{{i.item.item_name}}</td>
+                                                                    <td style="color:black">{{i.item.item_hsn}}</td >
+                                                                    <td style="color:black">{{i.item.item_sale_price}}</td>
+                                                                    <td style="color:black">{{i.quantity}}</td>                                                                    <td style="color:black">{{i.tax}}</td>
+                                                                    <td style="color:black">{{i.discount}} </td>
+                                                                    <td style="color:black">{{i.totalamount}}</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table><br><br>
+                                                    </section>
+                                        
+                                                    <section class="balance-info">
+                                                        <div class="row">
+                                                            <div class="col-md-8"></div>
+                                                            <div class="col-md-4">
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td style="color: #000;">Sub Total</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.subtotal}}</td>
+                                                                        </tr>
+                                                                        {% if salesinvoice.state_of_supply == 'state' %}
+                                                                        <tr>
+                                                                            <td style="color: #000;">CGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.cgst}}</td>
+                                                                            
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="color: #000;">SGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.sgst}}</td>
+                                                                        </tr>
+                                                                        {% else %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">IGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.igst}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Tax Amount</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.total_taxamount}}</td>
+                                                                        </tr>
+                                                                        {% if salesinvoice.adjust != '0.00' %}
+                                                                        {% if salesinvoice.adjust != '0' %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Adjustment</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{salesinvoice.adjustment}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                    </tbody>
+                                                                </table>
+                                                                <hr style="background-color: #000000;">
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th style="color: #000;">Grand Total &nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                                            <th style="color: #000; ">:</th>
+                                                                            <th style="color: #000; text-align: center;">{{salesinvoice.grandtotal}}</th>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                        
+                                   <!-- template2 -->
+<div id="whatToPrint2" class="printTemplates template2" style="display: none;">
+    <div class="my-5 page" size="A4">
+        <div id="printdiv2" class="rounded p-4" style="background-color: #ffffff;  ">
+            <div class="row px-3 py-2" style="background-color: #615dff; color: #fff;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4 text-center">
+                    <h3><b>SALES INVOICE</b></h3>
+                </div>
+                <div class="col-md-4 text-right">
+                    <p class="mb-0 mt-2">Bill No: <b>{{salesinvoice.id}}</b></p>
+                    <p class="mb-0 mt-2">Bill Date: <b>{{salesinvoice.date | date:'d-m-Y'}}</b></p>
+                </div>
+            </div>
+            <div class="px-3 py-2">
+                <section class="store-user mt-3">
+                    <div class="col-12">
+                        <div class="row pb-2 mt-3">
+                            <div class="col-md-6">
+                                <div class="bg-light p-2 rounded d-flex flex-column" style="min-height: 150px;"> <!-- Adjust min-height as needed -->
+                                    <h5 class="text-secondary"><b>BILLING ADDRESS</b></h5>
+                                    <p class="mb-0"><b>{{salesinvoice.staff.first_name}} {{salesinvoice.staff.last_name}}</b></p>
+                                    <p class="address mb-0">
+                                        {{salesinvoice.company.company_name}} <br>
+                                        {{salesinvoice.company.address}}
+                                        <br>
+                                        {{salesinvoice.company.city}}
+                                        <br>
+                                        {{salesinvoice.company.state}} - {{salesinvoice.company.pincode}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light p-2 rounded d-flex flex-column" style="min-height: 150px;"> <!-- Adjust min-height as needed -->
+                                    <h5 class="text-secondary"><b>SHIPPING ADDRESS</b></h5>
+                                    <p class="mb-0"><b>{{salesinvoice.party.party_name}}</b></p>
+                                    <p class="address mb-0">{{salesinvoice.party.address | linebreaksbr}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>                
+
+                <section class="product-area mt-3">
+                    <table class="table table-hover table-bordered" id="table2">
+                        <thead style="background-color: #615dff; color: #fff;">
+                            <tr class="template3tablehead">
+                                <th class="text-center">Items</th>
+                                <th class="text-center">HSN</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Rate</th>
+                                <th class="text-center">Tax</th>
+                                <th class="text-center">Discount</th>
+                                <th class="text-center">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in salesinvoiceitem %}
+                            <tr>
+                                <td>{{i.item.item_name}}</td>
+                                <td>{{i.item.item_hsn}}</td>
+                                <td>{{i.quantity}}</td>
+                                <td>{{i.item.item_sale_price}}</td>
+                                <td>{{i.tax}}</td>
+                                <td>{{i.discount}}</td>
+                                <td>{{i.totalamount}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="balance-info mt-3">
+                    <div class="row mt-3">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded">
+                                <!-- Remaining code for total calculations -->
+                                <p class="mb-1"><b>Sub Total:</b> {{salesinvoice.subtotal}}</p>
+                                {% if salesinvoice.state_of_supply == 'state' %}
+                                <p class="mb-1"><b>CGST:</b> {{salesinvoice.cgst}}</p>
+                                <p class="mb-1"><b>SGST:</b> {{salesinvoice.sgst}}</p>
+                                {% else %}
+                                <p class="mb-1"><b>IGST:</b> {{salesinvoice.igst}}</p>
+                                {% endif %}
+                                <p class="mb-1"><b>Tax Amount:</b> {{salesinvoice.total_taxamount}}</p>
+                                {% if salesinvoice.adjust != '0.00' %}
+                                {% if salesinvoice.adjust != '0' %}
+                                <p class="mb-1"><b>Adjustment:</b> {{salesinvoice.adjustment}}</p>
+                                {% endif %}
+                                {% endif %}
+                                <hr class="bg-dark">
+                                <p class="mb-1"><b>Grand Total:</b> {{salesinvoice.grandtotal}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                                   <!-- template3 -->
+<div id="whatToPrint3" class="printTemplates template3" style="display: none;">
+    <div class="my-5 page" size="A4">
+        <div id="printdiv3" class="rounded p-4" style="background-color: #ffffff; ">
+            <div class="row">
+                <div class="col-sm-12 bg-primary text-white">
+                    <br>
+                    <p style="font-size: 24px; text-align: center; font-weight: bold;">SALES INVOICE</p>
+                    <p style="text-align: center;">
+                        {{salesinvoice.staff.first_name}} {{salesinvoice.staff.last_name}}<br>
+                        {{salesinvoice.company.company_name}} <br>
+                        {{salesinvoice.company.address}} <br>
+                        {{salesinvoice.company.city}},
+                        {{salesinvoice.company.state}}<br>
+                        {{salesinvoice.company.cemail}}
+                        <br>
+                    </p>
+                </div>
+                <div class="row col-12">
+                    <div class="col-md-1"></div>
+                    <div class="col-5">
+                        <br><br><br>
+                        <p style="color: #000; font-weight: bold;">To:</p>
+                        <p>
+                            {{salesinvoice.party.party_name}}<br>
+                            {{salesinvoice.party.address|linebreaksbr }}
+                        </p>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-4">
+                        <br><br><br>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">Bill No:</td>
+                                    <td style="color: #000; text-align: left;">{{ salesinvoice.id }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">Bill Date:</td>
+                                    <td style="color: #000; text-align: left;">{{salesinvoice.date | date:'d-m-Y'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <br>
+                    <table class="table table-hover table-bordered template3table" id="table3" style="border:1px solid black">
+                        <thead class="bg-primary text-white">
+                            <tr class="template3tablehead">
+                                <th class="text-center">Items</th>
+                                <th class="text-center">HSN</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Rate</th>
+                                <th class="text-center">Tax</th>
+                                <th class="text-center">Discount</th>
+                                <th class="text-center">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in salesinvoiceitem %}
+                            <tr>
+                                <td>{{i.item.item_name}}</td>
+                                <td>{{i.item.item_hsn}}</td>
+                                <td>{{i.quantity}}</td>
+                                <td>{{i.item.item_sale_price}}</td>
+                                <td>{{i.tax}}</td>
+                                <td>{{i.discount}}</td>
+                                <td>{{i.totalamount}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <section class="balance-info mt-3">
+                <div class="row">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-4">
+                        <br>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">Sub Total</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.subtotal}}</td>
+                                </tr>
+                                {% if salesinvoice.state_of_supply != 'state' %}
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">IGST</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.igst}}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">CGST</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.cgst}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">SGST</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.sgst}}</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">Tax Amount</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.total_taxamount}}</td>
+                                </tr>
+                                {% if pbill.adjust != '0.00' %}
+                                {% if pbill.adjust != '0' %}
+                                <tr>
+                                    <td style="color: #000; font-weight: bold;">Adjustment</td>
+                                    <td style="color: #000;">:</td>
+                                    <td class="text-right" style="color: #000;">{{salesinvoice.adjustment}}</td>
+                                </tr>
+                                {% endif %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        <hr style="background-color: #000000;">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th style="color: #000;">Grand Total &nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                    <th style="color: #000; ">:</th>
+                                    <th style="color: #000; text-align: center;">{{salesinvoice.grandtotal}}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+                                </div>
+                                <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                                    <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 active templateToggleButtons">1</button>
+                                    <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 templateToggleButtons">2</button>
+                                    <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 templateToggleButtons">3</button>
+                                </div>
+                            </div>
+
+                            <div id="slipdiv" style="border-radius: 2vh; display: none;">
+                                <div class="my-5 page" size="A4">
+                                    <div class="row" style="margin-top: 20%;" id="printslip">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-6 ml-3">
+                                            <div class="card bg-white" style="border: 1px dotted black; box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+                                                <div class="mt-2" style="text-align: center;">
+                                                    <div class="text-center" style="font-size: 3vh; color: black;">
+                                                        <b>{{salesinvoice.company.company_name}} </b>
+                                                    </div>
+                                                    <span style="font-size: x-small; color: black;">
+                                                        {{ salesinvoice.company.address }} <br>
+                                                        {{salesinvoice.company.city}},
+                                                        {{salesinvoice.company.state}}
+                                                        {{salesinvoice.company.pincode}} <br>
+                                                        {{ salesinvoice.company.user.email }} <br>
+                                                        {{ salesinvoice.company.contact }} 
+                                                    </span>
+                                                </div>
+                                                <div class="ml-4 mt-2" style="color: black;">
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Bill No:</div>
+                                                        <div class="col-md-5 text-right">{{salesinvoice.id}}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Customer Name:</div>
+                                                        <div class="col-md-5 text-right">{{salesinvoice.party.party_name}}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Bill Date :</div>
+                                                        <div class="col-md-5 text-right">{{salesinvoice.date | date:'d-m-Y'}}</div>
+                                                    </div>
+                                                
+                                                </div>
+                                                <div><br>
+                                                    <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                                        <div class="equal-length-item" style=" text-align: center;">
+                                                            Item
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                                        </div>
+                                                        <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                                            HSN
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:63%; margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Qty
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Price
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:65%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Tax
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item" style=" text-align: center; ">
+                                                            Total
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:65%;  margin-left: 10px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {% for i in salesinvoiceitem %}
+                                                    <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                                        <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
+                                                            {{i.item.item_name}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: right;">
+                                                            {{i.item.item_hsn}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.quantity}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.item.item_sale_price}}
+                                                        </div>
+                                                        <div class="equal-length-item" id="tax{{ forloop.counter }}" style="display: none;">
+                                                            {{i.tax}}
+                                                        </div>
+                                                        <div class="equal-length-item" id="taxval{{ forloop.counter }}" style="text-align: center; ">
+                                                            {{i.tax}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.totalamount}}
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <div><br>
+                                                    {% if dis != 0 %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Discount
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ dis }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Subtotal
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ salesinvoice.subtotal }}
+                                                        </div>
+                                                    </div>
+                                                    {% if salesinvoice.state_of_supply != 'state' %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left " style=" color: black;">
+                                                            IGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ salesinvoice.igst }}
+                                                        </div>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            CGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ salesinvoice.cgst }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            SGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ salesinvoice.sgst }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if salesinvoice.adjustment != '0.00' %}
+                                                    {% if salesinvoice.adjustment != '0' %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Adjustment
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;">
+                                                            {{ salesinvoice.adjustment }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <div class="row">
+                                                        <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
+                                                            Total
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;">
+                                                            {{ salesinvoice.grandtotal }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ml-2 mt-2">
+                                                    <p>Created by : {{salesinvoice.staff.first_name}}  {{salesinvoice.staff.last_name}} <br>
+                                                    Printed by {{staff.first_name}}  {{staff.last_name}} 
+                                                    On <span id="datetimedisplay"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+<script>
+    function toggleDropdown() {
+            // Toggle the display of the dropdown content
+            // Toggle the display of the dropdown content
+            var dropdownContent = document.getElementById("myDropdown");
+            dropdownContent.style.display = (dropdownContent.style.display === "block") ? "none" : "block";
+        }
+</script>
+
+<script>
+    function updateDateTime() {
+        var currentDate = new Date();
+    
+        // Get day, month, and year
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; // Month is zero-based
+        var year = currentDate.getFullYear();
+    
+        // Get hours, minutes, and seconds
+        var hours = currentDate.getHours();
+        var minutes = currentDate.getMinutes();
+        var seconds = currentDate.getSeconds();
+    
+        // Add leading zeros if needed
+        day = day < 10 ? '0' + day : day;
+        month = month < 10 ? '0' + month : month;
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+        // Construct the date and time string in the desired format
+        var dateTimeStr = day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+    
+        // Display the formatted date and time
+        document.getElementById('datetimedisplay').textContent = dateTimeStr;
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 1000);    
+
+</script>
+
+<script>
+    l = parseInt('{{itm_len}}')
+    place = '{{salesinvoice.state_of_supply}}'
+    for (var i=1; i<=l; i++){
+        val =  document.getElementById('tax'+i).innerText
+        tax = val.split('[')[1];
+        tax = tax.split(']')[0]
+        if(place == 'state'){
+
+            document.getElementById('taxval'+i).innerText = 'GST' + tax;
+        }else{
+            document.getElementById('taxval'+i).innerText = 'IGST' + tax;
+            
+        }
+        console.log(tax)
+    }
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('#templates').css({'background-color': 'rgb(210, 235, 241)','height' : '4vw'})
+        $('#slip a').removeClass('text-dark')
+        $('#templates a').addClass('text-dark')
+        $('#slip').css({'background-color': 'none'})
+        $('#templatediv').attr('hidden',false)
+        $('#slipdiv').attr('hidden',true)
+
+        $('#templates').on('click',function(){
+            $(this).css({'background-color': 'rgb(210, 235, 241)','height' : '4vw'})
+            $('#slip a').removeClass('text-dark')
+            $('#templates a').addClass('text-dark')
+            $('#slip').css({'background-color': 'initial'});
+            $('#templatediv').attr('hidden',false)
+            $('#slipdiv').attr('hidden',true)
+            document.getElementById('slipdiv').style.display = 'none';
+        })
+    })
+
+    $(document).ready(function(){
+        $('#slip').on('click',function(){
+        $('#slip').css({'background-color': 'rgb(210, 235, 241)','height' : '4vw'})
+        $('#templates a').removeClass('text-dark')
+        $('#slip a').addClass('text-dark')
+        $('#templates').css({'background-color': 'initial'});
+        $('#templatediv').attr('hidden',true)
+        $('#slipdiv').attr('hidden',false)
+        document.getElementById('slipdiv').style.display = 'block';
+        })
+    })
+
+    function toggleTemplate(templateId,buttonId){
+            $('.printTemplates').css('display','none');
+            $('#'+templateId).css('display','block');
+            $('.templateToggleButtons').removeClass('active');
+            $('#'+buttonId).addClass('active');
+            scrollToTop();
+            
+        }
+
+    function scrollToTop() {
+        // Scroll to the top of the page with smooth scrolling
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        $(document).on('click', '#pdflink', function (event) {
+            event.preventDefault();
+            print1 = document.getElementById('whatToPrint1')
+            print2 = document.getElementById('whatToPrint2')
+            print3 = document.getElementById('whatToPrint3')
+            print4 = document.getElementById('slipdiv')
+
+            if (print1.style.display !== 'none'){
+                var element = document.getElementById('printdiv1') 
+            }
+
+            if (print2.style.display !== 'none'){
+                var element = document.getElementById('printdiv2') 
+            }
+
+            if (print3.style.display !== 'none'){
+                var element = document.getElementById('printdiv3') 
+            }
+
+            if (print4.style.display !== 'none'){
+                var element = document.getElementById('printslip') 
+            }
+
+            var opt =
+            {
+                margin: 1,
+                filename: 'PurchaseBill' + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
+
+    });
+</script>
+
+<script>
+    function printfun(){
+        print4 = document.getElementById('slipdiv')
+        if (print4.style.display !== 'none'){
+            var printContents = document.getElementById("slipdiv").innerHTML;
+        }else{
+            var printContents = document.getElementById("whatToPrint").innerHTML;
+        }
+        var $printerDiv = $('<div class="printContainer"></div>');
+        $printerDiv.html(printContents); 
+        $('body').append($printerDiv).addClass("printingContent"); 
+        window.print(); 
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+    }
+</script>
+
+{% endblock %}    

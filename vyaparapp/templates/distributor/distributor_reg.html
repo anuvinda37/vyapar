@@ -1,0 +1,522 @@
+<!-- Create by athul. -->
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Login & sign-up</title>
+</head>
+<style>
+    *{
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        font-family: 'Times New Roman', Times, serif;
+    }
+    :root{
+        --mainolor:#89216b;
+        --whiteColor:#ffffff;
+        --titleColor:#555555;
+        --labelColor:#333333;
+
+
+    }
+    html{
+        font-size: 62.5%;
+        scroll-behavior: smooth;
+    }
+    body{
+        background-color: #455a81;
+        font-weight: 400;
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        overflow: hidden;
+
+    }
+    .wrapper{
+        position: relative;
+        width: 45rem;
+        height: 60rem;
+        margin-bottom: 20px;
+       
+    }
+    @media(max-width:768px){
+        .wrapper{
+            width: 30rem;
+            max-height: 50rem;
+            
+            
+        }
+    }
+    .wrapper .form-container{
+        
+        position: absolute;
+        top: 0;
+        left: 0;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 110%;
+        height: 110%;
+        border-radius: .5rem;
+        box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);
+        background-color: #ffffff;
+    }
+   
+    .wrapper .form-container form h2{
+        font-size: 3rem;
+        text-align: center;
+        text-transform: capitalize;
+        color: #ffffff;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px #000000;
+    }
+    .wrapper .form-container form .form-group{
+        position: relative;
+        width: 32rem;
+        margin: 3rem 0;
+    }
+    
+    .wrapper .form-container form .form-group svg,
+    .wrapper .form-container form .form-group label{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.6rem;
+        text-transform: capitalize;
+        color: #333333;
+        padding: 0 .5rem;
+        pointer-events: none;
+        transition: all .5s ease;
+    }
+    .wrapper .form-container form .form-group svg{
+        left: .5rem;
+    }
+    .wrapper .form-container form .form-group label{
+        left: 2.5rem;
+    }
+    .wrapper .form-container form .form-group input{
+        width: 100%;
+        height: 4rem;
+        padding: 0 1rem;
+        border-radius: .5rem;
+        border: none;
+        outline: none;
+        border: .1rem solid #333333;
+        font-size: 1.6rem;
+        color: #333333;
+        /* background-color: transparent; */
+
+    }
+    form .form-group input:focus~label,
+    form .form-group input:valid~label,
+    form .form-group input:focus~svg,
+    form .form-group input:valid~svg{
+        top: 0 !important;
+        font-size: 1.2rem !important;
+        background-color: #ffffff;
+
+
+    }
+    .wrapper .form-container form .forgot-pass{
+        margin: -1.5rem 0 1.5rem;
+    }
+    .wrapper .form-container form .forgot-pass a{
+        color: #333333;
+        text-decoration: none;
+        font-size: 1.4rem;
+        text-transform: capitalize;
+        transform: all .5s ease;
+
+    }
+    .wrapper .form-container form .forgot-pass a:hover{
+        color:#89216b ;
+    }
+    .wrapper .form-container form .btn{
+        background-color: #da4453;
+        color: white;
+        text-transform: capitalize;
+        width: 100%;
+        height: 4rem;
+        font-size: 1.6rem;
+        font-weight: 500;
+        outline: none;
+        border: none;
+        border-radius: .5rem;
+        cursor: pointer;
+        box-shadow: 0 .2rem .1rem rgb(0,0,0,0.4);
+    }
+    .wrapper .form-container form .link{
+        text-align: center;
+        font-size: 1.4rem;
+        color: #333333;
+        margin: 2.5rem 0;
+    }
+    .wrapper .form-container form .link a{
+        text-transform: capitalize;
+        color: #89216b;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all .5s ease;
+
+    }
+    .wrapper .form-container form .link a:hover{
+        color: #da4453;
+
+
+    }
+    .wrapper  .sign-up{
+        transform: rotate(7deg);
+    }
+    .wrapper.animated-signin .form-container.sign-in {
+        animation: signin-flip 1s ease-in-out forwards;
+    }
+    @keyframes signin-flip {
+        0%{
+            transform: translateX(0);
+        }
+        50%{
+            transform: translateX(-50rem) scale(1.1);
+        }
+        100%{
+            transform: translateX(0) rotate(7deg) scale(1);
+        }
+    }
+    .wrapper.animated-signin .form-container.sign-up{
+        animation: rotatecard .7s ease-in-out forwards;
+    }
+    @keyframes rotatecard{
+        0%{
+            transform: rotate(7deg);
+        }
+        100%{
+            transform: rotate(0);
+            z-index: 1;
+        }
+    }
+
+    .wrapper.animated-signup .form-container.sign-up {
+        animation: signup-flip 1s ease-in-out forwards;
+    }
+    @keyframes signup-flip {
+        0%{
+            transform: translateX(0);
+            z-index: 1;
+        }
+        50%{
+            transform: translateX(50rem) scale(1.1);
+        }
+        100%{
+            transform: translateX(0) rotate(7deg) scale(1);
+        }
+    }
+    .wrapper.wrapper.animated-signup .form-container.sign-in {
+        animation: rotatecard .7s ease-in-out forwards;
+        transform: rotate(7deg);
+        animation-delay: .3s;
+    }
+    @keyframes rotatecard{
+        0%{
+            transform: rotate(7deg);
+        }
+        100%{
+            transform: rotate(0);
+            z-index: 1;
+        }
+    }
+
+</style>
+<body>
+    
+    <div class="wrapper">
+
+ 
+        <div class="form-container sign-up"  id="sign-up" style=" background-color: rgb(188, 232, 250);">
+            <form action="" method="post">
+                {% csrf_token %}
+                <h2 style="font-size: 2.5rem;margin-top: 10px;">Company Sign Up</h2>
+                <div class="form-group">
+                    <input type="text" name="fname" style="margin-bottom: 3px;" required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                      </svg>
+                    <label for="">Firstname</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="lname"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                      </svg>
+                    <label for="">Lastname</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="uname"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                      </svg>
+                    <label for="">Username</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-envelope-at-fill" viewBox="0 0 16 16">
+                        <path d="M2 2A2 2 0 0 0 .05 3.555L8 8.414l7.95-4.859A2 2 0 0 0 14 2H2Zm-2 9.8V4.698l5.803 3.546L0 11.801Zm6.761-2.97-6.57 4.026A2 2 0 0 0 2 14h6.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.606-3.446l-.367-.225L8 9.586l-1.239-.757ZM16 9.671V4.697l-5.803 3.546.338.208A4.482 4.482 0 0 1 12.5 8c1.414 0 2.675.652 3.5 1.671Z"/>
+                        <path d="M15.834 12.244c0 1.168-.577 2.025-1.587 2.025-.503 0-1.002-.228-1.12-.648h-.043c-.118.416-.543.643-1.015.643-.77 0-1.259-.542-1.259-1.434v-.529c0-.844.481-1.4 1.26-1.4.585 0 .87.333.953.63h.03v-.568h.905v2.19c0 .272.18.42.411.42.315 0 .639-.415.639-1.39v-.118c0-1.277-.95-2.326-2.484-2.326h-.04c-1.582 0-2.64 1.067-2.64 2.724v.157c0 1.867 1.237 2.654 2.57 2.654h.045c.507 0 .935-.07 1.18-.18v.731c-.219.1-.643.175-1.237.175h-.044C10.438 16 9 14.82 9 12.646v-.214C9 10.36 10.421 9 12.485 9h.035c2.12 0 3.314 1.43 3.314 3.034v.21Zm-4.04.21v.227c0 .586.227.8.581.8.31 0 .564-.17.564-.743v-.367c0-.516-.275-.708-.572-.708-.346 0-.573.245-.573.791Z"/>
+                      </svg>
+                    <label for="email">Email</label>
+                </div>
+                <div class="form-group">
+                    <input type="number" name="phone"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                      </svg>
+                    <label for="">Contact</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="password"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                      </svg>
+                    <label for="">password</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="cpassword"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                      </svg>
+                    <label for="">Conform password</label>
+                </div>
+                
+                <button type="submit" class="btn btn-danger">Signup</button>
+                <div class="link">
+                    <p style="margin-top: 0px;">You already have an account?<a href="#log" class="signin-link">sign in</a></p>
+                </div>
+            </form>
+        </div> 
+        
+        
+        <div class="form-container sign-in" id="log" style=" background-color: rgb(188, 232, 250);">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <h2 style="font-weight: bold;">Login</h2>
+                <div class="form-group">
+                    <input type="text" name="username"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                      </svg>
+                    <label for="">username</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password"  required>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                      </svg>
+                    <label for="">password</label>
+                </div>
+                <div class="forgot-pass">
+                    <a href="">Forgot Password?</a>
+                    
+                </div>
+                <button type="submit" class="btn btn-danger">Login</button>
+                <div class="link">
+                    <p>Don't have an account?<a href="#sign-up" class="signup-link">sign up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let wrapper = document.querySelector('.wrapper'),
+            signUpLink = document.querySelector('.link .signup-link'),
+            signInLink = document.querySelector('.link .signin-link');
+
+        signUpLink.addEventListener('click', () => {
+            wrapper.classList.add('animated-signin');
+            wrapper.classList.remove('animated-signup');
+        });   
+        signInLink.addEventListener('click', () => {
+            wrapper.classList.remove('animated-signin');
+            wrapper.classList.add('animated-signup');
+            
+        });  
+    </script> -->
+    
+<!-- </body>
+</html> -->
+
+
+<!-- create by athul -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VYAPAR</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        form .form-control {
+            border-radius: 20px;
+            border: 1px solid gray;
+            margin-top: 10px;
+            
+
+        }
+
+        @media (max-width:768px) {
+            #h1 {
+                font-size: 20px;
+                margin-top: 10px !important;
+                font-weight: bold;
+                text-align: center !important;
+                margin-right: 20px !important;
+            }
+
+            .main {
+                padding: 0px !important;
+                margin: 0px !important;
+                margin-left: 40px !important;
+
+            }
+
+            #btn1 {
+                width: 50% !important;
+                margin-bottom: 30px !important;
+                font-size: 12px !important;
+
+            }
+
+            #c2 {
+                border-bottom-left-radius: 20px !important;
+                border-top-right-radius: 0px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="background-color: #455a81;padding-bottom: 20px;">
+    <div class="main m-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
+        <h1 class="text-center" id="h1"
+            style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">DISTRIBUTOR REGISTERATION
+        </h1>
+        
+        <div class="row "
+            style="border: 1px solid black;width: 100%; border-radius: 20px;background-color: white;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
+            <div class="col-lg-6 col-md-10 d-flex "
+                style="border-right:1px solid black ;border-bottom: 1px solid black;">
+                <div class="img mt-5">
+                    <center>
+                        <img src="{% static 'images/log1.webp' %}" alt="" class="img-fluid">
+                        <button type="button" class="btn btn-outline-dark" id="btn1"
+                            style="width: 30%;padding: 10px;background-color: red;border-radius: 20px;margin-top: 60px;"><a
+                                href="{% url 'log_page' %}" class="text-white" style="text-decoration: none;"><b>Login
+                                    Now>>></b></a></button>
+                    </center>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-9 col-sm-12 pb-5 pt-5 align-item-center" id="c2"
+                style=" background-color: rgb(194, 222, 233);border-radius: 20px;border-bottom-left-radius: 0px;border-top-left-radius: 0px;">
+                <div class="form-box px-2 py-2 align-item-center" >
+                    <div class="container-fluid">
+                        <form id="form" class="mt-2" method="post" action="{% url 'distributor_reg_action' %}"
+                            enctype="multipart/form-data" >
+                            <!-- <h3 class="text-center mb-5" style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;font-weight: bold;">Basic information</h3> -->
+                            {% if messages %}
+                            {% for message in messages %}
+                                <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 100%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px;">{{message}}</label>
+                            {% endfor %}
+                         {% endif %}
+
+
+                            <div class="form-group ">
+                                {% csrf_token %}
+
+
+                                <input type="text" id="fname" name="fname" class="form-control"
+                                    placeholder="enter firstname" required><br>
+
+
+                                <input type="text" id="lname" name="lname" class="form-control"
+                                    placeholder="enter lastname" required><br>
+
+                                <!-- <input type="text" id="cname" name="cname" class="form-control"
+                                    placeholder="enter company name" required><br> -->
+
+                                <input type="text" id="eid" name="eid" class="form-control" placeholder="enter email"
+                                    required><br>
+
+
+
+                                <input type="text" id="uname" name="uname" class="form-control"
+                                    placeholder="enter username" required><br>
+
+
+
+                                <input type="number" id="ph" name="ph" class="form-control"
+                                    placeholder="enter phone number" required><br>
+
+                                <input type="password" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="form-control"
+                                    placeholder="enter password" required><br>
+                                    <p class="text-primary" style="font-size: 12px;margin-top: 0px;">*password must be at least 8 characters long and include uppercase , lowercase, special characters and numbers.</p>
+                                <input type="password" id="cpass" name="cpass" class="form-control"
+                                    placeholder="confirm password"  required>
+                                <span id='message' style="margin-top: 0px; padding-top: 0px;"></span><br>
+
+                                <select name="select" id="select" class="form-control" required>
+                                    <option value="">Choose Payment terms</option>
+
+                                    {% for t in terms %}
+                                    <option value="{{t.id}}" data-terms="{{ t.id}}">{{t.payment_terms_number}}
+                                        {{t.payment_terms_value}}</option>
+                                    {% endfor %}
+                                </select>
+
+                                
+
+                                <!-- <label for="" style="color: white; font-weight: bold;">Upload Image</label> -->
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control mt-4">
+                                    
+
+
+                            </div>
+                            <center><input type="submit" id="s" value="SUBMIT" class="btn text-white btn-outline-dark"
+                                    style="margin-top: 20px;  width: 70%; padding: 10px; border-radius: 20px; background-image: linear-gradient(to right,rgb(4, 38, 82),#284293,#a2aee3); font-weight: bold;"><br><br>
+                            </center>
+                            
+
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $('#pass, #cpass').on('keyup', function () {
+            if ($('#pass').val() == $('#cpass').val()) {
+                $('#message').html('Password Is Matching').css('color', 'green');
+            } else
+                $('#message').html('Password Is Not Matching').css('color', 'red');
+        });
+    </script>
+</body>
+
+</html>

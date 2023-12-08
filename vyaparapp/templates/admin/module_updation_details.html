@@ -1,0 +1,321 @@
+<!-- create by athul -->
+
+{% extends 'admin/adminbase.html' %}
+
+{% block content %}
+{% load static %}
+<style>
+    @media (max-width:768px) {
+       .h3{
+           font-size: 20px;
+       }
+       .h4{
+           font-size: 15px;
+       }
+   }
+</style>
+<body  style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="container mt-5 mr-5 " style="background-color: white;">
+                <h1 class="text-center h1 mb-5 pt-5"
+                    style="font-family: 'Times New Roman', Times, serif;text-shadow: 2px 2px 4px #39d2e3;"><b>UPDATION
+                        DETAILS</b></h1>
+                <hr>
+
+                <center>
+                    {% if data.company.profile_pic %}
+                    <img class="img-thumbnail" width="30%" src="{{ data.company.profile_pic.url }}" alt="">
+                    {% else %}
+                    <img src="{% static 'assets/images/profile/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
+                    {% endif %}
+                </center>
+                <h3 class="h3 text-center"><b>{{data.company.company_name}}</b></h3>
+
+                <hr>
+                <div class="row p-5 pb-3">
+                    <div class="col-md-6">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Company Owner </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="h4 "><b>: {{data.company.user.first_name}} {{data.company.user.last_name}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pb-3 pt-3">
+                    <div class="col-md-6">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Company Code </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="h4 "><b>: {{data.company.Company_code}}</b></h4>
+                    </div>
+                </div>
+
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Email </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b>: {{data.company.user.email}}</b></h4>
+                    </div>
+                </div>
+
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Contact </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.company.contact}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Address </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{data.company.address}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> City</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{data.company.city}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> State </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{data.company.state}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Country</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{data.company.country}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Pincode</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.company.pincode}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Pan Number</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{data.company.pan_number}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> GST type </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{data.company.gst_type}}</b></h4>
+                    </div>
+                </div>
+                {% if data.company.gst_no != '' %}
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> GST Number</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.company.gst_no}}</b></h4>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.company.dateperiod.payment_terms_number}}
+                                {{data.company.dateperiod.payment_terms_value}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> End Date</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{data.company.End_date}}</b></h4>
+                    </div>
+                </div>
+                <hr>
+                <h3 class="h3 p-5 pb-3 pt-3"><b>Modules</b></h3>
+                <hr>
+                <h3 class="h3 p-5 pb-3 pt-3"><b>Old Modules</b></h3>
+
+                <div class="row p-3" style="margin-left: 20px;">
+                    <div class="col-md-6">
+                        <h5>Sales</h5>
+
+                        {% if old_modules.sales_invoice != NULL %}
+                        <b>-> </b> Sale Invoices <br>
+                        {% endif %}
+
+
+                        {% if old_modules.Estimate != NULL %}
+                        <b>-> </b> Estimate/ Quotation <br>
+                        {% endif %}
+
+                        {% if old_modules.Payment_in != NULL %}
+                        <b>-> </b> Payment In <br>
+                        {% endif %}
+
+                        {% if old_modules.sales_order != NULL %}
+                        <b>-> </b> Sale Order <br>
+                        {% endif %}
+
+                        {% if old_modules.Delivery_challan != NULL %}
+                        <b>-> </b> Delivery Challan <br>
+                        {% endif %}
+
+                        {% if old_modules.sales_return != NULL %}
+                        <b>-> </b> Sale Return/ Cr. Note <br>
+                        {% endif %}
+
+                    </div>
+                    <div class="col">
+                        <h5>Purchase</h5>
+                        {% if old_modules.Purchase_bills != NULL %}
+                        <b>-> </b>Purchase Bills <br>
+                        {% endif %}
+                        {% if old_modules.Payment_out != NULL %}
+
+                        <b>-> </b> Payment Out <br>
+                        {% endif %}
+                        {% if old_modules.Purchase_order != NULL %}
+
+                        <b>-> </b>Purchase Order <br>
+                        {% endif %}
+                        {% if old_modules.Purchase_return != NULL %}
+
+                        <b>-> </b>Purchase Return/ Dr. Note <br>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="row p-3" style="margin-left: 20px;">
+                    <div class="col-md-6">
+                        <h5>Cash & Bank</h5>
+                        {% if old_modules.Bank_account != NULL %}
+                        <b>-> </b>Bank Accounts <br>
+                        {% endif %}
+                        {% if old_modules.Cash_in_hand != NULL %}
+                        <b>-> </b> Cash In Hand <br>
+                        {% endif %}
+                        {% if old_modules.cheques != NULL %}
+                        <b>-> </b> Cheques <br>
+                        {% endif %}
+                        {% if old_modules.Loan_account != NULL %}
+
+                        <b>-> </b> Loan Accounts <br>
+                        {% endif %}
+
+
+                    </div>
+                    <div class="col"></div>
+                </div>
+                <hr>
+
+
+                <h3 class="h3 p-5 pb-3 pt-3"><b>New Modules</b></h3>
+                <div class="row p-3" style="margin-left: 20px;">
+                    <div class="col-md-6">
+                        <h5>Sales</h5>
+
+                        {% if allmodules.sales_invoice != NULL %}
+                        <b>-> </b> Sale Invoices <br>
+                        {% endif %}
+
+
+                        {% if allmodules.Estimate != NULL %}
+                        <b>-> </b> Estimate/ Quotation <br>
+                        {% endif %}
+
+                        {% if allmodules.Payment_in != NULL %}
+                        <b>-> </b> Payment In <br>
+                        {% endif %}
+
+                        {% if allmodules.sales_order != NULL %}
+                        <b>-> </b> Sale Order <br>
+                        {% endif %}
+
+                        {% if allmodules.Delivery_challan != NULL %}
+                        <b>-> </b> Delivery Challan <br>
+                        {% endif %}
+
+                        {% if allmodules.sales_return != NULL %}
+                        <b>-> </b> Sale Return/ Cr. Note <br>
+                        {% endif %}
+
+                    </div>
+                    <div class="col">
+                        <h5>Purchase</h5>
+                        {% if allmodules.Purchase_bills != NULL %}
+                        <b>-> </b>Purchase Bills <br>
+                        {% endif %}
+                        {% if allmodules.Payment_out != NULL %}
+
+                        <b>-> </b> Payment Out <br>
+                        {% endif %}
+                        {% if allmodules.Purchase_order != NULL %}
+
+                        <b>-> </b>Purchase Order <br>
+                        {% endif %}
+                        {% if allmodules.Purchase_return != NULL %}
+
+                        <b>-> </b>Purchase Return/ Dr. Note <br>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="row p-3" style="margin-left: 20px;">
+                    <div class="col-md-6">
+                        <h5>Cash & Bank</h5>
+                        {% if allmodules.Bank_account != NULL %}
+                        <b>-> </b>Bank Accounts <br>
+                        {% endif %}
+                        {% if allmodules.Cash_in_hand != NULL %}
+                        <b>-> </b> Cash In Hand <br>
+                        {% endif %}
+                        {% if allmodules.cheques != NULL %}
+                        <b>-> </b> Cheques <br>
+                        {% endif %}
+                        {% if allmodules.Loan_account != NULL %}
+
+                        <b>-> </b> Loan Accounts <br>
+                        {% endif %}
+
+
+                    </div>
+                    <div class="col"></div>
+                </div>
+                <center>
+                    <a href="{% url 'module_updation_ok' data.company.id %}" class="btn btn-danger mb-5"  style="width: 30%;"><b>Ok</b></a>
+                </center>
+                
+                        
+                    
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</body>            
+
+{% endblock content %}

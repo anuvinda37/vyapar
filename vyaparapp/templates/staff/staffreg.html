@@ -1,0 +1,157 @@
+ <!-- Create by athul. -->
+ 
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VYAPAR</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        form .form-control {
+            border-radius: 20px;
+            border: 1px solid gray;
+
+        }
+
+        @media (max-width:768px) {
+            #h1 {
+                font-size: 20px;
+                margin-top: 10px !important;
+            }
+
+            .main {
+                padding: 0px !important;
+                margin: 0px !important;
+                margin-left: 40px !important;
+
+            }
+
+            #btn1 {
+                width: 50% !important;
+                margin-bottom: 20px !important;
+
+            }
+
+            #c2 {
+                border-bottom-left-radius: 20px !important;
+                border-top-right-radius: 0px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="background-color: #455a81;padding-bottom: 20px;">
+    <div class="main m-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
+        <h1 class="text-center" id="h1"
+            style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">STAFF REGISTERATION
+        </h1>
+        <div class="row "
+            style="border: 1px solid black;width: 100%;border-radius: 20px;background-color: white;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
+            <div class="col-lg-6 col-md-10 d-flex "
+                style="border-right:1px solid black ;border-bottom: 1px solid black;">
+                <div class="img mt-5">
+                    <center>
+                        <img src="{% static 'images/reg1.webp' %}" alt="" class="img-fluid">
+                        <button type="button" class="btn btn-outline-dark" id="btn1"
+                            style="width: 30%;padding: 10px;background-color: red;border-radius: 20px;"><a
+                                href="{% url 'log_page' %}" class="text-white" style="text-decoration: none;"><b>Login
+                                    Now>>></b></a></button>
+                    </center>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-9 col-sm-12 pb-5 pt-5" id="c2"
+                style="background-color: rgb(194, 222, 233);border-radius: 20px;border-bottom-left-radius: 0px;border-top-left-radius: 0px;">
+                <div class="form-box px-2 py-2 align-item-center">
+                    <div class="container-fluid">
+                        <form id="form" class="" method="post" action="{% url 'staff_registraction' %}"
+                            enctype="multipart/form-data">
+                            {% if messages %}
+                            {% for message in messages %}
+                                <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 100%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px;">{{message}}</label>
+                            {% endfor %}
+                         {% endif %}
+
+
+                            <div class="form-group ">
+                                {% csrf_token %}
+
+
+                                <input type="text" id="fname" name="fname" class="form-control"
+                                    placeholder="enter firstname" required><br>
+
+
+                                <input type="text" id="lname" name="lname" class="form-control"
+                                    placeholder="enter lastname" required><br>
+
+
+
+                                <input type="text" id="eid" name="eid" class="form-control" placeholder="enter email"
+                                    required><br>
+
+
+
+                                <input type="text" id="uname" name="uname" class="form-control"
+                                    placeholder="enter username" required><br>
+
+
+
+                                <input type="number" id="ph" name="ph" class="form-control"
+                                    placeholder="enter phone number" required><br>
+
+                                <input type="password" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="form-control"
+                                    placeholder="enter password" required><br>
+                                    <p class="text-primary" style="font-size: 12px;margin-top: 0px;">*password must be at least 8 characters long and include uppercase , lowercase, special characters and numbers.</p>
+                                <input type="password" id="cpass" name="cpass" class="form-control"
+                                    placeholder="conform password"  required>
+                                <span id='message' style="margin-top: 0px; padding-top: 0px;"></span><br>
+
+                                <input type="text" id="code" name="code" class="form-control"
+                                    placeholder="enter company code" required><br>
+
+                                <!-- <select class="form-control" name="select" id="" style="margin-bottom: 20px;">
+                                    <option value="">select company</option>
+                                    {% for d in company %}
+                                    <option value="{{d.id}}">{{d.company_name}}</option>
+                                    {% endfor %}
+                                </select> -->
+
+                                <!-- <label for="" style="color: white; font-weight: bold;">Upload Image</label> -->
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control"
+                                    style="margin-top: 10px; margin-bottom: 20px;">
+
+
+                            </div>
+                            <center><input type="submit" id="s" value="REGISTER" class="btn text-white btn-outline-dark"
+                                    style="margin-top: 20px;  width: 70%; padding: 10px; border-radius: 20px; background-image: linear-gradient(to right,rgb(4, 38, 82),#284293,#a2aee3); font-weight: bold;"><br><br>
+                            </center>
+                            
+
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $('#pass, #cpass').on('keyup', function () {
+            if ($('#pass').val() == $('#cpass').val()) {
+                $('#message').html('Password Is Matching').css('color', 'green');
+            } else
+                $('#message').html('Password Is Not Matching').css('color', 'red');
+        });
+    </script>
+</body>
+
+</html>

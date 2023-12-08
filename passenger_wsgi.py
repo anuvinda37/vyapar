@@ -1,0 +1,1 @@
+from vyapar.wsgi import application

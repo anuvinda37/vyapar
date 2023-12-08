@@ -1,0 +1,51 @@
+{% extends 'company/src/html/base.html' %}
+
+{% block content %}
+{% load static %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<style>
+    .chart-container {
+        margin: auto; /* Center the container horizontally */
+        width: 80%; /* Adjust the width as needed */
+        padding-top: 100px; /* Add some top padding to move it below the navbar */
+        padding-left: 160px;
+    }
+</style>
+
+<div class="chart-container">
+    <canvas id="profitLossChart" width="400" height="200"></canvas>
+</div>
+
+<script>
+const fetchData = async () => {
+  const response = await fetch('/api/profit_loss_data/');
+  const data = await response.json();
+
+  const ctx = document.getElementById('profitLossChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.labels, 
+      datasets: [
+        {
+          label: 'Sales',
+          data: data.sales,
+          fill: false,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 2,
+        },
+      
+      ],
+    },
+  });
+};
+
+fetchData();
+
+</script>
+
+{% endblock %}

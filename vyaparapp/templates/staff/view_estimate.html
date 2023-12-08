@@ -1,0 +1,928 @@
+<!-- create by shemeem -->
+{% extends 'staff/staffbase.html' %}
+{% block content %}
+{% load static %}
+{% load social_share %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<style>
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .amount_summary{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: 1rem;
+    }
+    .amt_head_label label{
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .table>:not(caption)>*>* {
+        padding: 12px 2px !important;
+    }
+    .form-control{
+        padding: 8px 7px;
+    }
+
+    /* New Party Modal */
+    .new_party_form .form-control {
+        border: 2px solid #6c757d;
+        transition: border-color 0.3s;
+    }
+
+    .new_party_form .form-control:focus {
+        border-color: #007bff;
+    }
+
+    #toPayRadio {
+        accent-color: red;
+    }
+
+    #toReceiveRadio {
+        accent-color: green;
+    }
+
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+    }
+
+  
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 3px;
+        bottom: 5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(18px);
+    }
+
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .save-button {
+        background-color: #007bff;
+        border-color: #007bff; 
+        color: #fff; 
+        margin-right: 1rem;
+    }
+
+   
+    .save-button:hover {
+        background-color: #fff;
+        color: #007bff;
+    }
+    td{
+        text-align: center;
+    }
+    .dropdown-toggle::after { 
+        content: none; 
+    } 
+    .btn.dropdown-toggle{
+        border: none;
+    }
+    .file_instructions p{
+        margin-bottom: 0.75rem;
+    }
+
+    /* SLIP VIEW STYLINGS */
+    .slip h5{
+        font-family: serif;
+    }
+    p {
+        font-size: 1.2em;
+    }
+    .address{
+        display: flex;
+        flex-direction: column;
+    }
+    .address p,.footer p{
+        font-size: 1rem;
+        margin: 0;
+    }
+    .slip-container{
+        width: 80mm;
+        margin: 2rem auto;
+        padding: 2rem;
+        box-shadow: rgba(60, 64, 67, 0.5) 0px 1px 2px 0px, rgba(60, 64, 67, 0.35) 0px 2px 6px 2px;
+    }
+    .divider{
+        margin: 1rem 0;
+        border-bottom: 3px dotted black;
+    }
+    .trns-id p,.datetime p{
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    /* =============================== */
+    .template_switch button{
+        background: #3dd9eb;
+        color: white;
+    }
+    .tmplt_swtch, .action_btn{
+        background: #3fa2db;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+    }
+    #template_btn{
+        background: #3fa2db;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+    }
+    .tmplt_swtch:hover, .action_btn:hover, .template_switch button:hover{
+        background: #447fa1 !important;
+        color: white !important;
+    }
+
+    .share-dropdown {
+    position: relative;
+    display: inline-block;
+    }
+    .share-dropdown-menu {
+        position: absolute;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        right: 0;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 10;
+    }
+
+    .share-dropdown-menu li {
+        padding: 5px 25px;
+        display: flex;
+        border-bottom: 1px solid khaki;
+        justify-content: left;
+    }
+
+    .share-dropdown-menu li a{
+        color: black;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .share-dropdown-menu li:hover {
+        background-color: #f0f0f0;
+    }
+    .share-dropdown i{
+        z-index: 5;
+    }
+
+</style>
+<div class="body-wrapper">
+    <div class="container-fluid" id="body-main-container">
+        <div class="row mb-4 mt-3">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 d-flex justify-content-center">
+                <a href="#" id="b1" class="btn text-white mx-2" style="background-color: rgb(252, 3, 3,0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b2" class="btn text-white mx-2" style="background-color: rgba(3, 161, 252, 0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b3" class="btn text-primary mx-2" style="border-radius: 20px; border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="position-relative" style="z-index: 10;">
+            <div class="position-absolute end-0">
+                <div class="d-flex pt-2" style="margin-top: -1rem;">
+                    <a href="{% url 'estimate_quotation' %}"><span class="fa fa-times-circle fs-5 text-dark close_pad"></span></a>
+                </div>
+            </div>
+        </div>
+        <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+            <div class="row pb-0 mb-0">
+                <div class="col text-center pb-2" style="border-bottom: 3px solid rgba(0, 0, 0, 0.548);"><a class="fw-bolder fs-6 text-dark" href="#">BILL - {{bill.ref_no}}</a></div>
+            </div>
+        </div>
+
+        <div class="template-card card bg-light bs mt-2" id="template-card">
+            <div class="row p-3">
+                <!-- <div class="row ps-3 pe-0"> -->
+                    <div class="col-md-12 d-flex justify-content-between px-3">
+                        <div class="template_switch">
+                            <button id="template_btn" class="btn btn-sm btn-primary bg-gradient" title="TEMPLATE"><i class="fas fa-file-alt me-1"></i> TEMPLATE</button>
+                            <button id="slip_btn" class="btn btn-sm" title="SLIP"><i class="fas fa-receipt me-1"></i> SLIP</button>
+                        </div>
+
+                        <!-- <div class="action_btns">
+                            <a href="{% url 'editEstimate' bill.id %}"><button class="btn btn-sm action_btn"><i class="fa fa-pencil-alt me-1"></i>EDIT</button></a>
+                            <a href="#"><button onclick="deleteEstimate(`{{bill.id}}`)" class="btn btn-sm action_btn"><i class="fa fa-trash me-1"></i>DELETE</button></a>
+            
+                            <button class="btn btn-sm action_btn" id="templatePrintButton" onclick="printSection('printBill1')"><i class="fas fa-print me-1"></i>PRINT</button>
+                            <a href="{% url 'estimateBillPdf' bill.id %}"><button class="btn btn-sm action_btn"><i class="fas fa-file-pdf me-1"></i>PDF</button></a>
+                            <div class="share-dropdown">
+                                <button class="btn btn-sm action_btn"><i class="fa fa-share-alt me-1"></i>SHARE</button>
+                                <ul class="share-dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li>{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li>{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'estimateTransactionHistory' bill.id %}"><button class="btn btn-sm action_btn"><i class="fas fa-history me-1"></i>TRANSACTION HISTORY</button></a>
+                        </div> -->
+                        <div class="action_btns">
+                            <a href="{% url 'editEstimate' bill.id %}"><button class="btn btn-sm" title="EDIT"><span><img width="27px" src="{% static 'assets/edit01.png' %}" alt="EDIT"></span></button></a>
+                            <a href="#"><button onclick="deleteEstimate(`{{bill.id}}`)" class="btn btn-sm" title="DELETE"><span><img width="27px" src="{% static 'assets/delete01.png' %}" alt="DELETE"></span></button></a>
+            
+                            <button class="btn btn-sm" id="templatePrintButton" onclick="printSection('printBill1')" title="PRINT"><span><img width="27px" src="{% static 'assets/printer1.png' %}" alt="PRINT"></span></button>
+                            <a href="{% url 'estimateBillPdf' bill.id %}"><button class="btn btn-sm" title="PDF"><span><img width="27px" src="{% static 'assets/pdf-file01.png' %}" alt="PDF"></span></button></a>
+                            <div class="share-dropdown">
+                                <button class="btn btn-sm" title="SHARE"><span><img width="27px" src="{% static 'assets/share01.png' %}" alt="SHARE"></span></button>
+                                <ul class="share-dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li>{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li>{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'estimateTransactionHistory' bill.id %}"><button class="btn btn-sm"><span><img width="27px" src="{% static 'assets/refresh01.png' %}" alt="HISTORY"></span></button></a>
+                        </div>
+                    </div>
+                <!-- </div> -->
+            </div>
+
+            <div class="row p-3">
+                <div class="bill_template_section col-md-12">
+                    <!-- Bill view -->
+                    <div class="billsToPrint" id="billsToPrint" style="display: block;">
+
+                        <!-- Template 1 -->
+                        <div  id="printBill1" class="printTemplates template1" style="display: block;">
+                            <div class="page bg-white px-3 py-2" >
+                                <div class="row px-3 py-4" style="background-color: #575757;">
+                                    <div id="es_status1" class="col-md-4 d-flex justify-content-start"></div>
+                                    <div class="col-md-4 d-flex justify-content-center align-items-center bill_header">
+                                        <center class="h4 text-white"><b>ESTIMATE BILL</b></center>
+                                    </div>
+                                    <div class="col-md-4 d-flex justify-content-end">
+                                        <div class="text-white">
+                                            <p class="mb-0">BILL # <b>{{bill.ref_no }}</b></p>
+                                            <p class="mb-0">Date: <b>{{ bill.date | date:'d-m-Y' }}</b></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5 px-2">
+                                    <div class="col-md-6">
+                                        <h4 class="text-secondary" style="font-weight: bold;">{{company.company_name }}</h4>
+                                        <p class="address" style="font-weight: normal; color: #000;"> {{company.address}}<br>
+                                            {{company.state}} - {{company.country}}<br>
+                                            {{company.user.email}}<br>
+                                            {{company.contact}}<br>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mt-4">
+                                            <p class="text-muted mt-2 mb-0" style="color: #000;">Party Name: <span style="float: right;"><b>{{bill.party_name}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Contact: <span style="float: right;"><b>{{bill.contact}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Billing Address: <span style="float: right;"><b>{{bill.billing_address}}</b></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table table-striped table-bordered border-dark" style="background-color: #d5dce3;" id="tableTemplate1">
+                                            <thead class="fw-bold" style="background-color: #96989b; color: white;">
+                                                <tr class="templatetablehead">
+                                                    <th class="text-center">Items</th>
+                                                    <th class="text-center">HSN Code</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-center">Rate</th>
+                                                    <th class="text-center">Tax</th>
+                                                    <th class="text-center">Discount</th>
+                                                    <th class="text-center">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for itm in items %}
+                                                    <tr>
+                                                        <td class="text-center">{{ itm.name }}</td>
+                                                        <td class="text-center">{{ itm.hsn }}</td>
+                                                        <td class="text-center">{{ itm.quantity }}</td>
+                                                        <td class="text-center">{{ itm.price  }}</td>
+                                                        <td class="text-center">{{ itm.tax  }}</td>
+                                                        <td class="text-center">{{ itm.discount  }}</td>
+                                                        <td class="text-center">{{ itm.total }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-6 ps-3">
+                                        <label for="bill_desc" class="fw-bolder">Description</label>
+                                        <p>{{bill.description}}</p>
+                                    </div>
+                                    <div class="col-2"></div>
+                                    <div class="col-4">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000;">Sub Total</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.subtotal}}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td style="color: #000;">Tax</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.tax_amount}}</td>
+                                                </tr>
+                                                {% if bill.adjustment != None and bill.adjustment != 0.0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.adjustment}}</td>
+                                                </tr>
+                                                {%endif%}
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <th style="color: #000;">Grand Total</th>
+                                                    <th style="color: #000;">:</th>
+                                                    <th class="text-center" style="color: #000;">{{bill.total_amount}}</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row container-fluid  px-4 mb-5">
+                                    <div class="col-sm-4 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b>  ________________</label></div>
+                                    <div class="col-sm-4 m-0 p-0 text-dark"></div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Template 2 -->
+                        <div  id="printBill2" class="printTemplates template2" style="display: none;">
+                            <div class="page bg-white px-3 py-2" >
+                                <div class="row px-3 py-4" style="background-color: #8a8d91;">
+                                    <div id="es_status2" class="col-md-4 d-flex justify-content-start align-items-center">
+                                        <span class="p-2 px-4 fw-bolder" style="background-color: #d1cbc391; color: white;">{{bill.status}}</span>
+                                    </div>
+                                    <div class="col-md-4 d-flex justify-content-center align-items-center bill_header">
+                                        <center class="h4 text-white"><b>ESTIMATE BILL</b></center>
+                                    </div>
+                                    <div class="col-md-4 d-flex justify-content-end">
+                                        <div class="text-white">
+                                            <p class="mb-0">BILL # <b>{{bill.ref_no }}</b></p>
+                                            <!-- <p class="mb-0">Date: <b>{{ bill.date | date:'d-m-Y' }}</b></p> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-4 d-flex justify-content-end pt-2">
+                                        <p class="mb-0">Estimate Date: <b>{{ bill.date | date:'d-m-Y' }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="row mt-5 px-2">
+                                    <div class="col-md-6">
+                                        <h3 class="fw-bolder" style="color: #b3b0ae;">Company Details</h3>
+                                        <h4 class="mt-4" style="font-weight: bold; color: #505763;">{{company.company_name }}</h4>
+                                        <p class="address" style="font-weight: normal; color: #000;"> {{company.address}}<br>
+                                            {{company.state}} - {{company.country}}<br>
+                                            {{company.user.email}}<br>
+                                            {{company.contact}}<br>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="fw-bolder" style="color: #b3b0ae;">Party Details</h3>
+                                        <div class="mt-4">
+                                            <p class="text-muted mt-2 mb-0" style="color: #000;">Party Name: <span style="float: right;"><b>{{bill.party_name}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Contact: <span style="float: right;"><b>{{bill.contact}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Billing Address: <span style="float: right;"><b>{{bill.billing_address}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">State Of Supply: <span style="float: right;"><b>{{bill.state_of_supply}}</b></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered border-dark" style="background-color: #8a8d91; color: white;" id="tableTemplate2">
+                                            <thead class="fw-bold" style="background-color: #505763;">
+                                                <tr class="templatetablehead">
+                                                    <th class="text-center">Items</th>
+                                                    <th class="text-center">HSN Code</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-center">Rate</th>
+                                                    <th class="text-center">Tax</th>
+                                                    <th class="text-center">Discount</th>
+                                                    <th class="text-center">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for itm in items %}
+                                                    <tr>
+                                                        <td class="text-center">{{ itm.name }}</td>
+                                                        <td class="text-center">{{ itm.hsn }}</td>
+                                                        <td class="text-center">{{ itm.quantity }}</td>
+                                                        <td class="text-center">{{ itm.price  }}</td>
+                                                        <td class="text-center">{{ itm.tax  }}</td>
+                                                        <td class="text-center">{{ itm.discount  }}</td>
+                                                        <td class="text-center">{{ itm.total }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-6 ps-3">
+                                        <label for="bill_desc" class="fw-bolder">Description</label>
+                                        <p>{{bill.description}}</p>
+                                    </div>
+                                    <div class="col-2"></div>
+                                    <div class="col-4">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000;">Sub Total</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.subtotal}}</td>
+                                                </tr>
+                                                {% if bill.state_of_supply != "State" %}
+                                                <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.igst}}</td>
+                                                </tr>
+                                                {% else %}
+                                                <tr >
+                                                    <td style="color: #000;">CGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.cgst}}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td style="color: #000;">SGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.sgst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.tax_amount}}</td>
+                                                </tr>
+                                                {% if bill.adjustment != None and bill.adjustment != 0.0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.adjustment}}</td>
+                                                </tr>
+                                                {%endif%}
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <th style="color: #000;">Grand Total</th>
+                                                    <th style="color: #000;">:</th>
+                                                    <th class="text-center" style="color: #000;">{{bill.total_amount}}</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row container-fluid  px-4 mb-5">
+                                    <div class="col-sm-4 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b>  ________________</label></div>
+                                    <div class="col-sm-4 m-0 p-0 text-dark"></div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Template 3 -->
+                        <div  id="printBill3" class="printTemplates template3" style="display: none;">
+                            <div class="page bg-white px-3 py-2" >
+                                <div class="row px-3 pt-4 pb-0">
+                                    <span id="es_status3" class="col-md-4 d-flex justify-content-start align-items-center">
+                                        <span class="p-2 px-4 fw-bolder" style="background-color: #3dd9eb; color: white;">{{bill.status}}</span>
+                                    </span>
+                                    <div class="col-md-4 d-flex justify-content-center align-items-center bill_header">
+                                        <!-- <center class="h4 text-dark"><b>ESTIMATE BILL</b></center> -->
+                                        <center class="">
+                                            <h4 class="text-secondary" style="font-weight: bold;">{{company.company_name }}</h4>
+                                            <p class="address" style="font-weight: normal; color: #000;"> {{company.address}}<br>
+                                                {{company.state}} - {{company.country}}<br>
+                                                {{company.user.email}}<br>
+                                                {{company.contact}}<br>
+                                            </p>
+                                        </center>
+                                    </div>
+                                    <div class="col-md-4 d-flex justify-content-end align-items-center">
+                                        <!-- <div class="text-dark">
+                                            <p class="mb-0">BILL # <b>{{bill.ref_no }}</b></p>
+                                            <p class="mb-0">Date: <b>{{ bill.date | date:'d-m-Y' }}</b></p>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12 d-flex justify-content-end align-items-center">
+                                        <div class="text-dark">
+                                            <p class="mb-0">BILL # <b>{{bill.ref_no }}</b></p>
+                                            <p class="mb-0">Date: <b>{{ bill.date | date:'d-m-Y' }}</b></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <center class="h4 text-primary"><b>ESTIMATE BILL</b></center>
+                                <div class="row mt-5 px-2">
+                                    <!-- <div class="col-md-6">
+                                        <h4 class="text-secondary" style="font-weight: bold;">{{company.company_name }}</h4>
+                                        <p class="address" style="font-weight: normal; color: #000;"> {{company.address}}<br>
+                                            {{company.state}} - {{company.country}}<br>
+                                            {{company.user.email}}<br>
+                                            {{company.contact}}<br>
+                                        </p>
+                                    </div> -->
+                                    <div class="col-md-12">
+                                        <h3 class="fw-bolder" style="color: #b3b0ae;">Party Details</h3>
+                                        <div class="mt-4">
+                                            <p class="text-muted mt-2 mb-0" style="color: #000;">Party Name: <span style="float: right;"><b>{{bill.party_name}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Contact: <span style="float: right;"><b>{{bill.contact}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">Billing Address: <span style="float: right;"><b>{{bill.billing_address}}</b></span></p>
+                                            <p class="text-muted mb-0" style="color: #000;">State Of Supply: <span style="float: right;"><b>{{bill.state_of_supply}}</b></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table table-striped border-dark" id="tableTemplate3" style="background-color: #77e5f178;">
+                                            <thead class="" style="background-color: #77e5f1;">
+                                                <tr class="templatetablehead">
+                                                    <th class="text-center">Items</th>
+                                                    <th class="text-center">HSN Code</th>
+                                                    <th class="text-center">Quantity</th>
+                                                    <th class="text-center">Rate</th>
+                                                    <th class="text-center">Tax</th>
+                                                    <th class="text-center">Discount</th>
+                                                    <th class="text-center">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for itm in items %}
+                                                    <tr>
+                                                        <td class="text-center">{{ itm.name }}</td>
+                                                        <td class="text-center">{{ itm.hsn }}</td>
+                                                        <td class="text-center">{{ itm.quantity }}</td>
+                                                        <td class="text-center">{{ itm.price  }}</td>
+                                                        <td class="text-center">{{ itm.tax  }}</td>
+                                                        <td class="text-center">{{ itm.discount  }}</td>
+                                                        <td class="text-center">{{ itm.total }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-6 ps-3">
+                                        <label for="bill_desc" class="fw-bolder">Description</label>
+                                        <p>{{bill.description}}</p>
+                                    </div>
+                                    <div class="col-2"></div>
+                                    <div class="col-4">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000;">Sub Total</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.subtotal}}</td>
+                                                </tr>
+                                                {% if bill.state_of_supply != "State" %}
+                                                <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.igst}}</td>
+                                                </tr>
+                                                {% else %}
+                                                <tr >
+                                                    <td style="color: #000;">CGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.cgst}}</td>
+                                                </tr>
+                                                <tr >
+                                                    <td style="color: #000;">SGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.sgst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.tax_amount}}</td>
+                                                </tr>
+                                                {% if bill.adjustment != None and bill.adjustment != 0.0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-center" style="color: #000;">{{bill.adjustment}}</td>
+                                                </tr>
+                                                {%endif%}
+                                            </tbody>
+                                        </table>
+                                        <hr>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <th style="color: #000;">Grand Total</th>
+                                                    <th style="color: #000;">:</th>
+                                                    <th class="text-center" style="color: #000;">{{bill.total_amount}}</th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row container-fluid  px-4 mb-5">
+                                    <div class="col-sm-4 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b>  ________________</label></div>
+                                    <div class="col-sm-4 m-0 p-0 text-dark"></div>
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                            <button id="toggleTemplate1" onclick="toggleTemplate('printBill1','toggleTemplate1')" class="btn btn-outline-info btn-sm m-2 active templateToggleButtons">1</button>
+                            <button id="toggleTemplate2" onclick="toggleTemplate('printBill2','toggleTemplate2')" class="btn btn-outline-info btn-sm m-2 templateToggleButtons">2</button>
+                            <button id="toggleTemplate3" onclick="toggleTemplate('printBill3','toggleTemplate3')" class="btn btn-outline-info btn-sm m-2 templateToggleButtons">3</button>
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- Bill Slip view -->
+                    <div class="saleBillSlip" id="printSlip" style="display: none;">
+                        <div class="slip-container bg-white" id="slip_container">
+                            <div class="slip">
+                                <h5 class="fw-bold text-center">{{company.company_name}}</h5>
+                                <div class="address text-center">
+                                    <p>{{company.address}}</p>
+                                    <p>{{company.state}}, {{company.country}}</p>
+                                    <p>{{company.contact}}</p>
+                                </div>
+                                <div class="divider">
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-start" style="border-bottom-width: 0px !important;">Item</th>
+                                            <!-- <th class="text-center">Rate</th>
+                                            <th class="text-center">Quantity</th> -->
+                                            <th class="text-end" style="border-bottom-width: 0px !important;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for itm in items %}
+                                            <tr>
+                                                <td style="border-bottom-width: 0px !important;" class="text-start">{{ itm.name }}</td>
+                                                <!-- <td class="text-center">{{ itm.rate  }}</td>
+                                                <td class="text-center">{{ itm.quantity }}</td> -->
+                                                <td style="border-bottom-width: 0px !important;" class="text-end"><span>&#8377; </span>{{ itm.total }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+            
+            
+            
+                                <div class="subtot mt-5">
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>Subtotal</span>
+                                        <span><span>&#8377; </span>{{bill.subtotal}}</span>
+                                    </div>
+                                    {% if bill.state_of_supply != "State" %}
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>IGST</span>
+                                        <span><span>&#8377; </span>{{bill.igst}}</span>
+                                    </div>
+                                    {%else%}
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>CGST</span>
+                                        <span><span>&#8377; </span>{{bill.cgst}}</span>
+                                    </div>
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>SGST</span>
+                                        <span><span>&#8377; </span>{{bill.sgst}}</span>
+                                    </div>
+                                    {%endif%}
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>Tax Amount</span>
+                                        <span><span>&#8377; </span>{{bill.tax_amount}}</span>
+                                    </div>
+                                    {% if bill.adjustment != 0.0 and bill.adjustment != None %}
+                                    <div class="subtot-item d-flex justify-content-between">
+                                        <span>Adjustment</span>
+                                        <span><span>&#8377; </span>{{bill.adjustment}}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="divider"></div>
+                                <div class="grandtot fw-bold d-flex justify-content-between">
+                                    <span><strong>TOTAL</strong></span>
+                                    <span><strong><span>&#8377; </span>{{bill.total_amount}}</strong></span>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="paid-by mb-1 d-flex justify-content-between">
+                                    <span>Paid By:</span>
+                                    <span>Credit</span>
+                                </div>
+                                <div class="created-by mb-4 d-flex justify-content-between">
+                                    <span>Created By:</span>
+                                    <span>{{bill.staff.first_name}} {{bill.staff.last_name}}</span>
+                                </div>
+                                <div class="datetime d-flex justify-content-start">
+                                    <p class="">{% now "d/m/Y g:i A" %}</p>
+                                </div>
+                                <div class="trns-id d-flex flex-column">
+                                    <div>
+                                        <p class="float-start">
+                                            <span>Transaction ID:</span>
+                                            <span>XXXXXXXXX</span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="float-start">
+                                            <span>Vendor ID:</span>
+                                            <span>XXXXXXXXXX</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="footer mt-4 text-center">
+                                    <p>Thank you for supporting Local business!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+<script>
+    function exportToExcel() {
+        const table = document.getElementById('est_tbl_exprt');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "estimate.xlsx");
+    }
+
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+    
+        document.body.innerHTML = printContents;
+    
+        window.print();
+    
+        document.body.innerHTML = originalContents;
+    }
+
+    $(document).ready(function(){
+        $(".share-dropdown").click(function(){
+            $(this).find(".share-dropdown-menu").slideToggle("fast");
+        });
+    });
+    $(document).on("click", function(event){
+        var $trigger = $(".share-dropdown");
+        if($trigger !== event.target && !$trigger.has(event.target).length){
+            $(".share-dropdown-menu").slideUp("fast");
+        }
+    });
+
+    $(document).ready(()=>{
+        $('#slip_btn').click(()=>{
+            $('#billsToPrint').css('display','none');
+            $('#printSlip').css('display','block');
+            $("#templatePrintButton").attr("onclick","printSection('printSlip')");
+        })
+
+        $('#template_btn').click(()=>{
+            $('#printSlip').css('display','none');
+            $('#billsToPrint').css('display','block');
+            $("#templatePrintButton").attr("onclick","printSection('printBill1')");
+        })
+    })
+
+    function toggleTemplate(templateId,buttonId){
+        $('.printTemplates').css('display','none');
+        $('#'+templateId).css('display','block');
+        $('.templateToggleButtons').removeClass('active');
+        $('#'+buttonId).addClass('active');
+        $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+
+        document.getElementById('body-main-container').scrollIntoView();
+    }
+
+    function deleteEstimate(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Estimate and items details will be removed permanently.!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+            window.location.href = "{% url 'deleteEstimate' 0 %}".replace('0', parseInt(id));
+            } else {
+                // swal({ icon: "success", text: "Operation Aborted!" });
+            }
+        });
+    }
+
+</script>
+
+{%if messages%} {%for message in messages%} {%if message.tags == "success"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "success",
+        title: "{{message}}",
+      });
+    </script>
+    {%elif message.tags == "warning"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "warning",
+        title: "{{message}}",
+      });
+    </script>
+    {%elif message.tags == "error"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "error",
+        title: "{{message}}",
+      });
+    </script>
+    {%else%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "info",
+        title: "{{message}}",
+      });
+    </script>
+    {%endif%} {%endfor%} {%endif%}
+
+{% endblock  %}

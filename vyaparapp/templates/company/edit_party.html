@@ -1,0 +1,324 @@
+<!-- create by Antony Tom -->
+{% extends 'company/src/html/base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    .form-control {
+        border: 2px solid #6c757d;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+    }
+
+    #toPayRadio {
+        accent-color: red;
+    }
+
+    #toReceiveRadio {
+        accent-color: green;
+    }
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 3px;
+        bottom: 5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(18px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .save-button {
+        background-color: #007bff; /* Blue background for both buttons */
+        border-color: #007bff; /* Blue border for "Save" button */
+        color: #fff; /* White text color */
+        margin-right: 1rem;
+    }
+
+    /* Style for the "Save" button on hover */
+    .save-button:hover {
+        background-color: #fff; /* White background on hover */
+        color: #007bff; /* Blue text color on hover */
+    }
+</style>
+
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <form method="POST" action="{% url 'edit_saveparty' getparty.id  %}" class="p-5" enctype="multipart/form-data" novalidate
+    id="forms" >
+    {% csrf_token %}
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="col-md-3">
+                <a class="text-dark" style="font-size: 1.5rem;">Add Party</a>
+            </div>
+            <div class="col-md-9 row" style="margin-top: 3vw;">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="partyname" name="partyname" placeholder="Party Name" style="background-color: white;" value="{{getparty.party_name}}">
+                </div>
+
+                <div class="col-md-4" style="position: relative;">
+                    <input type="text" style="background-color: white;" class="form-control" id="gstno" name="gstno" placeholder="GSTIN" value="{{getparty.gst_no}}" oninput="validateGSTIN(this)">
+                    <span id="gstno-validation" style="position: absolute; right: 14px; top: 8px;"></span>
+                    <label style="color: rgb(36, 206, 248);">* 32AAQFR1222B1ZS</label>
+                </div>
+                
+                <div class="col-md-4" style="position: relative;">
+                    <input type="number" style="background-color: white;" class="form-control" id="contact" name="contact" placeholder="Phone Number" value="{{getparty.contact}}" oninput="validatePhoneNumber(this)">
+                    <span id="contact-validation" style="position: absolute; right: 15px; top: 8px;"></span>
+                </div>  
+                
+                
+
+                <div class="options" style="margin-top: 5vw;">
+                    <a href="javascript:void(0);" onclick="toggleSection('GST')" style="color: black;"><b>GST &
+                            Address<b></a>
+                    <a href="javascript:void(0);" onclick="toggleSection('Credit')"
+                        style="color: black; margin-left: 3vw;"><b>Credit & Balances<b></a>
+                    <a href="javascript:void(0);" onclick="toggleSection('additionalfield')"
+                        style="color: black; margin-left: 3vw;">Aditional Field</a>
+                </div>
+            </div>
+            <fieldset id="GST" class="GST" >
+                <div class="col-sm-5"><select class="form-control mt-4 " id="gst" name="gst" style="background-color: white;"  value="{{getparty.gst_type}}">
+                        <option value="{{getparty.gst_type}}">{{getparty.gst_type}}</option>
+                        <option>Registered Party</option>
+                        <option>UnRegistered or Consumer</option>
+                        <option>Registered Business or Combosision</option>
+                    </select>
+                </div>
+                <div class="col-sm-5"> <select  class="form-control mt-4" id="state" name="state" style="background-color: white; " value="{{getparty.state}}"></div>
+                <option value="{{getparty.state}}" selected>{{getparty.state}}</option>
+                <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                <option value="Andhra Predhesh">Andhra Predhesh</option>
+                <option value="Arunachal Predesh">Arunachal Predesh</option>
+                <option value="Assam">Assam</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Chhattisgarh">Chhattisgarh</option>
+                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                <option value="Damn anad Diu">Damn anad Diu</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Goa">Goa</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Haryana">Haryana</option>
+                <option value="Himachal Predesh">Himachal Predesh</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Ladakh">Ladakh</option>
+                <option value="Lakshadweep">Lakshadweep</option>
+                <option value="Madhya Predesh">Madhya Predesh</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Manipur">Manipur</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Mizoram">Mizoram</option>
+                <option value="Nagaland">Nagaland</option>
+                <option value="Odisha">Odisha</option>
+                <option value="Puducherry">Puducherry</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Sikkim">Sikkim</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Tripura">Tripura</option>
+                <option value="Uttar Predesh">Uttar Predesh</option>
+                <option value="Uttarakhand">Uttarakhand</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Other Territory">Other Territory</option>
+                </select>
+        </div>
+
+        <div class="col-sm-5 ">
+            <textarea class="form-control mt-4" name="address" id="" cols="56" rows="3"
+                placeholder="&nbsp;Address" style="background-color: white;">{{getparty.address}}</textarea>
+        </div>
+
+        <div class="col-sm-5 ">
+            <input type="email" class="form-control mt-4" id="email" name="email" placeholder="Email" style="background-color: white;" value="{{getparty.email}}">
+        </div>
+        </fieldset>
+
+        <fieldset id="Credit" class="Credit" style="display:none;">
+            <div class="col-sm-5 ">
+                <input type="number" class="form-control mt-4" id="balance" name="balance"
+                    placeholder="Opening Balance" style="background-color: white;" value="{{getparty.openingbalance}}">
+            </div>
+
+            <div class="col-sm-7 mt-4">
+                <label class="radio-label">To Pay</label>
+                <input type="radio" class="radio-input" id="toPayRadio" name="paymentType" value="To Pay"
+                value="To Pay" {% if getparty.payment == 'To Pay' %}checked{% endif %}   style="margin-right: 2vw; margin-left: 5px;">
+                <label class="radio-label">To Receive</label>
+                <input type="radio" class="radio-input" id="toReceiveRadio" name="paymentType"   value="To Receive" {% if getparty.payment == 'To Receive' %}checked{% endif %}
+                    style="margin-right: 2vw; margin-left: 5px;">
+            </div>
+
+            <label class="switchbox mt-4" style="margin-right: 1vw;">Credit Limit</label>
+            <label class="switch">
+                <input type="checkbox" style="background-color: white;" id="toggle" {% if getparty.creditlimit %}checked{% endif %}>
+                <span class="slider round"></span>
+            </label>
+            <div class="col-md-5 mt-4" id="text-box" style="display: {% if getparty.creditlimit %}block{% else %}none{% endif %}">
+                <input type="number" style="background-color: white;" class="form-control"  name="creditlimit" placeholder="Credit Limit" value="{{getparty.creditlimit}}">
+            </div>
+
+            <script>
+                const toggleButton = document.getElementById("toggle");
+                const textBox = document.getElementById("text-box");
+
+                toggleButton.addEventListener("change", function () {
+                    if (toggleButton.checked) {
+                        textBox.style.display = "block";
+                    } else {
+                        textBox.style.display = "none";
+                    }
+                });
+            </script>
+
+            <div class="col-md-5 mt-4" >
+                <input type="date" style="background-color: white;" class="form-control" id="current-date" name="currentdate" placeholder="Current Date"  value="{{getparty.current_date|date:'Y-m-d'}}">
+            </div>
+
+
+        </fieldset>
+        <fieldset id="additionalfield" class="additionalfield" style="display:none;">
+            <div class="col-md-5 mt-4">
+                <input type="text" class="form-control" style="background-color: white;" name="additionalfield1" id="additionalfield1" placeholder="Additional Field" value="{{getparty.additionalfield1}}">
+            </div>
+    
+            <div class="col-md-5 mt-4">
+                <input type="text" class="form-control" style="background-color: white;" name="additionalfield2" id="additionalfield2" placeholder="Additional Field" value="{{getparty.additionalfield2}}">
+            </div>
+    
+            <div class="col-md-5 mt-4">
+                <input type="text" class="form-control" style="background-color: white;" name="additionalfield3" id="additionalfield3" placeholder="Additional Field" value="{{getparty.additionalfield3}}">
+            </div>
+        </fieldset>
+
+       
+        <div class="col-md-5 mt-4">
+            {% comment %} <input type="submit" class="btn btn-primary save-button" value="Save & New"> {% endcomment %}
+            <input type="submit" class="btn btn-primary save-button" value="Save">
+        </div>
+
+    </div>
+    </form>
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            // Get all the fieldsets
+            const fieldsets = document.querySelectorAll('fieldset');
+
+            // Hide all fieldsets
+            fieldsets.forEach(fieldset => {
+                fieldset.style.display = 'none';
+            });
+
+            // Show the selected fieldset
+            const section = document.getElementById(sectionId);
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        function validatePhoneNumber(inputElement) {
+            const phoneNumber = inputElement.value;
+            const validationSpan = document.getElementById("contact-validation");
+        
+            // Regular expression to check for a 10-digit number
+            const regex = /^[0-9]{10}$/;
+        
+            if (regex.test(phoneNumber)) {
+                // Valid 10-digit number, display a checkmark
+                validationSpan.innerHTML = "&#10004;"; // Checkmark symbol
+                validationSpan.style.color = "green";
+            } else {
+                // Not a valid 10-digit number, display a cross mark
+                validationSpan.innerHTML = "&#10060;"; // Cross mark symbol
+                validationSpan.style.color = "red";
+            }
+        }
+        
+        function validateGSTIN(inputElement) {
+            const gstin = inputElement.value;
+            const validationSpan = document.getElementById("gstno-validation");
+        
+            // Regular expression to check for a valid GSTIN pattern
+            const regex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9][A-Z][A-Z0-9]$/;
+        
+            if (regex.test(gstin)) {
+                // Valid GSTIN format, display a checkmark
+                validationSpan.innerHTML = "&#10004;"; // Checkmark symbol
+                validationSpan.style.color = "green";
+            } else {
+                // Not a valid GSTIN format, display a cross mark
+                validationSpan.innerHTML = "&#10060;"; // Cross mark symbol
+                validationSpan.style.color = "red";
+            }
+        }
+
+
+    </script>
+</body>
+
+{% endblock %}

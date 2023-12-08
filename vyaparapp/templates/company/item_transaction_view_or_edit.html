@@ -1,0 +1,165 @@
+{% load my_extras %}
+<form action="{% url 'update_adjusted_transaction' item.id transaction.id %}" method="post">
+    {% csrf_token %}
+    <div class="modal-header ps-4 pe-4 m-0">
+        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: 900;">STOCK ADJUSTMENT</h1>
+            <div class="form-check form-switch d-lg-flex d-sm-none mt-2">
+            <label id="lbl1" class="form-check-label fw-bolder" for="flexSwitchCheckChecked">ADD STOCK</label>
+            <input class="form-check-input fs-5 ms-2 me-2" type="checkbox" role="switch" id="flexSwitchCheckChecked" name="trans_type">
+            <label id="lbl2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked">REDUCE STOCK</label>
+            </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        
+        <hr class="mt-0 pt-0 ms-3 me-3">
+        <div class="ps-3 pe-3">
+            <div class="row">
+            <div class="col-sm-12 col-lg-4">
+                <label for="">ITEM NAME</label>
+                <h5 style="font-weight: 900;" class="pt-2">{{ item.item_name|upper }}</h3>
+            </div>
+            <div class="col-sm-12 col-lg-4">
+
+            </div>
+            <div class="col-sm-12 col-lg-4">
+                <label for="">ADJUSTMENT DATE</label>
+                <input id="adj_date" style="font-weight: 900;color: black;" class="form-control" type="date" value="" name="trans_date">
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-12 col-lg-4">
+                <label for="">ITEM QUANTITY</label>
+                <input id="item_quantity" style="font-weight: 900;color: black;background-color: white;" value="{{ transaction.trans_current_qty }}" disabled class="form-control fs-5" name="item_qty">
+            </div>
+            <div id="add__qty" class="col-sm-12 col-lg-4">
+                <label for="">ADD QUANTITY</label>
+                <input id="add_quantity" style="font-weight: 900;color: black;" min="0" class="form-control fs-5" type="number" value="{{ transaction.trans_qty }}" required name="added_qty">
+            </div>
+            <div id="red__qty" class="col-sm-12 col-lg-4">
+                <label for="">REDUCE QUANTITY</label>
+                <input id="reduce_quantity" style="font-weight: 900;color: black;" max="{{ transaction.trans_current_qty }}" class="form-control fs-5" type="number" value="0" required name="reduced_qty">
+            </div>
+            <div class="col-sm-12 col-lg-4">
+                <label for="">ADJUSTED QUANTITY</label>
+                <input id="adj_quantity" style="font-weight: 900;color: black;background-color: white;" class="form-control fs-5" type="number" {% if transaction.trans_type == 'reduce stock' %}value="{{ transaction.trans_current_qty|sub:transaction.trans_qty }}"  {% else %}value="{{ transaction.trans_current_qty|add:transaction.trans_qty }}"  {% endif %} disabled required name="adjusted_qty">
+            </div>
+        </div>
+        </div>
+        <hr class="m-0 mt-4 p-0  ms-3 me-3">
+            
+    </div>
+    <div class="modal-footer ps-4 pe-4 ">
+        <button id="cls_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="submit_function()">Save Changes</button>
+    </div>
+    </div>
+</form>
+
+
+<script>
+    // alert('{{ transaction.trans_type }}')
+    $(document).ready(function(){
+        var type = '{{ transaction.trans_type }}'
+        if(type !== 'add stock')
+        {
+            $('#flexSwitchCheckChecked').click()
+            var reduced = parseInt('{{ transaction.trans_qty }}')
+            $('#reduce_quantity').val(reduced)
+        }
+    })
+    function submit_function(){  
+        $('#adj_quantity').attr('disabled',false)   
+        $('#item_quantity').attr('disabled',false)     
+        $('#cls_btn').click()
+        setInterval(function(){
+            $('#sbmt_btn').click()
+        },200)
+    }
+    $(document).ready(function () {
+        if ($('#flexSwitchCheckChecked').prop('checked')) {
+        $('#lbl2').css({ 'color': 'blue' })
+        }
+        else{
+            $('#lbl1').css({ 'color': 'blue' })
+        }
+        $('#flexSwitchCheckChecked').on('change load', function () {
+        if ($('#flexSwitchCheckChecked').prop('checked')) {
+            $('#lbl2').css({ 'color': 'blue' })
+            $('#lbl1').css({ 'color': 'inherit' })
+        }
+        else {
+            $('#lbl1').css({ 'color': 'blue' })
+            $('#lbl2').css({ 'color': 'inherit' })
+        }
+        })
+    })
+    $(document).ready(function(){
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        var day = String(currentDate.getDate()).padStart(2, "0");
+        var formattedDate = year + "-" + month + "-" + day;
+        $("#adj_date").val(formattedDate);
+    })
+    $(document).ready(function(){
+        $('#add_quantity').on('input',function(){
+            var a = $('#add_quantity').val()
+            var b = $('#item_quantity').val()
+            if(a<0)
+            {
+                $('#add_quantity').val(0)
+                $('#adj_quantity').val(parseInt(b))
+            }
+            else{
+                $('#adj_quantity').val(parseInt(a)+parseInt(b))
+            }
+        })
+    })
+    $(document).ready(function(){
+        $('#reduce_quantity').on('input',function(){
+            var a = $('#reduce_quantity').val()
+            var b = $('#item_quantity').val()
+            if(a<0)
+            {
+                $('#reduce_quantity').val(0)
+                $('#adj_quantity').val(b)
+            }
+            if(parseInt(a)>parseInt(b))
+            {
+                $('#reduce_quantity').val(b)
+                $('#adj_quantity').val(0)
+            }
+            else{
+                $('#adj_quantity').val(parseInt(b)-parseInt(a))
+            }
+        })
+    })
+    $(document).ready(function(){
+        if(!$('#flexSwitchCheckChecked').prop('checked'))
+        {
+            $('#red__qty').attr('hidden',true)
+            $('#add__qty').attr('hidden',false)
+            $('#reduce_quantity').val(0)
+        }
+        else{
+            $('#add__qty').attr('hidden',true)
+            $('#red__qty').attr('hidden',false)
+            $('#add_quantity').val(0)
+        }
+        $('#flexSwitchCheckChecked').on('change',function(){
+            if(!$('#flexSwitchCheckChecked').prop('checked'))
+            {
+                $('#red__qty').attr('hidden',true)
+                $('#add__qty').attr('hidden',false)
+                $('#reduce_quantity').val('0')
+            }
+            else{
+                $('#add__qty').attr('hidden',true)
+                $('#red__qty').attr('hidden',false)
+                $('#add_quantity').val(0)
+            }
+        })
+    })
+</script>

@@ -1,0 +1,571 @@
+<!-- create by shemeem -->
+{% extends 'staff/staffbase.html' %}
+{% block content %}
+{% load static %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<style>
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .amount_summary{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: 1rem;
+    }
+    .amt_head_label label{
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .table>:not(caption)>*>* {
+        padding: 12px 2px !important;
+    }
+    .form-control{
+        padding: 8px 7px;
+    }
+
+    /* New Party Modal */
+    .new_party_form .form-control {
+        border: 2px solid #6c757d;
+        transition: border-color 0.3s;
+    }
+
+    .new_party_form .form-control:focus {
+        border-color: #007bff;
+    }
+
+    #toPayRadio {
+        accent-color: red;
+    }
+
+    #toReceiveRadio {
+        accent-color: green;
+    }
+
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+    }
+
+  
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 3px;
+        bottom: 5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(18px);
+    }
+
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .save-button {
+        background-color: #007bff;
+        border-color: #007bff; 
+        color: #fff; 
+        margin-right: 1rem;
+    }
+
+   
+    .save-button:hover {
+        background-color: #fff;
+        color: #007bff;
+    }
+    td{
+        text-align: center;
+    }
+    .dropdown-toggle::after { 
+        content: none; 
+    } 
+    .btn.dropdown-toggle{
+        border: none;
+    }
+    .file_instructions p{
+        margin-bottom: 0.75rem;
+    }
+</style>
+<div class="body-wrapper">
+    <div class="container-fluid">
+        <div class="row mb-4 mt-3">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 d-flex justify-content-center">
+                <a href="#" id="b1" class="btn text-white mx-2" style="background-color: rgb(252, 3, 3,0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b2" class="btn text-white mx-2" style="background-color: rgba(3, 161, 252, 0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b3" class="btn text-primary mx-2" style="border-radius: 20px; border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        {% if not challan %}
+        <div class="no_challan_section">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <div class="image_section d-flex justify-content-center mt-5">
+                        <img src="{% static 'assets/challan01.png' %}" class="img-fluid w-25" alt="challan">
+                    </div>
+                </div>
+                <div class="col-12 d-flex justify-content-center mt-4">
+                    <div class="addBtn_section d-flex justify-content-center">
+                        <button class="btn btn-sm btn-primary bg-gradient" type="button" onclick="window.location.href=`{% url 'createDeliveryChallan' %}`"><i class="fa fa-plus me-1"></i> Create Delivery Challan Here</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+            <div class="row pb-0 mb-0">
+                <div class="col text-center pb-2" style="border-bottom: 3px solid rgba(0, 0, 0, 0.548);"><a class="fw-bolder fs-4 text-dark" href="#">DELIVERY CHALLAN</a></div>
+            </div>
+        </div>
+        <div class="dc_date_between mt-2">
+            <div class="filtr_with_date_between d-flex d-inline align-items-center h-100">
+                <form action="{% url 'challanInBetween' %}" method="get" class="d-flex d-inline" onsubmit="return validateDates()">
+                    <div class="text-center fw-bold text-dark d-flex align-items-center px-1" style="background-color: #cbf3ff;">BETWEEN</div>
+                    <input type="date" name="from_date" id="from_date_value" class="form-control form-control-sm" required>
+                    <label for="" class="mx-1 py-1">to</label>
+                    <input type="date" name="to_date" id="to_date_value" class="form-control form-control-sm" required>
+                    <input type="submit" value="FILTER" class="btn btn-sm btn-info ms-1" id="dc_date_btwn_filt_sub_btn"> 
+                </form>
+            </div>
+        </div>
+        <div class="row m-0 mt-3 p-0 pt-3 card bs">
+            <div class="col-sm-12 col-md-12 pt-1 d-flex justify-content-between">
+                <div class="d-flex d-inline">
+                    <p class="text-dark fw-bolder  pt-2">TRANSACTIONS</p>
+                    <button class="btn btn-sm btn-outline-secondary h-75  ms-3 align-middle" onclick="window.location.href=`{% url 'createDeliveryChallan' %}`"><i class="fa fa-plus me-1"></i>DELIVERY CHALLAN</button>
+                </div>
+                
+                <div class="d-flex d-inline justify-content-end w-50">
+                    <div class="search_bar py-1">
+                        <div class="position-relative">
+                            <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                <span class="fa fa-search fs-5 text-info"></span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <input id="transaction_search_box" style="padding-inline-start: 2rem;" class="border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                        </div>
+                    
+                    </div>
+                    <div class="option_btn d-flex align-items-center">
+                        <!-- <button class="btn btn-sm btn-outline-secondary me-2" onclick="window.location.href=`{% url 'create_estimate' %}`"><i class="fa fa-plus me-1"></i>ESTIMATE</button> -->
+                        <button class="btn btn-sm" type="button" onclick="printSection('print_export_section')" title="PRINT"><span><img width="22px" src="{% static 'assets/printer1.png' %}" alt="PRINT"></span></button>
+                        <!-- <form id="myForm" action="{% url 'importChallanFromExcel' %}" method="POST" class="p-0 m-0 " enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input id="excel_file" hidden type="file" name="excel_file">
+                            <label for="excel_file" class="btn p-1 ps-1 pe-1 m-0" type="button" title="IMPORT"><span><img draggable="false" width="22px" src="{% static 'assets/excel02.png' %}" alt="no img"></span></label>
+                            <input id="submit_import_excel" hidden type="submit">
+                        </form> -->
+                        <button class="btn btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#importChallan" title="IMPORT"><span><img width="22px" src="{% static 'images/import.png' %}" alt="IMPORT"></span></button>
+                        <button class="btn btn-sm" type="button" onclick="exportToExcel()" title="EXPORT"><span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="EXPORT"></span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                    <table id="delivery_challan_table" class="table table-bordered table-info table-striped tb table-responsive w-100">
+                        <thead>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-uppercase text-center align-middle fs-2">Date
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuDate" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuDate">
+                                        <form action="{% url 'challanFilterWithDate' %}" class="form" method="get">
+                                            <select name="date_filter" id="date_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="date" name="date_filter_value" class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Name
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuName" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuName">
+                                        <form action="{% url 'challanFilterWithName' %}" class="form" method="get">
+                                            <select name="name_filter" id="name_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="text" name="name_filter_value" placeholder="Name" class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Challan No.
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuChalNo" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuChalNo">
+                                        <form action="{% url 'challanFilterWithChallanNo' %}" class="form" method="get">
+                                            <select name="chalan_no_filter" id="chalan_no_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="text" name="challan_no_filter_value" placeholder="Challan No." class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Due Date
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuName" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuName">
+                                        <form action="{% url 'challanFilterWithDueDate' %}" class="form" method="get">
+                                            <select name="name_filter" id="name_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="date" name="due_date_filter_value" class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Total
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuTotal" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuTotal">
+                                        <form action="{% url 'challanFilterWithTotal' %}" class="form" method="get">
+                                            <select name="total_filter" id="total_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="text" name="total_filter_value" placeholder="Total" class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Balance
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuBal" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuBal">
+                                        <form action="{% url 'challanFilterWithBal' %}" class="form" method="get">
+                                            <select name="bal_filter" id="bal_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <input type="text" name="bal_filter_value" placeholder="Balance" class="form-control form-control-sm mt-1" required>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Status
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuStatus" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-filter"></i>
+                                    </button>
+                                    <div class="dropdown-menu p-1" aria-labelledby="dropdownMenuStatus">
+                                        <form action="{% url 'challanFilterWithStat' %}" class="form" method="get">
+                                            <select name="bal_filter" id="bal_filter_condition" class="form-control form-control-sm">
+                                                <option value="equals_to">Equals To</option>
+                                            </select>
+                                            <div class="form-check mt-1">
+                                                <input class="form-check-input" type="radio" name="status" value="Open" id="open_stat_radio" required>
+                                                <label class="form-check-label" for="open_stat_radio">Open</label>
+                                            </div>
+                                            <div class="form-check mt-1">
+                                                <input class="form-check-input" type="radio" name="status" value="Completed" id="completed_stat_radio">
+                                                <label class="form-check-label" for="completed_stat_radio">Completed</label>
+                                            </div>
+                                            <input type="reset" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="CLEAR" />
+                                            <input type="submit" class="btn btn-sm btn-info mt-1" style="width: 49%;" value="APPLY" />
+                                        </form>
+                                    </div>
+                                </span>
+                            </th>
+                            <th class="text-uppercase text-center align-middle fs-2">Create/Edit</th>
+                            <th class="text-uppercase text-center align-middle fs-2">Done By</th>
+                            <th class="text-uppercase text-center align-middle fs-2">Action</th>
+                            <th class="text-center p-0 m-0"></th>
+                        </thead>
+                        <tbody>
+                            {% for i in challan %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{i.challan.date}}</td>
+                                <td>{{i.challan.party_name}}</td>
+                                <td>{{i.challan.challan_no}}</td>
+                                <td>{{i.challan.due_date}}</td>
+                                <td>{{i.challan.total_amount}}</td>
+                                <td>{{i.challan.balance}}</td>
+                                <td>{{i.challan.status}}</td>
+                                <td>{{i.history.action}}</td>
+                                <td>{{i.history.staff.first_name| capfirst}}</td>
+                                <td class="p-0 pt-1 m-0">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Convert
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li><button type="button" class="dropdown-item fw-bold" hx-get="#">To Invoice</button></li>
+                                          <!-- <li><button type="button" class="dropdown-item fw-bold" hx-get="#">To Sales Order</button></li> -->
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td class="p-0 pt-1 m-0">
+                                    <div class="btn-group mb-1">
+                                        <button style="border: none; background: none;" type="button" class="dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="fa fa-ellipsis-v text-dark fs-1"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li><button type="button" class="dropdown-item fw-bold" onclick="window.location.href=`{% url 'viewChallan' i.challan.id %}`"><span class="fa fa-eye me-2 text-success"></span> View</button></li>
+                                          <li><button type="button" class="dropdown-item fw-bold" onclick="window.location.href=`{% url 'editChallan' i.challan.id %}`"><span class="fas fa-pencil-alt me-2 text-info"></span> Edit</button></li>
+                                          <li><button type="button" onclick="deleteChallan(`{{i.challan.id}}`)" class="dropdown-item fw-bold" href=""><span class="fa fa-trash-alt me-2 text-danger"></span> Delete</button></li>
+                                          <li><button type="button" onclick="window.location.href=`{% url 'challanTransactionHistory' i.challan.id %}`" class="dropdown-item fw-bold"><span class="fa fa-history me-2 text-info"></span> Transaction History</button></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+        {% endif %}
+
+
+
+
+
+
+
+
+        <!-- Table Print and export data -->
+        <div class="dc_table_exprt d-none" id="print_export_section">
+            <h3 class="mb-2">DELIVERY CHALLAN</h3>
+            <table id="dc_tbl_exprt" class="table table-bordered table-info table-striped tb w-100">
+                <thead>
+                    <th class="text-center">#</th>
+                    <th class="text-uppercase text-center">Date</th>
+                    <th class="text-uppercase text-center">Name</th>
+                    <th class="text-uppercase text-center">Challan No.</th>
+                    <th class="text-uppercase text-center">Due Date</th>
+                    <th class="text-uppercase text-center">Total</th>
+                    <th class="text-uppercase text-center">Balance</th>
+                    <th class="text-uppercase text-center">Status</th>
+                </thead>
+                <tbody>
+                    {% for i in challan %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{i.challan.date}}</td>
+                        <td>{{i.challan.party_name}}</td>
+                        <td>{{i.challan.challan_no}}</td>
+                        <td>{{i.challan.due_date}}</td>
+                        <td>{{i.challan.total_amount}}</td>
+                        <td>{{i.challan.balance}}</td>
+                        <td>{{i.challan.status}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Import Challan modal -->
+<div class="modal fade" id="importChallan">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-body bg-light rounded-1">
+                <div class="d-flex justify-content-between">
+                    <h3 class="m-3">IMPORT DELIVERY CHALLAN</h3>
+                    <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="file_instructions">
+                    <div class="alert alert-danger" role="alert">
+                        <span class="fw-bolder">IMPORTANT:</span>
+                        <p>File should have 2 sheets named 'challan' & 'items' and column name & order should be in the given formate(Uppercase).</p>
+                        <p class="fw-bolder">Challan sheet - SLNO*, DATE, DUE DATE, NAME*, STATE OF SUPPLY*, DESCRIPTION, SUB TOTAL*, IGST*, CGST*, SGST*, TAX AMOUNT*, ADJUSTMENT, GRAND TOTAL* </p>
+                        <p class="fw-bolder">Items sheet - CHALLAN NO**, NAME*, HSN*, QUANTITY*, PRICE*, TAX PERCENTAGE*, DISCOUNT, TOTAL* </p>
+                        <p>* All required columns should be filled.</p>
+                        <p>** <b>CHALLAN NO</b> is <b>SLNO</b> of challan</p>
+                        <p>State of supply should be '<b>State</b>' or '<b>Other State</b>'. State -> CGST* & SGST*, Other State -> IGST*</p>
+                        <p>Date format should be 'YYYY-MM-DD' or 'DD-MM-YYYY'.</p>
+                    </div>
+                </div>
+                <div class="sample_file mb-2">
+                    <a href="{% url 'downloadChallanSampleImportFile' %}" class="fw-bolder">Download Sample File</a>
+                </div>
+                <form id="importChallanForm" action="{% url 'importChallanFromExcel' %}" method="POST" class="form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="excel_file" class="form-label">File</label>
+                        <input id="excel_file" class="form-control" type="file" name="excel_file" required>
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <input id="submit_import_excel" value="IMPORT" class="btn btn-info bg-gradient" type="submit">
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        var $rows = $('#delivery_challan_table tbody tr');
+        $('#transaction_search_box').keyup(function() {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+            $rows.show().filter(function() {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return !~text.indexOf(val);
+            }).hide();
+        });
+
+    });
+
+    function exportToExcel() {
+        const table = document.getElementById('dc_tbl_exprt');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "delivery_challan.xlsx");
+    }
+
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+    
+        document.body.innerHTML = printContents;
+    
+        window.print();
+    
+        document.body.innerHTML = originalContents;
+    }
+
+    function deleteChallan(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Delivery Challan and items details will be removed permanently.!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+            window.location.href = "{% url 'deleteChallan' 0 %}".replace('0', parseInt(id));
+            } else {
+                swal({ icon: "success", text: "Operation Aborted!" });
+            }
+        });
+    }
+    $(document).ready(function(){
+        $('#excel_file').on('change',function(){
+            $('#submit_import_excel').click()
+        })
+    })
+
+    function validateDates() {
+      var fromDate = new Date(document.getElementById('from_date_value').value);
+      var toDate = new Date(document.getElementById('to_date_value').value);
+
+      if (toDate < fromDate) {
+        alert('To date must be greater than or equal to From date');
+        return false;
+      }
+      return true;
+    }
+</script>
+
+{%if messages%} {%for message in messages%} {%if message.tags == "success"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "success",
+        title: "{{message}}",
+      });
+    </script>
+    {%elif message.tags == "warning"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "warning",
+        title: "{{message}}",
+      });
+    </script>
+    {%elif message.tags == "error"%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "error",
+        title: "{{message}}",
+      });
+    </script>
+    {%else%}
+    <script>
+      swal({
+        position: "top-end",
+        icon: "info",
+        title: "{{message}}",
+      });
+    </script>
+    {%endif%} {%endfor%} {%endif%}
+
+{% endblock  %}

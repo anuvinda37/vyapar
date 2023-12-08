@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>VYAPAR</title>
+        <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/styles.min.css' %}" />
+          <!-- Font Awesome CSS CDN -->
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+      
+          <!-- Font Awesome CSS -->
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        @media (max-width:768px) {
+            .h1{
+                font-size: 25px;
+            }
+            .h3{
+                font-size: 20px;
+            }
+        }
+    </style>
+
+
+       
+        
+        
+      </head>
+<body style="background-color: #455a81;">
+    <div class="body-wrapper ">
+        <div class="container-fluid mt-5 mb-5 pl-4"  style="border-radius: 10px; background-color: rgb(255, 255, 255,0.7);box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <form action="{% url 'addmodules' user.id %}" method="post">
+                {% csrf_token %}
+            <center><h1 class="h1 mb-5" style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;font-family: 'Times New Roman', Times, serif;"><b>CHOOSE MODULES</b></h1></center>
+            <h3 class="h3 mb-4 mt-4" style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;"><b>Sales</b></h3>
+            <div class="row">
+                <div class="col-md-4">
+                    
+                        
+                    <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c1" name="c1" value="1"> 
+                    <b style="color: black;">Sales Invoices</b>     
+                     
+                    
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c2" name="c2" value="1">
+                    <b style="color: black;">Estimate/Quotation</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c3" name="c3" value="1">
+                    <b style="color: black;">Payment In</b>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c4" name="c4" value="1">
+                    
+                        <b style="color: black;">Sales Order</b>
+                        
+                            
+                        
+                    
+                    
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c5" name="c5" value="1">
+                    <b style="color: black;">Delivery Challan</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c6" name="c6" value="1">
+                    <b style="color: black;">Sales Return/cr.note</b>
+                    
+                </div>
+
+            </div>
+
+            <h3 class="h3 mb-4 mt-4" style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; ">Purchase</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c7" name="c7" value="1">
+                    <b style="color: black;">Purchase Bill</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c8" name="c8" value="1">
+                    <b style="color: black;">Payment Out</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;margin-right:10px ;width: 20px;height: 20px;" id="c9" name="c9" value="1">
+                    <b style="color: black;">Purchase Order</b>
+                    
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c10" name="c10" value="1">
+                    <b style="color: black;">Purchase Return / Dr.note</b>
+                    
+                </div>
+               
+
+            </div>
+
+            
+            <h3 class="h3 mb-4 mt-4" style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;">Cash & Bank</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c11" name="c11" value="1">
+                    <b style="color: black;">Bank Account</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c12" name="c12" value="1">
+                    <b style="color: black;">Cash In Hand</b>
+                   
+                </div>
+
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c13" name="c13" value="1">
+                    <b style="color: black;">cheques</b>
+                    
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c14" name="c14" value="1">
+                    <b style="color: black;">Loan Amount</b>
+                    
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c15" name="c15" value="1">
+                    <b style="color: black;">UPI</b>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <center><input type="submit" class="btn btn-danger p-2 mt-5 mb-3" style="width: 30%;font-weight: bold;border-radius: 10px;"></center>
+            
+        </form>    
+        </div>
+    </div>        
+    
+</body>
+</html>

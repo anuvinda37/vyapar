@@ -1,0 +1,195 @@
+<!-- create by athul -->
+{% extends 'company/src/html/base.html' %}
+{% block content %}
+{% load static %}
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="container-fluid mt-5 mb-5 "  style="border-radius: 10px; background-color: rgb(255, 255, 255,0.7);box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);padding-left: 20px;">
+                <form action="{% url 'editmodule_action' %}" method="post">
+                    {% csrf_token %}
+                <center><h1 class="h1 mb-5 pt-5" style="font-family: 'Times New Roman', Times, serif;"><b>EDIT MODULES</b></h1></center>
+                <h3 class="h3 mb-4 mt-4"><b>Sales</b></h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.sales_invoice != Null %}   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c1" name="c1" value="1" checked> 
+                        <b>Sales Invoices</b>  
+                        {% else %}
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c1" name="c1" value="1"> 
+                        <b>Sales Invoices</b> 
+                        {% endif %}   
+                         
+                        
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Estimate != Null %}  
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c2" name="c2" value="1" checked>
+                        <b>Estimate/Quotation</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c2" name="c2" value="1">
+                        <b>Estimate/Quotation</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Payment_in != Null %}  
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c3" name="c3" value="1" checked>
+                        <b>Payment In</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c3" name="c3" value="1">
+                        <b>Payment In</b>
+                        {% endif %}
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.sales_order != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c4" name="c4" value="1" checked>
+                        <b>Sales Order</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c4" name="c4" value="1">
+                        <b>Sales Order</b>
+                        {% endif %}
+          
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Delivery_challan != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c5" name="c5" value="1" checked>
+                        <b>Delivery Challan</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c5" name="c5" value="1">
+                        <b>Delivery Challan</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.sales_return != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c6" name="c6" value="1" checked>
+                        <b>Sales Return/cr.note</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c6" name="c6" value="1">
+                        <b>Sales Return/cr.note</b>
+                        {% endif %}
+                    </div>
+    
+                </div>
+    
+                <h3 class="h3 mb-4 mt-4" ><b>Purchase</b></h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.Purchase_bills != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c7" name="c7" value="1" checked>
+                        <b>Purchase Bill</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c7" name="c7" value="1">
+                        <b>Purchase Bill</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Payment_out  != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c8" name="c8" value="1" checked>
+                        <b>Payment Out</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right: 10px;width: 20px;height: 20px;" id="c8" name="c8" value="1">
+                        <b>Payment Out</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Purchase_order  != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right:10px ;width: 20px;height: 20px;" id="c9" name="c9" value="1" checked>
+                        <b>Purchase Order</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;margin-right:10px ;width: 20px;height: 20px;" id="c9" name="c9" value="1">
+                        <b>Purchase Order</b>
+                        {% endif %}
+                        
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.Purchase_return  != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c10" name="c10" value="1" checked>
+                        <b>Purchase Return / Dr.note</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c10" name="c10" value="1">
+                        <b>Purchase Return / Dr.note</b>
+                        {% endif %}
+                        
+                    </div>
+                   
+    
+                </div>
+    
+                
+                <h3 class="h3 mb-3 mt-5"><b>Cash & Bank</b></h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.Bank_account != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c11" name="c11" value="1" checked>
+                        <b>Bank Account</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c11" name="c11" value="1">
+                        <b>Bank Account</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Cash_in_hand != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c12" name="c12" value="1" checked>
+                        <b>Cash In Hand</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c12" name="c12" value="1">
+                        <b>Cash In Hand</b>
+                        {% endif %}
+                       
+                    </div>
+    
+                    <div class="col-md-4">
+                        {% if allmodules.cheques != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c13" name="c13" value="1" checked>
+                        <b>cheques</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c13" name="c13" value="1">
+                        <b>cheques</b>
+                        {% endif %}
+                        
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if allmodules.Loan_account != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c14" name="c14" value="1" checked>
+                        <b>Loan Amount</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c14" name="c14" value="1">
+                        <b>Loan Amount</b>
+                        {% endif %}
+                        
+                    </div>
+                    <div class="col-md-4">
+                        {% if allmodules.Upi != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c15" name="c15" value="1" checked>
+                        <b>UPI</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c15" name="c15" value="1">
+                        <b>UPI</b>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+                <center><input type="submit" class="btn btn-danger p-2 mt-5 mb-3" style="width: 30%;font-weight: bold;border-radius: 10px;"></center>
+                
+            </form>    
+            </div>
+        </div>
+    </div>
+</body>            
+
+{% endblock %}

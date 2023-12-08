@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VYAPAR</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<style>
+		form .form-control {
+			border-radius: 10px;
+			border: 1px solid gray;
+			width: 100%;
+			padding-top: 25px;
+			padding-bottom: 25px;
+			
+
+		}
+
+		@media (max-width:768px) {
+			#h1 {
+				font-size: 30px;
+				margin-top: 10px !important;
+			}
+
+			.main {
+				padding: 0% !important;
+				margin: 0px !important;
+				margin-left: 5px !important;
+
+			}
+
+			#btn1 {
+				width: 50% !important;
+				margin-bottom: 20px !important;
+
+			}
+
+			#c2 {
+				border-bottom-left-radius: 20px !important;
+				border-top-right-radius: 0px !important;
+			}
+			#row{
+				margin-left: 0% !important;
+				margin-right: 5% !important;
+				padding-left: 0% !important;
+			}
+
+		}
+	</style>
+</head>
+
+<body style="background-color: #455a81;padding-bottom: 20px;">
+	<div class="main m-5 ml-2 p-5 pt-1 mt-1" style=" padding-bottom: 20px;position: absolute;">
+
+	
+		<div class="row" id="row"
+		style="margin-left: 10%;margin-right: 10%; border: 1px solid black;width: 100%;border-radius: 20px;background-color: white;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
+		<div class="col-lg-6 col-md-10 d-flex "
+			style="border-right:1px solid black ;border-bottom: 1px solid black;">   
+			<div class="img mt-5">
+				<center>
+					<img src="{% static 'images/log1.webp' %}" alt="" class="img-fluid">
+					
+				</center>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-9 col-sm-12 pb-5 pt-5" id="c2"
+			style="background-color: rgb(194, 222, 233);border-radius: 20px;border-bottom-left-radius: 0px;border-top-left-radius: 0px;">
+			<div class="form-box px-2 py-2 align-item-center">
+				<div class="container-fluid">
+					<h1 class="text-center" id="h1"
+						style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">
+						LOGIN
+					</h1>
+					{% if messages %}
+                            {% for message in messages %}
+                                <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 100%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px;">{{message}}</label>
+                            {% endfor %}
+                         {% endif %}
+						
+					<form id="form" class="" method="post" action="{% url 'login' %}"
+						enctype="multipart/form-data">
+
+
+						<div class="form-group ">
+							{% csrf_token %}
+
+
+
+
+
+							<input type="text" id="username" name="username" class="form-control mb-3 mt-3"
+								placeholder="enter username"  required><br>
+
+
+
+
+							<input type="password" id="pass" name="password"
+								 class="form-control "
+								placeholder="enter password" required><br>
+
+							<a href="" class="mt-0" >Forgot password .??</a>		
+
+
+						</div>
+						<center><input type="submit" id="s" value="LOGIN" class="btn btn-danger text-white btn-outline-dark"
+								style="margin-top: 15px;  width: 50%; padding: 10px; border-radius: 20px; background-image: linear-gradient(to right,rgb(4, 38, 82),#284293,#a2aee3); font-weight: bold;"><br><br>
+						</center>
+						<div class="row mt-5">
+							<div class="col"><button class="btn btn-outline-danger bg-danger text-white" style="width: 100%;border-radius: 10px;text-decoration: none;"><a href="{% url 'company_reg' %}" class="text-white" style="text-decoration: none;">Company Registration</a></button></div>
+							<div class="col"><button class="btn btn-outline-primary bg-primary text-white" style="width: 100%;border-radius: 10px;text-decoration: none;"><a href="{% url 'staff_register' %}" class="text-white" style="text-decoration: none;"> Staff Registration</a></button></div>
+						</div>
+
+
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+</body>
+
+</html>

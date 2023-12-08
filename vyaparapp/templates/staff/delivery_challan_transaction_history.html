@@ -1,0 +1,128 @@
+{% extends 'staff/staffbase.html' %}
+
+{% block content %}
+{% load static %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+{% load my_extras %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .to{
+        color: orange;
+    }
+    .tbl{
+        color: blue;
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+    .color_change{
+        color: black;
+    }
+    .color_change:hover{
+        color: blue
+    }
+</style>
+
+<div class="body-wrapper">
+    <br><br><br>
+    <div class="row p-0 m-0">
+        <div class="col-12  p-0 m-0">
+            <div class=" bg-light bg-light bs pb-0 mb-0"style="height:100%;width:100%">
+                <div class="d-flex justify-content-center pt-4">
+                    <a href=""  id="b1" class="btn  text-white" style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b2" class="btn  text-white" style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b3" class="btn text-primary" style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+                </div>
+                <p></p>
+                <hr class="p-0 m-0">
+                <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+                    <div class="row pb-0 mb-0">
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid rgba(0, 0, 0, 0.548);"><a class=" fs-4 text-dark" style="font-weight: 900;" href="">TRANSACTION HISTORY</a></div>
+                        <!-- <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD1</a></div>
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD2</a></div>
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD3</a></div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row ps-3 pe-3 m-0">
+        <div class="col-sm-12 col-lg-12  ps-2 pe-3 pb-2" style="height: 50rem;">
+            <div class="position-relative" style="z-index: 10;">
+                <div class="position-absolute end-0">
+                  <div class="d-flex pt-3 pe-3" style="margin-top: -0.4rem;">
+                    <a href="#" onclick="javascript:history.go(-1)"><span class="fa fa-times-circle fs-5 tb close_pad"></span></a>
+                  </div>
+                </div>
+              </div>
+            <div class="card bg-light bs"style="height:100%;">
+                <div class="row m-0">
+                    <div class="col-12 p-4 pt-3" style="z-index:2">
+                        <div class="p-2 rounded" style="border:1px solid rgba(128, 128, 128, 0.628);overflow: auto;">
+                            <table class="table table-info table-bordered table-striped table-hover w-100">
+                                <thead>
+                                    <th class="text-center tb">DATE</th>
+                                    <th class="text-center tb">ACTION</th>
+                                    <th class="text-center tb">ACTION DONE BY</th>
+                                </thead>
+                                <tbody>
+                                    {% if history %}
+                                        {% for i in history %}
+                                        <tr>
+                                            <td class="text-center tb">{{ i.date }}</td>
+                                            <td class="text-center tb">{{ i.action }}</td>
+                                            <td class="text-center tb">{{ i.staff.first_name|capfirst }} {{ i.staff.last_name|capfirst }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                                            <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                                            <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                                        </tr>
+                                    {% endif %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

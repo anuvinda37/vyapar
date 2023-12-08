@@ -1,0 +1,35 @@
+<!-- create by athul -->
+
+{% extends 'admin/adminbase.html' %}
+
+{% block content %}
+{% load static %}
+<style>
+       @media (max-width:768px) {
+        .row{
+            margin-left: 10px !important;
+            margin-right: 10px !important;
+        }
+        .h4{
+            font-size: 15px !important;
+            margin-left: 5px !important;
+        }
+       }
+</style>
+<body  style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            {% for d in data %}
+            {% if d.company.reg_action == 'self' %}
+            <div class="row p-4 m-5" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                <h6><b>Module Updation Details</b></h6>
+                <hr>
+                <h4 class="h4" style="margin-left: 60px;"><b style="margin-right: 10px;">{{ d.company.company_name }}</b>  is change the modules.......... <a href="{% url 'module_updation_details' d.id %}" style="font-size: 15px;">View More</a></h4>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>        
+</body>
+
+{% endblock content %}

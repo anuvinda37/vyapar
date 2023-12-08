@@ -1,0 +1,217 @@
+{% load static %}
+{% load my_extras %}
+
+<div class="row m-0" style="height:20%">
+    <div class="card bg-light bs p-3 mb-3">
+        <div class="d-flex justify-content-between">
+            <p class="tb fw-bolder fs-2">{{ item.item_name|upper }} <span class="fa fa-share ps-1 tb"></span></p>
+            <button class="btn btn-sm btn-primary fs-2"data-bs-toggle="modal" data-bs-target="#myModal1" data-bs-whatever="@getbootstrap"
+                        hx-get="{% url 'item_get_details_for_modal_target' item.id %}"
+                        hx-trigger="click delay:0s"
+                        hx-target="#item_get_details_for_modal_target"
+                        ><span class="fa fa-sliders-h pe-1"></span> ADJUSTMENT ITEM</button>
+        </div>
+        <p></p>
+        <div class="d-flex justify-content-between">
+            <p class="tb fw-bolder fs-2">SALE PRICE  <span class="ps-2 tg">₹{{ item.item_sale_price }}</span></p>
+            <p class="tb fw-bolder fs-2">STOCK QUANTITY  <span class="ps-2 tg">{{ item.item_current_stock }}</span></p>
+        </div>
+        <div class="d-flex justify-content-between">
+            <p class="tb fw-bolder fs-2">PURCHASE PRICE  <span class="ps-2 tg">₹{{ item.item_purchase_price }}</span></p>
+            <p class="tb fw-bolder fs-2">STOCK VALUE  <span class="ps-2 tg">₹{{ item.item_current_stock|mul:item.item_at_price }}</span></p>
+        </div>
+        {% if item.item_min_stock_maintain %}
+        <div class="d-flex justify-content-between">
+            <p class="tb fw-bolder fs-2">MINIMUM STOCKS TO MAINTAIN  <span class="ps-2 tg">{{ item.item_min_stock_maintain }}</span></p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- <div class="row" style="height: 0.5rem;"></div> -->
+<div class="row pt-0 m-0" {% if item.item_min_stock_maintain %} style="height:39rem;"{% else %}style="height:41.1rem;"{% endif %}>
+    <div class="card p-0 bg-light bs">
+        <div class="row m-0 p-0 pt-3">
+            <div class="col-sm-12 col-lg-3">
+                <p class="tb fw-bolder pt-2">TRANSACTIONS</p>
+            </div>
+            <div class="col-sm-12 col-lg-3">
+                
+            </div>
+            
+            <div class="col-sm-12 col-lg-6 pt-1">
+                <div class="position-relative">
+                    <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                        <span class="fa fa-search fs-5 text-info"></span>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <input id="search_input1" style="padding-inline-start: 2rem;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                    <button class="btn p-0 ps-2 pe-2 ms-2"><span><img width="22px" onclick="exportToExcel()" src="{% static 'assets/excel2.png' %}" alt="no img"></span></button>
+                </div>
+            </div>
+            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                <table id="myTable" class="table table-bordered table-info table-striped tb table-responsive w-100">
+                    <thead>
+                        <th>#</th>
+                        <th class="text-center fs-2">TYPE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">INVOIVE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">NAME <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">DATE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">QUANTITY <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">PRICE <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center fs-2">STATUS <span class="fa fa-filter ps-1 fs-1"></span></th>
+                        <th class="text-center p-0 m-0"></th>
+                    </thead>
+                    <tbody>
+                        {% for i in transactions %}
+                                        <tr>
+                                            <td class="text-center" style="padding-top: 1.4rem;">
+                                                <div class="d-flex justify-content-center">
+                                                    <div style="width: 10px;height: 10px;box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.205);border-radius: 50%;" {% if forloop.counter|mod:10 == 0 %}class="bg-success"{% elif forloop.counter|mod:10 == 1 %}class="bg-warning"{% elif forloop.counter|mod:10 == 2 %}class="bg-danger"{% elif forloop.counter|mod:10 == 3 %}class="bg-success"{% elif forloop.counter|mod:10 == 4 %}class="bg-info"{% elif forloop.counter|mod:10 == 5 %}class="bg-primary"{% elif forloop.counter|mod:10 == 6 %}class="bg-secondary"{% elif forloop.counter|mod:10 == 7 %}class="bg-warning"{% elif forloop.counter|mod:10 == 8 %}class="bg-danger"{% else %}class="bg-pink"{% endif %}></div>
+                                                </div>
+                                            </td>
+                                            <!-- <td class="text-center">{% if item.item_opening_stock %}{{ item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                            <td class="text-">{{ i.trans_type|capfirst }}</td>
+                                            <td class="text-center"></td>
+                                            <!-- <td class="text-center">{% if item.item_opening_stock %}{{ item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                            <td class="text-center"></td>
+                                            <td class="text-center">{{ i.trans_date|date:"d-m-Y" }}</td>
+                                            <td class="text-center">{{ i.trans_qty }}</td>
+                                            <td class="text-center"></td>
+                                            <td class="text-center"></td>
+                                            <td class="p-0 pt-1 m-0">
+                                                <div class="btn-group mb-1">
+                                                    <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v"data-bs-toggle="modal" data-bs-target="#myModal2"
+                                                        hx-get="{% url 'item_transaction_view_or_edit' item.id i.id %}"
+                                                        hx-trigger="click delay:0s"
+                                                        hx-target="#item_transaction_view_or_edit_target"
+                                                        ><span class="fa fa-eye pe-2 tg"></span> View / Edit</a></li>
+                                                      <li><button type="button" onclick="delete_transaction({{ i.id }})" class="dropdown-item fw-bold tb hide_table_text_d" href=""><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</button></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr {% if item.item_opening_stock == 0 %} hidden{% endif %}>
+                                        <td class="text-center" style="padding-top: 1.4rem;">
+                                            <div class="d-flex justify-content-center">
+                                                <div style="width: 10px;height: 10px;" class="bg-dark rounded-pill bs_sm"></div>
+                                            </div>
+                                        </td>
+                                        <!-- <td class="text-center">{% if item.item_opening_stock %}{{ item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                        <td class="text-">Open stk</td>
+                                        <td class="text-center"></td>
+                                        <!-- <td class="text-center">{% if item.item_opening_stock %}{{ item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                        <td class="text-center"></td>
+                                        <td class="text-center">{{ item.item_date|date:"d-m-Y" }}</td>
+                                        <td class="text-center">{{ item.item_opening_stock }}</td>
+                                        <td class="text-center">₹{{ item.item_at_price }}</td>
+                                        <td class="text-center"></td>
+                                        <td class="p-0 pt-1 m-0">
+                                            <div class="btn-group mb-1">
+                                                <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                  <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'item_view_or_edit' item.id %}"><span class="fa fa-eye pe-2 tg"></span> View / Edit</a></li>
+                                                  <li><a class="dropdown-item fw-bold tb hide_table_text_d" onclick="item_open_stk_delete({{ item.id }})"><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- first mmodal -->
+
+<div class="modal modal-lg fade" id="myModal1" tabindex="-1" aria-labelledby="myModal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="item_get_details_for_modal_target">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal 1</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Content for Modal 1 goes here.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Modal -->
+<div class="modal modal-lg fade" id="myModal2" tabindex="-1" aria-labelledby="myModal2Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="item_transaction_view_or_edit_target">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  <script>
+      function exportToExcel() {
+        $('.hide_table_text_v').text('')
+        $('.hide_table_text_d').text('')
+        const table = document.getElementById('myTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "table_data.xlsx");
+        $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
+        $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
+    }
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    function item_open_stk_delete(Id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Opening Stock Detail?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Opening Stock Deleted Successfilly!",
+                    icon: "success",
+                    buttons: false,
+                })
+                // 
+                .then((willDelete) => {
+                if (willDelete) {
+                    // Redirect to the delete_teacher view with the teacher's ID
+                    window.location.href = "{% url 'item_delete_open_stk' 0 %}".replace('0', Id);
+                    
+                } else {
+                    window.location.href = "{% url 'item_delete_open_stk' 0 %}".replace('0', Id);
+                }
+            });
+                // 
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+  </script>

@@ -1,0 +1,376 @@
+<!-- Create by athul. -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VYAPAR</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        form .form-control {
+            border-radius: 20px;
+            border: 1px solid gray;
+
+        }
+
+        @media (max-width:768px) {
+            #h1 {
+                font-size: 20px;
+                margin-top: 10px !important;
+            }
+
+            .main {
+                padding: 0px !important;
+                margin: 0px !important;
+                margin-left: 40px !important;
+
+            }
+
+            #btn1 {
+                width: 50% !important;
+                margin-bottom: 20px !important;
+
+            }
+
+            #c2 {
+                border-bottom-left-radius: 20px !important;
+                border-top-right-radius: 0px !important;
+            }
+
+        }
+    </style>
+</head>
+
+<body style="background-color: #455a81;padding-bottom: 20px;">
+    <div class="main m-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
+        <h1 class="text-center" id="h1"
+            style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">COMPANY
+            REGISTERATION
+        </h1>
+        {% if messages %}
+        {% for message in messages %}
+        <label for="" class="text-center"
+            style="background-color: rgb(255, 0, 0,0.5); width: 100%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px;">{{message}}</label>
+        {% endfor %}
+        {% endif %}
+        <div class="row "
+            style="border: 1px solid black;width: 100%;border-radius: 20px;background-color: white;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
+            <div class="col-lg-6 col-md-10 d-flex "
+                style="border-right:1px solid black ;border-bottom: 1px solid black;">
+                <div class="img mt-5">
+                    <center>
+                        <img src="{% static 'images/reg1.webp' %}" alt="" class="img-fluid " style="margin-top: 100px;">
+                        <button type="button" class="btn btn-outline-dark " id="btn1"
+                            style="width: 30%;padding: 10px;background-color: red;border-radius: 20px;margin-top: 120px;"><a
+                                href="javascript:history.go(-1);" class="text-white" style="text-decoration: none;">
+                                <b>
+                                    <<< Previous</b></a></button>
+                    </center>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-9 col-sm-12 pb-5 pt-5" id="c2"
+                style="background-color: rgb(194, 222, 233);border-radius: 20px;border-bottom-left-radius: 0px;border-top-left-radius: 0px;">
+                <div class="form-box px-2 py-2 align-item-center">
+                    <div class="container-fluid">
+                        <form id="form" class="" method="post" action="{% url 'add_company' %}"
+                            enctype="multipart/form-data">
+                            <h3 class="text-center mb-5"
+                                style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;font-weight: bold;">
+                                Company Details</h3>
+
+                            <div class="form-group ">
+                                {% csrf_token %}
+
+
+                                <input type="text" id="cname" name="cname" class="form-control"
+                                    placeholder="enter company name" required><br>
+
+                                <input type="text" id="email" name="email" class="form-control"
+                                    placeholder="email id (same as Previous page)" required><br>
+
+
+                                <input type="text" id="address" name="address" class="form-control"
+                                    placeholder="enter address" required><br>
+
+
+
+                                <input type="text" id="city" name="city" class="form-control" placeholder="enter city"
+                                    required><br>
+
+
+
+                                <select type="text" class="form-control mt-2 mb-4" id="state" name="state">
+                                    <option value="" selected>Choose State</option>
+                                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                                    <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                    <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Damn anad Diu">Damn anad Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Predesh">Himachal Predesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Madhya Predesh">Madhya Predesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Predesh">Uttar Predesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Other Territory">Other Territory</option>
+                                </select>
+
+
+
+                                <input type="text" id="country" name="country" class="form-control"
+                                    placeholder="country" required><br>
+
+                                <input type="number" id="pincode" name="pincode" class="form-control"
+                                    placeholder="pincode" required><br>
+
+                                <input type="text" id="pannumber" name="pannumber" class="form-control"
+                                    placeholder="pan number  :  ABCDE1234A" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required>
+
+
+                                <select class="form-control mt-4 mb-4" name="gsttype" id="gsttype"
+                                    onclick="hidinput('hello', this),disinput('hai', this) ,disinput2('hai1', this)">
+                                    <option selected disabled value="">Select GST Type</option>
+                                    <option value="Registered Business - Regular">Registered Business - Regular
+                                        <span><i>(Business that is registered under gst)</i></span>
+                                    </option>
+                                    <option value="Registered Business - Composition">Registered Business - Composition
+                                        (Business that is registered under composition scheme in gst)</option>
+                                    <option value="unregistered Business">Unregistered Business (Business that has not
+                                        been registered under gst)</option>
+                                    <option value="Overseas">Overseas (Import/Export of supply outside india)</option>
+                                    <option value="Consumer">Consumer</option>
+
+                                </select>
+                                <input type="text" name="gstno" id="gstno" placeholder="GST Number:11AAAAA1111A1ZA"
+                                    class="gstno form-control mb-3" style="display: none;" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$">
+
+
+
+
+
+                                <!-- <label for="" style="color: white; font-weight: bold;">Upload Image</label> -->
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control"
+                                    style="margin-top: 20px; margin-bottom: 20px;">
+
+
+                                <!-- <h6 class="mt-4">Payment Terms</h6> -->
+
+                                <!-- <div class="row">
+                                    <div class="col"> -->
+                                <select name="select" id="select" class="form-control" required>
+                                    <option value="">Choose Payment terms</option>
+
+                                    {% for t in terms %}
+                                    <option value="{{t.id}}" data-terms="{{ t.id}}">{{t.payment_terms_number}}
+                                        {{t.payment_terms_value}}</option>
+                                    {% endfor %}
+                                </select>
+
+
+                                <!-- </div>
+                                    <div class="col">
+                                      
+                                        <input type="text" name="end" id="end" class="form-control"
+                                            placeholder="end date" readonly>
+                                    </div> -->
+                            </div>
+
+
+                    </div>
+                    <center><input type="submit" id="s" value="REGISTER" class="btn text-white btn-outline-dark"
+                            style="margin-top: 20px;  width: 70%; padding: 10px; border-radius: 20px; background-image: linear-gradient(to right,rgb(4, 38, 82),#284293,#a2aee3); font-weight: bold;"><br><br>
+                    </center>
+
+
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+
+
+            var roinc = 0
+            const date = new Date();
+            console.log("ajax");
+            // var place = document.getElementById('pos').value;
+
+            $(document).on('click', '#select', function () {
+                select = $('#select').val();
+
+                console.log(select);
+
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'payment_term' %}",
+                    data: {
+                        id: select
+
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        data = response.days
+                        data1 = response.payment_terms_value
+                        data2 = response.payment_terms_number
+
+                        date.setDate(date.getDate() + data);
+                        document.getElementById('end').value = date.toJSON().slice(0, 10);
+
+
+                    }
+                });
+
+            });
+        });
+
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+
+
+
+
+
+        $('#pass, #cpass').on('keyup', function () {
+            if ($('#pass').val() == $('#cpass').val()) {
+                $('#message').html('Password Is Matching').css('color', 'green');
+            } else
+                $('#message').html('Password Is Not Matching').css('color', 'red');
+        });
+
+
+        function hidinput(divId, element) {
+            if (element.value == 'GST-registered-Regular' || element.value == 'Consumer' || element.value == 'Overseas') {
+                document.getElementById(divId).style.display = 'block';
+            } else {
+                document.getElementById(divId).style.display = 'none';
+            }
+        }
+
+        function disinput(divId, element) {
+            if (element.value == 'GST-registered-Regular') {
+                document.getElementById(divId).style.display = 'block';
+            } else {
+                document.getElementById(divId).style.display = 'none';
+            }
+        }
+
+        function disinput2(divId, element) {
+            if (element.value == 'GST-registered-Regular') {
+                document.getElementById(divId).style.display = 'block';
+            } else {
+                document.getElementById(divId).style.display = 'none';
+            }
+        }
+
+        $(document).ready(function () {
+            $("#gsttype").change(function () {
+                var x = $('#gsttype').val();
+                if (x == "unregistered Business") {
+                    $(".gstno").removeClass('d-block');
+                    $(".gstno").addClass('d-none');
+
+                }
+                else if (x == 'Overseas') {
+                    $(".gstno").removeClass('d-block');
+                    $(".gstno").addClass('d-none');
+                }
+                else if (x == 'Consumer') {
+                    $(".gstno").removeClass('d-block');
+                    $(".gstno").addClass('d-none');
+                }
+                else {
+                    $(".gstno").removeClass('d-none');
+                    $(".gstno").addClass('d-block');
+                }
+
+            });
+        });
+
+
+
+
+        // function buydate(){
+        //     const date = new Date();
+
+        //     const select = document.getElementById('select').value;
+        //     for (let i=0; i<terms.length; i++){
+
+        //         if(terms[i].id == select){
+        //             date.setDate(date.getDate()+terms[i].days);
+
+        //             document.getElementById('end').value = date.toJSON().slice(0,10);
+
+        //         }
+
+        //     }
+
+        // if( select == 'One Month' ){
+        //     date.setDate(date.getDate()+30);
+
+        //    document.getElementById('end').value = date.toJSON().slice(0,10);
+        // }
+        // if( select == 'Six Month' ){
+        //     date.setDate(date.getDate()+180);
+
+        //    document.getElementById('end').value = date.toJSON().slice(0,10);
+        // }
+        // if( select == 'One Year' ){
+        //     date.setDate(date.getDate()+360);
+
+        //    document.getElementById('end').value = date.toJSON().slice(0,10);
+        // }
+        // if( select == 'Two Year' ){
+        //     date.setDate(date.getDate()+720);
+
+        //    document.getElementById('end').value = date.toJSON().slice(0,10);
+        // }
+        // if( select == 'Five Year' ){
+        //     date.setDate(date.getDate()+1800);
+
+        //    document.getElementById('end').value = date.toJSON().slice(0,10);
+        // }
+        //   }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+{% extends 'company/src/html/base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .tablediv{
+        margin-left: 1vh;
+        margin-right: 1vh;
+        margin-top: 1vh;
+    }
+
+    h4{
+        text-align: left; 
+        margin-top:2vh; 
+        margin-bottom: 2vh;
+        margin-left: 1vh;
+    }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+    
+</style>
+
+
+<div class="body-wrapper ">
+    <br><br>
+    <!-- <div class="d-flex justify-content-center pt-5" style="margin-top: 5px;">
+        <a href="" id="b1" class="btn  text-white"
+            style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Sale <i class="fa fa-plus"></i>
+        </a>
+        <a href="" id="b2" class="btn  text-white"
+            style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Purchase <i class="fa fa-plus"></i>
+        </a>
+        <a href="" id="b3" class="btn text-primary"
+            style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add More <i class="fa fa-plus"></i>
+        </a>
+    </div> -->
+    <div class="p-3 text-center" style="display: flex;justify-content: center;">
+        <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4 class="text-primary">DEBI NOTE NO : {{id}}</h4>
+                </div>
+                <div class="col-md-7"></div>
+                <div class="col-md-1">
+                    <a href="{% url 'view_purchasedebit' %}" style="text-align: right; font-size: large;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="tablediv" style="overflow: scroll;height: 35rem; width: 97%;">
+                <table class="table table-bordered table-info table-striped tb table-responsive w-100" id="billtable"  style="text-align: center;">
+                    <thead >
+                        <tr class="fs-2 tb" >
+                            <th class="bg-secondary text-white">
+                                DATE 
+                            </th>
+                            <th class="bg-secondary text-white">
+                                STAFF NAME 
+                            </th>
+                            <th class="bg-secondary text-white">
+                                ACTION
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in hsty %}
+                        <tr>
+                            <td style="color: black;" >{{h.transactiondate | date:'d-m-Y'}}</td>
+                            <td style="color: black;" >{{staff.first_name}} {{staff.last_name}}</td>
+                            {% if h.action == 'Created' %}
+                                <td style="color: red;" >{{h.action}}</td>
+                            {% else %}
+                                <td style="color: #154c79;" >{{h.action}}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

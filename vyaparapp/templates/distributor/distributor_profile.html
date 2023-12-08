@@ -1,0 +1,107 @@
+<!-- create by athul -->
+{% extends 'distributor/distributor_base.html' %}
+{% block content %}
+{% load static %}
+<style>
+   @media (max-width:768px) {
+        .h1{
+            font-size: 15px;
+            
+            
+        }
+        .img-thumbnail{
+            width: 100% !important;
+        }
+        .h5{
+            font-size: 10px ;
+        }
+        #label{
+            font-size: 8px;
+        }
+        #acol{
+            margin-top: 20px !important;
+            margin-left: 3px !important;
+            margin-bottom: 0px !important;
+            padding-bottom:0px !important ;
+            width: 100% !important;
+            margin-top: 50px !important;
+        }
+        #pcol{
+            margin-left: 3px !important;
+            margin-top: 30px !important;
+            padding-top: 0px !important;
+            width: 100% !important;
+            margin-right: 3px !important;
+        }
+        #scond_main_row{
+           height: 500px;
+        }
+    }
+</style> 
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+
+            <div class="container p-5" >
+                <div class="row" style="height: 300px;" >
+                    <div class="col-md-4 p-3 pt-5" >
+                        {% if distributor.img %}
+                        <img   class="img-thumbnail" src="{{ distributor.img.url }}" style="width: 100%;height: 90%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" alt="">
+                        {% else %}
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}"  style="width: 100%;height: 90%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+                          class="img-thumbnail">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8" >
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <h1 class="h1 text-center pt-3 pb-2" style="text-transform:uppercase; font-family: 'Times New Roman', Times, serif;padding-left: 5px;">
+                                <b> {{distributor.user.first_name}} {{distributor.user.last_name}}</b></h1>
+
+                        </div>
+                        <div class="row mt-3"  style="background-color: rgba(176, 199, 205, 0.4);"></div>
+                        
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3" id="label">Distributor Id</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: {{distributor.distributor_id}}</b></h5></div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3" id="label">Designation</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: Distributor</b></h5></div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3" id="label">Email</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: {{distributor.user.email}}</b></h5></div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3 pb-3" id="label">Contact</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: {{distributor.contact}}</b></h5></div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3 pb-3" id="label">Payment Term</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: {{distributor.payment_term.payment_terms_number}} {{distributor.payment_term.payment_terms_value}}</b></h5></div>
+                        </div>
+                        <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                            <div class="col pt-3 pb-3" id="label">End Date</div>
+                            <div class="col pt-3"><h5 class="h5"><b>: {{distributor.End_date}}</b></h5></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row mt-5 pt-5">
+                    <center>
+                        <a href="{% url 'editcompanyprofile' %}" class="btn btn-danger m-3" style=" width: 40%;font-weight: bold;">Edit Profile</a></div>
+                            
+                      
+                        </center>
+                </div>
+                
+                
+               
+            
+            </div>
+            
+        </div>
+    </div>        
+</body>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content %}
+{% load static %}
+<style>
+    table tr td:hover {
+        cursor: pointer;
+    }
+    @media (max-width:768px) {
+        .h1{
+            font-size: 20px;
+        }
+    }
+</style>
+
+
+<div class="body-wrapper" style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="container-fluid">
+        <center>
+            <form action="{% url 'add_payment_terms' %}" method="post" class="m-5"
+                style="background-color: white; padding: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);width: 70%;">
+                {% csrf_token %}
+                <h1 class="h1" style="text-shadow: 2px 2px 5px skyblue;font-family: 'Times New Roman', Times, serif;"><b>ADD PAYMENT TERMS</b></h1>
+                {% if messages %}
+                {% for message in messages %}
+                <center>
+                    <label for="" class="text-center"
+                    style="background-color: rgba(102, 228, 121, 0.5); width: 50%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px;"><b>{{message}}</b></label>
+                </center>
+                {% endfor %}
+                {% endif %}
+                <div class="row d-flex align-items-center" style="display: flex;">
+                    <div class="col"></div>
+                    <div class="col-md-4">
+                        <input type="text" name="num" class="form-control mt-5" placeholder="Enter Number Of"
+                            style="outline: none;border: none;border-bottom: 3px solid rgb(113, 179, 240);" required>
+
+                    </div>
+                    <div class="col-md-4">
+                        <select name="select" id="" class="form-control mt-5"
+                            style="outline: none;border: none;border-bottom: 3px solid rgb(113, 179, 240);">
+                            <option value="Months">Months</option>
+                            <option value="Years">Years</option>
+                        </select>
+                    </div>
+                    <div class="col"></div>
+
+
+
+                </div>
+                <input type="submit" class="btn btn-outline-primary mt-5"
+                    style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            </form>
+        </center>
+
+        <h3 class="h3 text-center pt-5 mb-3" style="text-shadow: 2px 2px 5px skyblue;font-family: 'Times New Roman', Times, serif;"><b>ALL PAYMENT TERMS</b></h3>
+
+
+        <table class="table table-hover"
+            style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <tr>
+                <th><b>ID</b></th>
+                <th><b>Payment Terms</b></th>
+                <th><b>No. Of Days</b></th>
+            </tr>
+            
+            
+            {% for t in terms %}
+            <tr>
+                <td>{{t.id}}</td>
+
+                <td>{{t.payment_terms_number}}  {{t.payment_terms_value}}</td>
+                <td>{{t.days}} days</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,58 @@
+<!-- create by athul -->
+
+{% extends 'company/src/html/base.html' %}
+
+{% block content %}
+{% load static %}
+
+
+<style>
+  table tr td:hover {
+  cursor: pointer;
+}
+</style>
+<body  style="background-color: rgba(176, 199, 205, 0.4);">
+  
+
+
+<div class="body-wrapper">
+  <div class="container-fluid">
+
+  
+
+     <!-- <h3 class="text-center"><b style="color: rgb(158, 213, 245);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">All Company</b></h3> -->
+      <div style="overflow-x:auto;">  
+        <table class="table table-hover  mt-5 " style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <thead>
+              <tr>
+                <th scope="col" style="color: black;"><b>ID</b></th>
+                <th scope="col" style="color: black;"><b>Name</b></th>
+                <th scope="col" style="color: black;"><b>Email</b></th>
+                
+                <th scope="col" style="color: black;"><b>Contact</b></th>
+                
+                <th scope="col" style="color: black;"><b>Action</b></th>
+
+              </tr>
+            </thead>
+            <tbody>
+                {% for a in data %}
+              <tr>
+                <td>{{a.id}}</th>
+                <td> <b><a href="" style="color: black;">{{a.first_name}} {{a.last_name}}</a></b></td>
+                <td>{{a.email}}</td>
+                <td>{{a.contact}}</td>
+                
+                <td><a href="{% url 'companyaccept' a.id %}" class="btn btn-primary m-1">Accept</a>
+                <a href="{% url 'companyreject' a.id %}" class="btn btn-danger m-1">Reject</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table> 
+        </div>
+
+  </div>
+</div>
+</body>
+
+{% endblock content %}

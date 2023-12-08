@@ -1,0 +1,76 @@
+<form action="{% url 'bank_to_cash_transaction_create' %}" method="post">
+    {% csrf_token %}
+    <div class="modal-header ps-4 pe-4 m-0">
+        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: 900;">BANK TO CASH TRANSFER</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mt-0 pt-0 ms-3 me-3 ps-1 pe-1">
+    <div class="modal-body">
+        
+        
+        <div class="p-1">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <label style="font-weight: 900;" for="">FROM</label>
+                    <select class="form-control fs-4 fw-bolder tb" name="from_here" id="from_" required>
+                        <option class="form-control fs-4 fw-bolder" value="">Select a bank</option>
+                        {% for i in banks %}
+                            <option class="form-control fs-4 fw-bolder tb" value="{{ i.id }}">{{ i.bank_name|upper }}</option>
+                        {% endfor %}
+                    </select>   
+                    <hr>     
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <label style="font-weight: 900;" for="">TO</label> 
+                    <input id="to_" class="form-control fs-4 fw-bolder tb" style="background-color: white;" value="CASH" disabled name="to_here" type="text" required>
+                    <hr>     
+                </div>
+            </div>
+            <div class="p-1">
+                <div class="row">
+                    <div class="col-sm-12 col-lg-6">
+                        <label style="font-weight: 900;" for="">AMOUNT</label>
+                        <input id="amount_" min="0" style="background-color: white;user-select: none;" type="number" autocomplete="false" value=""  placeholder="0" class="form-control fw-bolder fs-4 tb" name="amount" required>
+                        <hr>
+                    </div>
+                    <div class="col-sm-12 col-lg-6">
+                        <label style="font-weight: 900;" for="">DATE</label>
+                        <input id="date_" style="background-color: white;user-select: none;" type="date" autocomplete="false" value=""  placeholder="amount/-" class="form-control fw-bolder fs-4 tb" name="date" required>
+                        <hr>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="modal-footer justify-content-center ps-4 pe-4 ">
+        <button id="cls_btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" onclick="submit_function()">Save Changes</button>
+    </div>
+    </div>
+</form>
+
+
+<script>
+    function submit_function(){
+        if($('#from_').val()  && $('#to_').val() && $('#amount_').val())
+        {
+            $('#cls_btn').click()
+            setInterval(function(){
+                $('#sbmt_btn').click()
+            },200)
+        }
+    }
+    $('input').on('input',function(){
+        if(parseInt($(this).val())<0)
+        {
+            $(this).val(0)
+        } 
+    })
+    $(document).ready(function(){
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        var day = String(currentDate.getDate()).padStart(2, "0");
+        var formattedDate = year + "-" + month + "-" + day;
+        $("#date_").val(formattedDate);
+    })
+</script>

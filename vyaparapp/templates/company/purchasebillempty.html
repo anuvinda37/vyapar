@@ -1,0 +1,96 @@
+{% extends 'company/src/html/base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .tb{
+        color: black;
+    }
+
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+        
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+</style>
+
+
+<div class="body-wrapper ">
+    <br><br>
+    <div class="d-flex justify-content-center pt-5" style="margin-top: 5px;">
+        <a href="" id="b1" class="btn  text-white"
+            style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Sale <i class="fa fa-plus"></i>
+        </a>
+        <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
+            style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Purchase <i class="fa fa-plus"></i>
+        </a>
+        <a href="" id="b3" class="btn text-primary"
+            style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add More <i class="fa fa-plus"></i>
+        </a>
+    </div>
+    <div class="p-5 text-center" style="display: flex;justify-content: center;">
+        <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <img height="500vw" src="{% static 'images/emptybill.png' %}" class="card-img" alt="no img">
+                    <!-- <div class="card-img-overlay">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                    </div> -->
+                </div>
+                <div class="col-sm-12 col-md-6 ps-4 pe-4">
+                    <div class="p-1 rounded" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                        <p style="margin-bottom: 4rem;"></p>
+                        <img width="100vw" src="{% static 'images/fav.png' %}" alt="no img">
+                        <p></p>
+                        <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">VYAPAR</h1>
+                        <!-- <h5 class="card-title">Card title</h5> -->
+                        <p style="margin-bottom: 1.5rem;"></p>
+                        <p class="card-text">Welcome to vyapar, We're committed to providing a seamless and secure online marketplace for buyers and sellers. Our platform offers a range of features.</p>
+                        <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">You can manage all you purchase bills here.</p>
+                        <p class="mt-4"></p>
+                        <a class="btn btn-lg btn-info btn-gradient" href="{% url 'add_purchasebill' %}">Add Your First Purchase Bill</a>
+                        <p style="margin-bottom: 4rem;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock  %}

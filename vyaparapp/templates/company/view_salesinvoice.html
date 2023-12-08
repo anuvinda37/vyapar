@@ -1,0 +1,989 @@
+<!-- create by Antony -->
+
+{% extends 'company/src/html/base.html' %}
+
+{% block content %}
+{% load static %}
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+{% load my_extras %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+
+    
+    .heading-with-dropdown {
+        display: flex;
+        align-items: center;
+    }
+    
+    .heading-with-dropdown span {
+        margin-right: 10px; /* Adjust as needed */
+    }
+    
+</style>
+
+{% if salesinvoice %}
+<div class="body-wrapper">
+    <br><br><br>
+    <div class="row p-0 m-0">
+        <div class="col-12  p-0 m-0">
+            <div class=" bg-light bg-light bs pb-0 mb-0"style="height:100%;width:100%">
+                <div class="d-flex justify-content-center pt-4">
+                    <a href=""  id="b1" class="btn  text-white" style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b2" class="btn  text-white" style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b3" class="btn text-primary" style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+                </div>
+                <p></p>
+                <hr class="p-0 m-0">
+                
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row ps-3 pe-3 m-0">
+        <div class="col-sm-10 col-lg-12  ps-2 pe-3" style="height: 80%;">
+            <div class="card bg-light bs p-3 mb-3">
+                <div class="row m-0" style="height:20%">
+                
+                    <div class="d-flex mt-2">
+                        <label for="" style="color: black; font-size: 1.3vw;"><b>Date</b></label>
+                        <div class="date-range-box" style="margin-left: 2vw;">
+                            <input type="date" id="fromDate" class="date-input"> TO
+                            <input type="date" id="toDate" class="date-input">
+                        </div>
+                        <div class="ml-auto  " style="padding-left: 20vw;" >
+                            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="window.location.href='{% url 'graph_salesinvoice' %}'">
+                                <span>
+                                   <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
+                                   <br><span style="color: black; font-size: small; ">Graph</span>
+                                </span>
+                            </button>
+                            
+
+                            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()">
+                                <span>
+                                    <img width="22px" src="{% static 'images/excel2.png' %}" alt="Excel Icon">
+                                    <br><span style="color: black; font-size: small; ">Export</span>
+                                </span>
+                            </button>
+
+                             {% comment %} <button class="btn p-0 ps-2 pe-2 ms-2" type="button" data-bs-toggle="modal" data-bs-target="#importTransactions" data-toggle="tooltip" data-placement="top" >
+                                        <span><img width="23px" src="{% static 'images/excel02.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; ">Import</span>
+                                    </button>  {% endcomment %}
+
+                                    <button class="btn" type="button" data-toggle="modal" data-target="#excelModal" onclick="excelmodel()">
+                                        <span><img width="23px" src="{% static 'images/excel02.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; ">Import</span>
+                                    </button>
+                                  
+                                
+                            <button id="printButton" class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printTable()">
+                                <span>
+                                    <img width="28px" src="{% static 'images/printer.png' %}" alt="Printer Icon">
+                                    <br><span style="color: black; font-size: small; ">Printer</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="row m-0" style="height:20%">
+                    <div class="d-flex " style="margin-top: 3rem;">
+                        <div class="card bs p-3 mb-3" style="width: 10vw; height: 6vw; background-color: aquamarine;">
+                            <label for="" style="color: black; font-size: 15px;">Paid</label>
+                            <label for="" id="total-paidoff"  style="color: rgba(0, 0, 0, 0.774);"></label>
+                        </div>
+                        <b class="mt-2" style="font-size: 1.5rem;">+</b>
+                        <div class="card bs p-3 mb-3" style="width: 11vw; height: 6vw; background-color: lightskyblue;">
+                            <label for="" style="color: black; font-size: 15px;">Unpaid</label>
+                            <label for="" id="total-balance"  style="color: rgba(0, 0, 0, 0.774);"></label>
+                        </div>
+                        <b class="mt-2" style="font-size: 1.5rem;">=</b>
+                        <div class="card bs p-3 mb-3" style="width: 12vw; height: 6vw; background-color: rgba(255, 166, 0, 0.641)">
+                            <label for="" style="color: black; font-size: 15px;">Total</label>
+                            <label for="" id="grand_total" style="color: rgba(0, 0, 0, 0.774);"></label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+
+            <!-- <div class="row" style="height: 0.5rem;"></div> -->
+            <div class="row pt-0 m-0" >
+                <div class="card p-0 bg-light bs">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-3">
+                            <p class="tb fw-bolder pt-2">SALES INVOICE</p>
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            
+                        </div>
+                        
+                        <div class="col-sm-12 col-lg-6 pt-1">
+                            <div class="position-relative">
+                                <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                    <span class="fa fa-search fs-5 text-info"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <input id="search_input1" style="padding-inline-start: 2rem;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                                <a style="color: white;   height: 35px; margin-left: 20px;"
+                                    class="btn pt-2 btn-info" href="{% url 'add_salesinvoice' %}">Add
+                                    <!-- <i class="fa-solid fa fa-plus"></i> -->
+                                </a>
+                
+                            </div>
+                        </div>
+                            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                                <table id="myTable" class="table table-bordered table-info table-striped tb table-responsive w-100">
+                                    <thead>
+                                        <th class="hide_field">#</th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span>DATE</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown1()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd1">
+                                                        <span onclick="toggleDropdown1()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd1_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input1()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick1()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown ">
+                                                <span style="white-space: nowrap;">INVOICE NO</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown2()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd2">
+                                                        <span onclick="toggleDropdown2()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd2_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input2()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick2()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                      
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span style="white-space: nowrap;">PARTY NAME</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown3()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd3">
+                                                        <span onclick="toggleDropdown3()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd3_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input3()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick3()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span>TRANSACTION</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown4()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd4">
+                                                        <span onclick="toggleDropdown4()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd4_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input4()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick4()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span style="white-space: nowrap;">PAYMENT TYPE</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown5()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd5">
+                                                        <span onclick="toggleDropdown5()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd5_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input5()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick5()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span>AMOUNT</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown6()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd6">
+                                                        <span onclick="toggleDropdown6()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd6_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input6()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick6()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span style="white-space: nowrap;">BALANCE DUE</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown7()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd7">
+                                                        <span onclick="toggleDropdown7()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd7_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input7()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick7()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span>ACTION</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown8()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd8">
+                                                        <span onclick="toggleDropdown8()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd8_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input8()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick8()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-2">
+                                            <div class="heading-with-dropdown">
+                                                <span>BY</span>
+                                                <div class="custom-dropdown">
+                                                    <span class="fa fa-filter ps-1 fs-1" onclick="toggleDropdown9()"></span>
+                                                    <div style="display: none;" class="dropdown-content dd9">
+                                                        <span onclick="toggleDropdown9()" class="fa fa-times cls"></span>
+                                                        <h6 class="title mb-0 mb-2 exact_match_0">EXACT MATCH</h6>
+                                                        <input id="dd9_input" type="text" placeholder="Enter something...">
+                                                        <div class="d-flex">
+                                                            <button class="me-2 clear_0" onclick="clear_input9()">CLEAR</button>
+                                                            <button class="sbmit_0" onclick="handleButtonClick9()">SUBMIT</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="text-center p-0 m-0 no-export"></th> 
+                                    </thead>
+               
+                                    <tbody>
+                                        {% for s in salesinvoice %}
+                                            <tr class="sales-row">
+                                                <td class="text-center hide_field" style="padding-top: 1.4rem;">
+                                                    <div style="width: 10px;height: 10px;" class="bg-dark rounded-pill bs_sm"></div>
+                                                </td>                                                
+                                                <td class="text-center date-cell td_date">{{s.date|date:"Y-m-d"}}</td>
+                                                <td class="text-center td_invoice">{{s.invoice_no}}</td>
+                                                <td class="text-center td_name">{{s.party.party_name}}</td>
+                                                <td class="text-center td_transcation">Sale Invoice</td>
+                                                <td class="text-center td_payment">{{ s.paymenttype }}</td>
+                                                <td class="text-center td_amount">{{s.grandtotal}}</td>
+                                                <td class="text-center td_balance">{{ s.totalbalance }}</td>
+                                                <td class="text-center td_action">{{ s.action }}</td>
+                                                <td class="text-center td_by">{{s.done_by_name}}</td>
+                                                <td class="p-0 pt-1 m-0 no-export">
+                                                  <div class="btn-group mb-1">
+                                                        <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a href="{% url 'salesinvoice_billtemplate' s.id  %}" style="color: black; padding-left: 10px;" class="hide_table_text_v"> <span class="fa fa-eye pe-2 tg"></span>  view</a></li> 
+                                                                      
+                                                          <li>
+                                                             <a href="{% url 'edit_salesinvoice' s.id  %}" style="color: black; padding-left: 10px;" class="hide_table_text_e"><span class="fas fa-edit pe-2 text-primary mt-2"></span>Edit</a></li> 
+                                                       </li>
+
+                                                       <li>
+                                                        <a href="{% url 'deletesalesinvoice' s.id  %}" style="color: black; padding-left: 10px;" class="hide_table_text_d"> <span class="fa fa-trash-alt pe-2 tr mt-2"></span>  Delete</a></li> 
+                                                  </li>
+
+                                                  <li>
+                                                    <a href="{% url 'salesinvoicehistory' s.id  %}" style="color: black; padding-left: 10px;" class="hide_table_text_h"> <span class="fa fa-history pe-2 th mt-2"></span>  History</a></li> 
+                                              </li>
+                                                        </ul>
+                                                    </div> 
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                       
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <p id="emptyMessage" style="text-align: center;">
+    <br><br><br>
+    No Transactions to Show
+</p>
+
+<table id="excelbilltable" hidden>
+    <thead >
+        <tr class="fs-2 tb" >
+            <th> DATE </th>
+            <th> INVOICE NO </th>
+            <th> PARTY NAME </th>
+            <th> TRANSCATION </th>
+            <th> PAYMENT TYPE </th>
+            <th> AMOUNT </th>
+            <th> BALANCE DUE </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in salesinvoice %}
+        <tr>
+            <td>{{s.date | date:'d-m-Y'}}</td>
+            <td>{{s.invoice_no}}</td>
+            <td>{{s.party.party_name}}</td>
+            <td>Sale Invoice</td>
+            <td>{{s.paymenttype}}</td>
+            <td>{{s.grandtotal}}</td>
+            <td>{{s.totalbalance}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table> {% endcomment %}
+
+<table id="tablemodel" hidden>
+    <thead>
+        <tr>
+            <th>Party Name</th>
+            <th>Party Email</th>
+            <th>Date</th>
+            <th>Supply State</th>
+            <th>Payment Method</th>
+            <th>Payment No</th>
+            <th>Adjustment</th>
+            <th>Advance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>State/Other State</td>
+            <td>Cash/Cheque/UPI/Bank Name</td>
+            <td>Cheque ID/UPI ID/Bank no</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableitemmodel" hidden>
+    <thead>
+        <tr>
+            <th>Invoice</th>
+            <th>Item Name</th>
+            <th>Item HSN</th>
+            <th>Quantity</th>
+            <th>Tax</th>
+            <th>Discount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Corresponding Row no from invoice Model </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Import Invoice modal -->
+<div class="modal" id="excelModal" tabindex="-2" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excelModalLabel">Upload File
+                <label for="" style="color: red; font-size: x-small;" >* Refer Downloaded Sheet For Format </label><br></h5>
+                <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="excelForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="file" style="color: black;">Choose Excel File for Sales Invoice- </label> <br>
+                        <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
+                        
+
+                        <label for="file" style="color: black;">Choose Excel File for Sales Invoice Item- </label> <br>
+                        <input type="file" class="form-control-file" id="prdfile" name="prdfile" accept=".xls, .xlsx"><br>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="uploadFile()" data-dismiss="modal">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% else %}
+
+<div class="body-wrapper ">
+    <br><br><br>
+    <div class="p-5 text-center" style="display: flex;justify-content: center;">
+        <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <img height="450vw" src="{{'static/images/billingimg.jpg'}}" class="card-img" alt="no img">
+                    <!-- <div class="card-img-overlay">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                    </div> -->
+                </div>
+                <div class="col-sm-12 col-md-6 ps-4 pe-4">
+                    <div class="p-1 rounded" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                        <p style="margin-bottom: 4rem;"></p>
+                        <img width="100vw" src="{{'static/images/fav.png'}}" alt="no img">
+                        <p></p>
+                        <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">VYAPAR</h1>
+                        <!-- <h5 class="card-title">Card title</h5> -->
+                        <p style="margin-bottom: 1.5rem;"></p>
+                        <p class="card-text">Welcome to vyapar, We're committed to providing a seamless and secure online marketplace for buyers and sellers. Our platform offers a range of features.</p>
+                        <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">Please create your first Invoice</p>
+                        <p class="mt-4"></p>
+                        <a class="btn btn-lg btn-info btn-gradient" href="{% url 'add_salesinvoice' %}">Create Invoice</a>
+                        <p style="margin-bottom: 4rem;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p>No Invoice available.</p>
+{% endif %}
+
+<script>
+    function excelmodel(){
+        const table1 = document.querySelector('#tablemodel');
+        const ws1 = XLSX.utils.table_to_sheet(table1);
+        const wb1 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb1, ws1, 'Sheet1');
+        XLSX.writeFile(wb1, 'SalesInvoiceModel.xlsx');
+
+        const table2 = document.querySelector('#tableitemmodel');
+        const ws2 = XLSX.utils.table_to_sheet(table2);
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
+        XLSX.writeFile(wb2, 'SalesInvoiceItemModel.xlsx');
+    }
+</script>
+
+
+<script>
+    function uploadFile() {
+        const form = document.getElementById('excelForm');
+        const formData = new FormData(form);
+        fetch('importsalesinvoice_excel', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            swal({
+                title: "Imported !",
+                text: "Sales Invoice Import Successfull!",
+                icon: "Success",
+                buttons: false,
+            })
+        })
+        .catch(error => {
+            swal({
+                title: "Error !",
+                text: "Sales Invoice Unsuccessfull!",
+                icon: "warning",
+                buttons: false,
+            })
+        });
+    }
+
+
+    {% comment %} $(document).ready(function() {
+        var table = document.getElementById("excelbilltable");
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 1; i < rows.length; i++) {
+            var bankid = rows[i].getElementsByTagName("td")[3].innerText;
+            if(bankid != 'Cash' && bankid != 'Cheque' && bankid != 'UPI'){
+                changetobankname(i,bankid)
+            }
+        } {% endcomment %}
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to filter rows based on date range
+        function filterRowsByDate() {
+            var fromDate = new Date(document.getElementById("fromDate").value);
+            var toDateInput = document.getElementById("toDate");
+            var toDate = new Date(toDateInput.value);
+
+            // Set the min attribute of toDate input to the selected fromDate
+            toDateInput.min = document.getElementById("fromDate").value;
+
+            var rows = document.querySelectorAll(".sales-row");
+
+            rows.forEach(function (row) {
+                var dateCell = row.querySelector(".date-cell");
+
+                if (dateCell) {
+                    var rowDate = new Date(dateCell.textContent);
+
+                    // Show/hide rows based on the date range (inclusive)
+                    if (rowDate >= fromDate && rowDate <= toDate) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+        }
+
+        // Attach the filter function to the date input change event
+        document.getElementById("fromDate").addEventListener("change", filterRowsByDate);
+        document.getElementById("toDate").addEventListener("change", filterRowsByDate);
+    });
+</script>
+
+<script>
+    function printTable() {
+        // Get the table element by its ID
+        var table = document.getElementById('myTable');
+
+        // Exclude the last column (ACTION) from export
+        var noExportCols = Array.from(table.querySelectorAll('th.no-export, td.no-export'));
+        noExportCols.forEach(col => col.style.display = 'none');
+
+        // Open a new window and write the table HTML content to it
+        var newWin = window.open('', 'Print-Window');
+        newWin.document.open();
+        newWin.document.write('<html><head><style>@media print {table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #000; padding: 8px;}}</style></head><body>' + table.outerHTML + '</body></html>');
+        newWin.document.close();
+
+        // Restore the display of excluded columns after export
+        noExportCols.forEach(col => col.style.display = '');
+
+        // Trigger the print action
+        newWin.print();
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.10/xlsx.full.min.js"></script>
+
+
+<script>
+
+    function exportToExcel() {
+        $('.exact_match_0').text('');
+        $('.clear_0').text('');
+        $('.sbmit_0').text('');
+        $('.hide_table_text_v').text('');
+        $('.hide_table_text_e').text('');
+        $('.hide_table_text_d').text('');
+        $('.hide_table_text_h').text('');
+        // $('.show_bank_id').attr('hidden', false);
+        $('.hide_field').remove();
+    
+        const table = document.getElementById('myTable');
+        const wsData = XLSX.utils.table_to_sheet(table);
+        
+        // Set date format for the 'date-cell' column
+        const dateColumn = 'A';  // Assuming 'date-cell' is the second column (adjust accordingly)
+        wsData['!cols'] = [{ wch: 10 }, { wch: 10 }, /* ... add more if needed ... */ ];
+    
+        wsData[dateColumn + '1'].z = 'yyyy-mm-dd';  // Set the desired date format
+    
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, wsData, 'Sheet1');
+        XLSX.writeFile(wb, 'table_data.xlsx');
+    
+        $('.exact_match_0').text('EXACT MATCH');
+        $('.clear_0').text('CLEAR');
+        $('.sbmit_0').text('SUBMIT');
+        $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span>  view');
+        $('.hide_table_text_e').html('<span class="fas fa-edit pe-2 text-primary mt-2"></span> Edit');
+        $('.hide_table_text_d').html(' <span class="fa fa-trash-alt pe-2 tr mt-2"></span>  Delete');
+        $('.hide_table_text_h').html('<span class="fa fa-history pe-2 th mt-2"></span>  History');
+    
+        window.location.href = '';
+    }
+    
+
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $(this).attr('hidden',true)
+            $('#search_item_input').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',true)
+        })
+    })
+    $(document).ready(function(){
+        $('#close_seacrh').click(function(){
+            $('#search_item_input').val('')
+            $('#search_item_input').attr('hidden',true)
+            $('#search_item').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',true)
+        })
+    })
+ 
+</script>
+
+<script>
+
+    function updateTotalBalance() {
+        $.ajax({
+            url: '/get_total_balance/', 
+            type: 'GET',
+            success: function(data) {
+                $('#total-balance').text('₹' + data.total_balance);
+                $('#total-paidoff').text('₹' + data.paid_off);
+                $('#grand_total').text('₹' + data.grand_total);
+            },
+            error: function(error) {
+                console.log('Error fetching total balance:', error);
+            }
+        });
+    }
+    updateTotalBalance();
+</script>
+<script>
+// custom dropdown1
+function toggleDropdown1() 
+{
+    var dropdownContent = document.querySelector('.dd1');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick1() 
+{
+    var inputValue = $('#dd1_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_date').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            $(this).hide()
+        }
+    })
+    toggleDropdown1();
+}
+function clear_input1()
+{
+    $('#dd1_input').val('')
+}
+// custom dropdown2
+function toggleDropdown2() 
+{
+    var dropdownContent = document.querySelector('.dd2');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick2() 
+{
+    var inputValue = $('#dd2_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_invoice').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            // alert($(this).find('.td_name').text().toLocaleLowerCase(),inputValue)
+            $(this).hide()
+        }
+    })
+    toggleDropdown2();
+}
+function clear_input2()
+{
+    $('#dd2_input').val('')
+}
+// custom dropdown3
+function toggleDropdown3() 
+{
+    var dropdownContent = document.querySelector('.dd3');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick3() 
+{
+    var inputValue = $('#dd3_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_name').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            // alert($(this).find('.td_name').text().toLocaleLowerCase(),inputValue)
+            $(this).hide()
+        }
+    })
+    toggleDropdown3();
+}
+function clear_input3()
+{
+    $('#dd3_input').val('')
+}
+// custom dropdown4
+function toggleDropdown4() 
+{
+    var dropdownContent = document.querySelector('.dd4');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick4() 
+{
+    var inputValue = $('#dd4_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_transcation').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            // alert($(this).find('.td_name').text().toLocaleLowerCase(),inputValue)
+            $(this).hide()
+        }
+    })
+    toggleDropdown4();
+}
+function clear_input4()
+{
+    $('#dd4_input').val('')
+}
+// custom dropdown5
+function toggleDropdown5() 
+{
+    var dropdownContent = document.querySelector('.dd5');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick5() 
+{
+    var inputValue = $('#dd5_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_payment').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            // alert($(this).find('.td_name').text().toLocaleLowerCase(),inputValue)
+            $(this).hide()
+        }
+    })
+    toggleDropdown5();
+}
+function clear_input5()
+{
+    $('#dd5_input').val('')
+}
+// custom dropdow6
+function toggleDropdown6() 
+{
+    var dropdownContent = document.querySelector('.dd6');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick6() 
+{
+    var inputValue = $('#dd6_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_amount').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            $(this).hide()
+        }
+    })
+    toggleDropdown6();
+}
+function clear_input6()
+{
+    $('#dd6_input').val('')
+}
+// custom dropdow7
+function toggleDropdown7() 
+{
+    var dropdownContent = document.querySelector('.dd7');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick7() 
+{
+    var inputValue = $('#dd7_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_balance').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            $(this).hide()
+        }
+    })
+    toggleDropdown7();
+}
+function clear_input7()
+{
+    $('#dd7_input').val('')
+}
+// custom dropdow8
+function toggleDropdown8() 
+{
+    var dropdownContent = document.querySelector('.dd8');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick8() 
+{
+    var inputValue = $('#dd8_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_action').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            $(this).hide()
+        }
+    })
+    toggleDropdown8();
+}
+function clear_input8()
+{
+    $('#dd8_input').val('')
+}
+// custom dropdow9
+function toggleDropdown9() 
+{
+    var dropdownContent = document.querySelector('.dd9');
+    dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleButtonClick9() 
+{
+    var inputValue = $('#dd9_input').val().toLowerCase();
+    $('#myTable tbody tr').each(function(){
+        if($(this).find('.td_by').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+        {
+            $(this).show()
+        }
+        else{
+            $(this).hide()
+        }
+    })
+    toggleDropdown9();
+}
+function clear_input9()
+{
+    $('#dd9_input').val('')
+}
+// bootstrap tooltip
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+
+
+
+{% endblock  %}

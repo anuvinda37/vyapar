@@ -1,0 +1,175 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content %}
+{% load static %}
+<style>
+    @media (max-width:768px) {
+        .h3{
+            font-size: 20px;
+        }
+        .h4{
+            font-size: 15px;
+        }
+    }
+</style>
+
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="container mt-5 mr-5 " style="background-color: white;">
+                <h1 class="text-center h1 mb-5 pt-5"
+                    style="font-family: 'Times New Roman', Times, serif;text-shadow: 2px 2px 4px #39d2e3;"><b>DISTRIBUTOR
+                        DETAILS</b></h1>
+                <hr>
+
+                <center>
+                    {% if data.img %}
+                    <img class="img-thumbnail" width="30%" src="{{ data.img.url }}" alt="">
+                    {% else %}
+                    <img src="{% static 'assets/images/profile/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
+                    {% endif %}
+                </center>
+                <h3 class="h3 text-center"><b>{{data.user.first_name}} {{data.user.last_name}}</b></h3>
+
+                <hr>
+                <!-- <div class="row p-5 pb-3">
+                    <div class="col-md-6">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Company Owner </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="h4"><b>: {{company.user.first_name}} {{company.user.last_name}}</b></h4>
+                    </div>
+                </div> -->
+                <div class="row p-5 pb-3 pt-3">
+                    <div class="col-md-6">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Distributor Code </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="h4"><b>: {{data.distributor_id}}</b></h4>
+                    </div>
+                </div>
+
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Email </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b>: {{data.user.email}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> User Name</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{data.user.username}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Contact </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.contact}}</b></h4>
+                    </div>
+                </div>
+                
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> City</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{company.city}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> State </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{company.state}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b>Country</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{company.country}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Pincode</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{company.pincode}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Pan Number</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{company.pan_number}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> GST type </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"><b> : {{company.gst_type}}</b></h4>
+                    </div>
+                </div> -->
+                <!-- {% if company.gst_no != '' %}
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> GST Number</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{company.gst_no}}</b></h4>
+                    </div>
+                </div>
+                {% endif %} -->
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b>: {{data.payment_term.payment_terms_number}}
+                                {{data.payment_term.payment_terms_value}}</b></h4>
+                    </div>
+                </div>
+                <div class="row p-5 pt-3 pb-3">
+                    <div class="col">
+                        <h5 class="h5"><b style="margin-right: 10px;">-> </b> End Date</h5>
+                    </div>
+                    <div class="col">
+                        <h4 class="h4"> <b> : {{data.End_date}}</b></h4>
+                    </div>
+                </div>
+                <hr>
+                
+                <div class="row pb-5">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin_distributor_accept' data.id %}" class="btn btn-primary" style="width: 100%;">ACCEPT</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin_distributor_reject' data.id %}" class="btn btn-danger"  style="width: 100%;">REJECT</a>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+</body>
+
+{% endblock content %}

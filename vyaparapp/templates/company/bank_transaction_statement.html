@@ -1,0 +1,882 @@
+{% extends 'staff/staffbase.html' %}
+
+{% block content %}
+{% load static %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+{% load my_extras %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .bs_sm_out{
+        box-shadow: inset 0px 0px 1px 1px rgba(0, 94, 255, 0.772);
+    }
+    .ts_sm{
+        text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.27);
+    }
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .to{
+        color: orange;
+    }
+    .tbl{
+        color: rgb(0, 0, 176);
+    }
+    .p_red{
+        color: red;
+    }
+    .p_green{
+        color: green;
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+    .color_change{
+        color: black;
+    }
+    .color_change:hover{
+        color: blue
+    }
+    
+</style>
+
+<style>
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        }
+
+        .dropdown-toggle {
+        padding: 10px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        }
+
+        .dropdown-content {
+        z-index: 1;
+        display: none;
+        position: absolute;
+        top: 40px;
+        left: -95px;
+        background-color: #b4b4b450;
+        backdrop-filter: blur(5px);
+        padding: 10px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        box-shadow: 3px 5px 5px 5px rgba(0, 0, 0, 0.201);
+        }
+
+        .dropdown-content input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid rgb(168, 168, 168);
+        }
+
+        .dropdown-content button {
+        padding: 8px 15px;
+        background-color: rgb(0, 154, 108);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+        }
+
+        .custom-dropdown .dropdown-content .cls{
+            position: absolute;
+            right: -7px;
+            top: -7px;
+            padding: 3px 5px;
+            color: white;
+            text-shadow: 0px 0px 2px black ;
+            border-radius: 50%;
+            font-size: 15px;
+            background-color: rgba(255, 0, 0, 0.424);
+        }
+        .custom-dropdown .dropdown-content .title
+        {
+            background-color: rgb(255, 255, 255);
+            font-weight: 500;
+            color: rgb(0, 0, 0);
+            text-shadow: 0px 0px 20px rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+        }
+</style>
+
+<div class="body-wrapper">
+    <br><br><br>
+    <div class="row p-0 m-0">
+        <div class="col-12  p-0 m-0">
+            <div class=" bg-light bg-light bs pb-0 mb-0"style="height:100%;width:100%">
+                <div class="d-flex justify-content-center pt-4">
+                    <a href=""  id="b1" class="btn  text-white" style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b2" class="btn  text-white" style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                    <a href="" id="b3" class="btn text-primary" style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+                </div>
+                <p></p>
+                <hr class="p-0 m-0">
+                <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+                    <div class="row pb-0 mb-0">
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid rgba(0, 0, 0, 0.548);"><a class=" fs-4 text-dark" style="font-weight: 900;" href="">{{ bank.bank_name|upper }} BANK - TRANSACTION STATEMENT</a></div>
+                        <!-- <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD1</a></div>
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD2</a></div>
+                        <div class="col text-center pb-2" style="border-bottom: 3px solid transparent;"><a class="fw-bolder fs-4" style="color: gray;" href="">FIELD3</a></div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if messages %}
+        {% for i in messages %}
+          {% if i.tags == 'warning' %}
+          <div class="alert alert-warning alert-dismissible fade show ms-4" style="margin-right: 2rem;" role="alert">
+            <strong>WARNING:</strong> {{ i }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% elif i.tags == 'info' %}
+          <div class="alert alert-info alert-dismissible fade show ms-4" style="margin-right: 2rem;" role="alert">
+            <strong>INFO:</strong> {{ i }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% elif i.tags == 'success' %}
+          <div class="alert alert-success alert-dismissible fade show ms-4" style="margin-right: 2rem;" role="alert">
+            <strong>SUCCESS:</strong> {{ i }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% elif i.tags == 'error' %}
+          <div class="alert bg-danger alert-dismissible fade show ms-4" style="margin-right: 2rem;" role="alert">
+            <strong>ERROR:</strong> {{ i }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    <div class="row ps-3 pe-3 m-0">
+        <div class="col-sm-12 col-lg-12  ps-2 pe-3" style="height: 80%;">
+          <div id="bank_get_detail_target">
+            
+            <!-- <div class="row" style="height: 0.5rem;"></div> -->
+            <div class="row pt-0 m-0" style="height:39rem;">
+                <div class="card p-0 bg-light bs">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-5">
+                            <div class="d-flex">
+                                <label class="tb fw-normal pt-2">FROM</label>
+                                <input id="startDate" class="p-1 m-1" style="border-radius: 5px;border: 1px solid rgba(0, 0, 0, 0.272);" type="date" value="{{ bank.created_date|date:'Y-m-d' }}">
+                                <label class="tb fw-normal pt-2">TO</label>
+                                <input id="endDate" class="p-1 m-1" style="border-radius: 5px;border: 1px solid rgba(0, 0, 0, 0.272);" type="date" value="">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-1">
+                            
+                        </div>
+                        
+                        <div class="col-sm-12 col-lg-6 pt-1">
+                            <div class="d-flex">
+                                <a style="opacity: 0.75;" class="btn p-1 ps-2 pe-2 m-0 me-1" type="button" href="{% url 'banks_list' bank.id %}"><span><img draggable="false" width="17px" src="{% static 'assets/back.png' %}" alt="no img"></span></a>
+                                <div class="position-relative">
+                                    <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                        <span class="fa fa-search fs-5 text-info"></span>
+                                    </div>
+                                </div>
+                                <input id="search_input1" style="padding-inline-start: 2rem;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                                <button data-toggle="tooltip" data-placement="top" title="Print" class="btn p-0 ps-2 pe-1 m-0" type="button" onclick="printContent()"><span><img draggable="false" width="22px" src="{% static 'assets/printer1.png' %}" alt="no img"></span></button>
+                                <form id="myForm" action="{% url 'import_statement_from_excel' bank.id %}" method="POST" class="p-0 m-0 " enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input id="file_" hidden type="file"  name="excel_file">
+                                    <label data-toggle="tooltip" data-placement="top" title="Import from Excel" for="file_" class="btn p-1 ps-1 pe-1 m-0" type="button"><span><img draggable="false" width="23px" src="{% static 'assets/excel02.png' %}" alt="no img"></span></label>
+                                    <input id="submit_import_excel" hidden type="submit">
+                                </form>
+                                <button data-toggle="tooltip" data-placement="top" title="Export to Excel" class="btn p-0 ps-1 pe-1 m-0" type="button" onclick="exportToExcel()"><span><img draggable="false" width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span></button>
+                            </div>
+                        </div>
+                        <hr class="mt-3">
+                        <br>
+                        <div class="p-4" style="background-color: rgb(238, 245, 255);">
+                            <div style="border: 1px solid rgba(0, 0, 0, 0.408);background-color: rgb(97, 97, 97,0);" class="p-3 rounded">
+                                <br>
+                                <h2 style="text-align:center;margin-top: 0.2rem;font-weight: 500;">TRANSACTION STATEMENT</h2>
+                                <h5 class="text-center mt-1" style="font-weight: 900;">{{ bank.bank_name|upper }} BANK</h3>
+                                <p class="mt-1 mb-2 tb" id="date_statement" style="font-weight: 500px;text-align: center;"></p>
+                                <br><hr>
+                                <div id="printable_content" class="mt-3" style="overflow: scroll;height: 31rem;">
+                                    <table id="myTable" class="table table-bordered table-info table-striped tb table-responsive w-100">
+                                        <thead style="background-color: rgb(155, 208, 255);">
+                                            <th hidden class="text-center fs-2 hide_field">#</th>
+                                            <th style="font-weight: 900;" class="text-center fs-3">
+                                                TYPE
+                                            </th>
+                                            <th style="font-weight: 900;" class="text-center fs-3 show_bank_id hide_field" hidden>FROM <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                            <th style="font-weight: 900;" class="text-center fs-3 fs-2 show_bank_id hide_field" hidden>TO <span class="fa fa-filter ps-1 fs-1"></span></th>
+                                            <th style="font-weight: 900;" class="text-center fs-3">
+                                                NAME
+                                            </th>
+                                            <th style="font-weight: 900;" class="text-center fs-3">
+                                                DATE
+                                            </th>
+                                            <th style="font-weight: 900;" class="text-center fs-3">
+                                                AMOUNT
+                                            </th>
+                                            <th style="font-weight: 900;" class="text-center fs-3">
+                                                BALANCE
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            {% if bank.open_balance != 0 %}
+                                            <tr class="fs-2 open_balane_remove">
+                                                <td hidden class="text-center hide_field" style="padding-top: 1.4rem;">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div style="width: 10px;height: 10px;" class="bg-dark rounded-pill bs_sm"></div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center td_type">Open. Balance</td>
+                                                <td class="text-center show_bank_id hide_field" hidden>{{ bank.id }}</td>
+                                                <td class="text-center show_bank_id hide_field" hidden></td>
+                                                <td class="text-center td_name">Opening Blance</td>
+                                                <td class="text-center date-column td_date">{{ bank.as_of_date|date:"Y-m-d" }}</td>
+                                                <td class="text-center fw-bolder td_amount">{% if bank.open_balance < 0 %}-₹{{ bank.open_balance|mul:-1 }}{% else %}₹{{ bank.open_balance }}{% endif %}</td>
+                                                <td class="text-center fw-bolder td_balance">{% if bank.open_balance < 0 %}-₹{{ bank.open_balance|mul:-1 }}{% else %}₹{{ bank.open_balance }}{% endif %}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% for i in transactions %}
+                                                <tr class="fs-2">
+                                                    <td hidden class="text-center hide_field" style="padding-top: 1.4rem;">
+                                                        <div class="d-flex justify-content-center">
+                                                            <div style="width: 10px;height: 10px;box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.205);border-radius: 50%;" {% if forloop.counter|mod:10 == 0 %}class="bg-success"{% elif forloop.counter|mod:10 == 1 %}class="bg-warning"{% elif forloop.counter|mod:10 == 2 %}class="bg-danger"{% elif forloop.counter|mod:10 == 3 %}class="bg-success"{% elif forloop.counter|mod:10 == 4 %}class="bg-info"{% elif forloop.counter|mod:10 == 5 %}class="bg-primary"{% elif forloop.counter|mod:10 == 6 %}class="bg-secondary"{% elif forloop.counter|mod:10 == 7 %}class="bg-warning"{% elif forloop.counter|mod:10 == 8 %}class="bg-danger"{% else %}class="bg-pink"{% endif %}></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center td_type">{{ i.type|lower|capfirst }}</td>
+                                                    <td class="text-center show_bank_id hide_field" hidden>{{ i.from_here.id }}</td>
+                                                    <td class="text-center show_bank_id hide_field" hidden>{{ i.to_here.id }}</td>
+                                                    <td class="text-center td_name">
+                                                        {% if i.type == 'Cash Deposit' or i.type == 'CASH DEPOSIT' %}
+                                                            Cash Deposit
+                                                        {% elif i.type == 'Cash Withdraw' or i.type == 'CASH WITHDRAW' %}
+                                                            Cash Withdraw
+                                                        {% elif i.type == 'Adjustment Reduce'  or i.type == 'ADJUSTMENT REDUCE'  %}
+                                                            Adjustment Reduce
+                                                        {% elif i.type == 'Adjustment Increase' or i.type == 'ADJUSTMENT INCREASE' %}
+                                                        Adjustment Increase
+                                                        {% else %}
+                                                            {% if i.from_here.id == bank.id %}
+                                                                To: <span class="fw-bolder">{{ i.to_here.bank_name|upper }}</span>
+                                                            {% elif i.to_here.id == bank.id %}
+                                                                From : <span class="fw-bolder">{{ i.from_here.bank_name|upper }}</span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center date-column td_date">{{ i.date|date:"Y-m-d" }}</td>
+                                                    <td class="text-center fw-bolder td_amount">
+                                                        {% if i.type == 'Cash Withdraw' %}
+                                                            <p class="tb pred">-₹{{ i.amount }}</p>
+                                                        {% elif  i.type == 'Adjustment Reduce'  %}
+                                                            <p class="tb pred">-₹{{ i.amount }}</p>
+                                                        {% elif  i.type == 'Adjustment Increase'  %}
+                                                            <p class="tb pgreen">+₹{{ i.amount }}</p>
+                                                        {% elif i.from_here.id == bank.id %}
+                                                            <p class="tb pred">-₹{{ i.amount }}</p>
+                                                        {% else %}
+                                                            <p class="tb pgreen">+₹{{ i.amount }}</p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center fw-bolder td_balance">{% if i.current_amount < 0 %}-₹{{ i.current_amount|mul:-1 }}{% else %}₹{{ i.current_amount }}{% endif %}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-lg fade" id="myModal1" tabindex="-1" aria-labelledby="myModal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="bank_modal_get_details">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal 1</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Content for Modal 1 goes here.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Modal -->
+<div class="modal modal-lg fade" id="myModal2" tabindex="-1" aria-labelledby="myModal2Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="bank_modal_view_or_edit">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#file_').on('change',function(){
+            // setInterval(function(){
+                $('#submit_import_excel').click()
+            // },0)
+        })
+    })
+    $(document).ready(function(){
+        var b,a,temp
+        $('.amount_truncate').each(function(){
+            b =$(this).text()
+            a = parseInt(b)
+            temp = a
+            if (temp<0)
+            {
+                a = a*-1
+            }
+            if (a >= 1e9) {
+                $(this).text( '₹'+(a / 1e9).toFixed() + 'B');
+            } else if (a >= 1e6) {
+                $(this).text( '₹'+(a / 1e6).toFixed() + 'M');
+            } else if (a >= 1e3) {
+                $(this).text( '₹'+(a / 1e3).toFixed() + 'K');
+            } else {
+                $(this).text( '₹'+a.toFixed());
+            }
+            if (temp<0)
+            {
+                $(this).text( '-'+$(this).text( ));
+            }
+        })
+    })
+    // hide open balance if its 0 or not available
+    $(document).ready(function(){
+        if('{{ bank.open_balance }}' === '0' || '{{ bank.open_balance }}' ==='')
+        {
+            $('.open_balane_remove').remove()
+        }
+    })
+
+    function exportToExcel() {
+        $('.hide_table_text_v').text('')
+        $('.hide_table_text_d').text('')
+        // $('.show_bank_id').attr('hidden',false)
+        $('.hide_field').remove()
+        const table = document.getElementById('myTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "bank_statement.xlsx");
+        $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
+        $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
+        // $('.show_bank_id').attr('hidden',true)
+        window.location.href=''
+    }
+    $(document).ready(function() {
+        $("#search_item_input").on("keyup",function() {
+            var value = $(this).val().toLowerCase();
+            $("#table1 tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+        $("#close_seacrh").on("click",function() {
+            setInterval(function(){
+                var value = $('#search_item_input').val().toLowerCase();
+                $("#table1 tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+                });
+            },100)
+        });
+    });
+
+    
+    $(document).ready(function() {
+        $("#search_input1").on("keyup",function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $(this).attr('hidden',true)
+            $('#search_item_input').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',true)
+        })
+    })
+    $(document).ready(function(){
+        $('#close_seacrh').click(function(){
+            $('#search_item_input').val('')
+            $('#search_item_input').attr('hidden',true)
+            $('#search_item').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',true)
+        })
+    })
+    function confirm_delete(Id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Bank?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Bank Deleted Successfilly!",
+                    icon: "success",
+                    buttons: false,
+                })
+                // 
+                .then((willDelete) => {
+                if (willDelete) {
+                    // Redirect to the delete_teacher view with the teacher's ID
+                    window.location.href = "{% url 'bank_delete' 0 %}".replace('0', Id);
+                    
+                } else {
+                    window.location.href = "{% url 'bank_delete' 0 %}".replace('0', Id);
+                }
+            });
+                // 
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+    function delete_bank_transaction(Id,bank_id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Transaction?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Transaction Deleted Successfilly!",
+                    icon: "success",
+                    buttons: false,
+                })
+                .then((willDelete) => {
+                    // alert(Id+" "+bank_id)
+                    // $('.click_here_ooo').click()
+                    // window.location.href = "{% url 'delete_bank_transaction' 0 1 %}".replace('0', Id).replace('1', bank_id);
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "delete_bank_transaction" 0 0 %}',
+                        data: {
+                            'pk': Id,
+                            'bank_id':bank_id,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            // Handle success response from the second view
+                            console.log(response);
+                            window.location.href=''
+                        },
+                        error: function(error) {
+                            // Handle error response from the second view
+                            console.error(error);
+                        }
+                    });
+                });
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+    $('.click_here_ooo').on('click',function(){
+        alert('clicked.......')
+    })
+    function bank_open_stk_delete(Id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Opening Stock Detail?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Opening Stock Deleted Successfilly!",
+                    icon: "success",
+                    buttons: false,
+                })
+                // 
+                .then((willDelete) => {
+                if (willDelete) {
+                    // Redirect to the delete_teacher view with the teacher's ID
+                    window.location.href = "{% url 'delete_bank_open_balance' 0 %}".replace('0', Id);
+                    
+                } else {
+                    window.location.href = "{% url 'delete_bank_open_balance' 0 %}".replace('0', Id);
+                }
+            });
+                // 
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+    // document.getElementById('myForm').addEventListener('keypress', function (e) {
+    //     if (e.key === 'Enter') {
+    //         e.preventDefault();
+    //         handleSubmit();
+    //     }
+    // });
+    function printContent() {
+            // Create an iframe to render the content
+            var sd = $('#startDate').val()
+            var ed = $('#endDate').val()
+            $('.hide_table_text_v').text('')
+            $('.hide_table_text_d').attr('hidden',true)
+            $('.hide_field').attr('hidden',true)
+            $('.hide_this_for_print').attr('hidden',true)
+            $('.over').css({'overflow':'hidden'})
+            // $('html').css({'color':'black','font-size': '11px'})
+            $('.table').removeClass('table-striped')
+            $('table th').css({'color':'black'})
+            $('.remove_color').attr('color','black')
+            $('.custom-dropdown').attr('hidden',true)
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            // Get the printable content
+            const printableContent = document.getElementById('printable_content').innerHTML;
+            iframe.contentDocument.open();
+            iframe.contentDocument.write('<html><head><title>Print</title>');
+            iframe.contentDocument.write('<style>');
+            iframe.contentDocument.write(`
+                /* Custom alignment styles for printed content */
+                body {
+                    font-family: Arial, sans-serif; /* Change font-family if needed */
+                    text-align: center; /* Center-align the content */
+                    
+                }
+                table {
+                    width: 100%; /* Make the table width 100% */
+                    border:1px solid black;
+                    border-collapse:collapse;
+                }
+                th, td {
+                    border:1px solid black;
+                    border-collapse:collapse;
+                    text-align:center;
+                    padding: 10px; /* Add padding for better spacing */
+                }
+            `);
+            iframe.contentDocument.write('</style>');
+            iframe.contentDocument.write('</head><body><br><h2 style="text-align-center">TRANSACTION STATEMENT</h2><p></p><h3 style="text-align:center;font-weight:bolder">{{ bank.bank_name|upper }} BANK</h3><p style="font-weight:100">( '+sd+'-'+ed+' )</p><br>' + printableContent + '</body></html>');
+            iframe.contentDocument.close();
+    
+        
+            // Print the iframe content
+            iframe.contentWindow.print();
+            document.body.removeChild(iframe);
+
+            // $('.custom-dropdown').attr('hidden',false)
+            // $('.hide_field').attr('hidden',false)
+            // $('.hide_this_for_print').attr('hidden',false)
+            $('.over').css({'overflow':'visible'})
+            $('body').css({'color':'inherit'})
+            $('html').css({'color':'inherit','font-size': 'inherit'})
+            $('.table').addClass('table-striped table-hover')
+            $('.print__text').removeClass('text-dark')
+            $('.print__text').addClass('text-warning')
+            $('table td').removeClass('text-dark')
+            // window.location.href=''
+        }
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+        $(document).ready(function() {
+            // Define the table and date inputs
+            var table = $('#myTable');
+            var startDateInput = $('#startDate');
+            var endDateInput = $('#endDate');
+
+            // Add change event listeners to date inputs
+            startDateInput.on('change', filterTable);
+            endDateInput.on('change', filterTable);
+
+            // Function to filter the table based on date range
+            function filterTable() {
+                var sd = new Date(startDateInput.val());
+                var startDate = sd.getFullYear() + '-' + padZero(sd.getMonth() + 1) + '-' + padZero(sd.getDate());
+                var ed = new Date(endDateInput.val());
+                var endDate = ed.getFullYear() + '-' + padZero(ed.getMonth() + 1) + '-' + padZero(ed.getDate());
+                // alert(startDate+" "+endDate)
+
+
+                table.find('tbody tr').each(function() {
+                    var rowDateText = $(this).find('.date-column').text(); // Adjust '.date-column' to the actual class or selector
+                    var rowDate = new Date(rowDateText);
+
+                    // Show or hide the row based on the date range
+                    if (rowDateText >= startDate && rowDateText <= endDate) {
+                    $(this).show();
+                    } else {
+                    $(this).hide();
+                    }
+                });
+            }
+        });
+        $('#startDate').on('change',function(){
+            var sd = new Date($(this).val());
+            var startDate = sd.getFullYear() + '-' + padZero(sd.getMonth() + 1) + '-' + padZero(sd.getDate());
+            $('#endDate').attr('min',startDate)
+        })
+        $('#endDate').on('change',function(){
+            var ed = new Date($(this).val());
+            var endDate = ed.getFullYear() + '-' + padZero(ed.getMonth() + 1) + '-' + padZero(ed.getDate());
+            $('#startDate').attr('max',endDate)
+        })
+        $(document).ready(function(){
+            var currentDate = new Date();
+            var year = currentDate.getFullYear();
+            var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+            var day = String(currentDate.getDate()).padStart(2, "0");
+            var formattedDate = year + "-" + month + "-" + day;
+            $("#endDate").val(formattedDate);
+        })
+        // custom dropdown1
+        function toggleDropdown1() 
+        {
+            var dropdownContent = document.querySelector('.dd1');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick1() 
+        {
+            var inputValue = $('#dd1_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                if($(this).find('.td_type').text().toLocaleLowerCase()===inputValue)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown1();
+        }
+        function clear_input1()
+        {
+            $('#dd1_input').val('')
+        }
+        // custom dropdown2
+        function toggleDropdown2() 
+        {
+            var dropdownContent = document.querySelector('.dd2');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick2() 
+        {
+            var inputValue = $('#dd2_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                if($(this).find('.td_name').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    // alert($(this).find('.td_name').text().toLocaleLowerCase(),inputValue)
+                    $(this).hide()
+                }
+            })
+            toggleDropdown2();
+        }
+        function clear_input2()
+        {
+            $('#dd2_input').val('')
+        }
+        // custom dropdown3
+        function toggleDropdown3() 
+        {
+            var dropdownContent = document.querySelector('.dd3');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick3() 
+        {
+            var inputValue = $('#dd3_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                if($(this).find('.td_date').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown3();
+        }
+        function clear_input3()
+        {
+            $('#dd3_input').val('')
+        }
+        // custom dropdown4
+        function toggleDropdown4() 
+        {
+            var dropdownContent = document.querySelector('.dd4');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick4() 
+        {
+            var inputValue = $('#dd4_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                var a =  $(this).find('.td_amount').text().replace('₹','')
+                if(a.replace('','').indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown4();
+        }
+        function clear_input4()
+        {
+            $('#dd4_input').val('')
+        }
+        // custom dropdown5
+        function toggleDropdown5() 
+        {
+            var dropdownContent = document.querySelector('.dd5');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick5() 
+        {
+            var inputValue = $('#dd5_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                var a =  $(this).find('.td_balance').text().replace('₹','')
+                if(a.replace('','').indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown5();
+        }
+        function clear_input5()
+        {
+            $('#dd5_input').val('')
+        }
+        // custom dropdow6
+        function toggleDropdown6() 
+        {
+            var dropdownContent = document.querySelector('.dd6');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick6() 
+        {
+            var inputValue = $('#dd6_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                if($(this).find('.td_action').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown6();
+        }
+        function clear_input6()
+        {
+            $('#dd6_input').val('')
+        }
+        // custom dropdow7
+        function toggleDropdown7() 
+        {
+            var dropdownContent = document.querySelector('.dd7');
+            dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleButtonClick7() 
+        {
+            var inputValue = $('#dd7_input').val().toLowerCase();
+            $('#myTable tbody tr').each(function(){
+                if($(this).find('.td_by').text().toLocaleLowerCase().indexOf(inputValue)>-1)
+                {
+                    $(this).show()
+                }
+                else{
+                    $(this).hide()
+                }
+            })
+            toggleDropdown7();
+        }
+        function clear_input7()
+        {
+            $('#dd7_input').val('')
+        }
+        $(document).ready(function(){
+            $('#date_statement').text('( '+$('#startDate').val()+' - '+$('#endDate').val()+' )')
+        })
+        // bootstrap tooltip
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+</script>
+
+{% endblock  %}

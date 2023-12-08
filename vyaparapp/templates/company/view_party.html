@@ -1,0 +1,322 @@
+<!-- create by Antony -->
+
+{% extends 'company/src/html/base.html' %}
+
+{% block content %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+ 
+
+</style>
+
+
+{% if Party %}
+<div class="body-wrapper">
+    <br><br><br>
+    
+    <div class="row p-0 m-0">
+        <div class="col-12  p-0 m-0" >
+            <div class=" bg-light bg-light bs pb-0 mb-0"style="height:100%;width:100%">
+                
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row ps-3 pe-3 m-0" >
+        <div class="col-sm-12 col-lg-3  ps-2 pe-3 pb-2" style="height: 48rem;">
+            <div class="card bg-light bs"style="height:100%;">
+                <div class="row m-0">
+                    <div class="col-12 p-4 pt-3" style="z-index:2">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-between">
+                                <input type="text" id="search" class="form-control text-dark mb-2 " placeholder="search......">
+                                <a style="color: white; background-color: orange;  height: 35px; margin-left: 20px;" class="btn pt-2" href="{% url 'add_parties' %}">
+                                    <i class="fa-solid fa fa-plus" ></i>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="col-12 p-3 pt-0">
+
+                            <form action="" method="post">
+                                {% csrf_token %}
+
+                                <div style="overflow: auto;height: 42rem;">
+                                <table  class="table w-100 table-light " id="partysearch">
+                                    <thead class="bg-primary">
+                                        <th class="text-start fs-2 tb">PARTY</th>
+                                        <th class="text-end fs-2 tb">AMOUNT</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for p in Party %}
+                                        <tr>
+                                            <td style="border: none;">
+                                                <a href="{% url 'view_party' p.id %}" style="color: black; ">{{ p.party_name }}</a>
+                                            </td>
+                                            <td style="border: none; position: relative; padding-left: 60px;">
+                                                {% if p.payment == 'To Pay' %}
+                                                    <span style="border: none; color: red; ">{{ p.openingbalance }}</span>
+                                                {% elif p.payment == 'To Receive' %}
+                                                    <span style="border: none; color: green; ">{{ p.openingbalance }}</span>
+                                                {% else %}
+                                                    <span style="border: none; color: black; ">{{ p.openingbalance }}</span>
+                                                {% endif %}
+                                                <span class="three-dots" style="cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); right: 10px;" onclick="toggleDropdown(this)">&#8942;</span>
+                                                <div class="dropdown-menu" style="display: none; position: absolute; right: 0;">
+                                                    <a class="dropdown-item" href="{% url 'edit_party' p.id %}">Edit</a>
+                                                    <a class="dropdown-item" href="{% url 'deleteparty' p.id %}">Delete</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                </div>
+
+                            </form>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-9  ps-2 pe-3" style="height: 80%;">
+       
+            <div class="row m-0" style="height:20%">
+                <div class="card bg-light bs p-3 mb-3">
+                    
+                    <h5 style="color: black; ">{{getparty.party_name}}</h5>
+
+
+                    <div class=" row d-flex justify-content-between">
+                        <div class="col-md-4 mt-2">
+                            <label class="tb  fs-3">Phone: </label>
+                            {% if getparty.contact %}
+                            <label for="" style="color: #000000; ">{{ getparty.contact }}</label>
+                            {% else %}
+                            <a href="{% url 'edit_party' getparty.id %}"><i class="fas fa-phone "></i>&nbsp;&nbsp;Add
+                                Contact</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label class="tb  fs-3">Address: </label>
+                            {% if getparty.address %}
+                            <label for="" style="color: #000000; ">{{getparty.address}}</label>
+                            {% else %}
+                            <a href="{% url 'edit_party' getparty.id %}"><i class="fas fa-map-marker"></i>&nbsp;&nbsp;Add
+                                Address</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class=" row d-flex justify-content-between mt-2">
+                        <div class="col-md-4 mt-2">
+                            <label class="tb  fs-3">Email: </label>
+                            {% if getparty.email %}
+                            <label for="" style="color: #000000; ">{{getparty.email}}</label>
+                            {% else %}
+                            <a href="{% url 'edit_party' getparty.id %}"><i class="fas fa-envelope"></i>&nbsp;&nbsp;Add
+                                Email</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label class="tb  fs-3">Gstin: </label>
+                            {% if getparty.gst_no %}
+                            <label for="" style="color: #000000; ">{{getparty.gst_no}}</label>
+                            {% else %}
+                            <a href="{% url 'edit_party' getparty.id %}"><i class="fas fa-barcode "></i>&nbsp;&nbsp;Add
+                                Gstin</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <label class="tb  fs-3">Credit limit: </label>
+                        {% if getparty.creditlimit %}
+                            <label for="" style="color: #000000; ">{{getparty.creditlimit}}</label>
+                            {% else %}
+                            <a href="{% url 'edit_party' getparty.id %}" ><i
+                                    class="fas fa-rupee-sign "></i>&nbsp;&nbsp;Set Credit Limit</a>
+                            {% endif %}
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- <div class="row" style="height: 0.5rem;"></div> -->
+            <div class="row pt-0 m-0">
+                <div class="card p-0 bg-light bs" style="height: 36rem;">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-3">
+                            <p class="tb fw-bolder pt-2">TRANSACTIONS</p>
+                        </div>
+
+                        <div class="col-sm-12 col-lg-4 " style="margin-left: 16rem;">
+                            <input type="text" id="search1" class="form-control text-dark mb-2 border-dark "
+                                    placeholder="search......" >
+                        </div>
+
+                        <div class="col-sm-12 col-lg-3">
+                            
+                        </div>
+                        
+                            <div class="mt-3" style="overflow: scroll;height: 31rem;">
+                                <table class="table" id="partiessearch">
+                                    <thead>
+                                        <tr class="fs-2 tb">
+                                            <th></th>
+                                            <th>TYPE</th>
+                                            <th>NUMBER</th>
+                                            <th>DATE</th>
+                                            <th>TOTAL</th>
+                                            <th>BALANCE</th>
+                                        </tr>
+                                    </thead>
+                                    {% if getparty.openingbalance != "" %}
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-size: 20px; color: {% if getparty.payment == 'To Pay' %}red{% elif getparty.payment == 'To Receive' %}green{% else %}black{% endif %}; vertical-align: middle;">&#8226;</td>
+                                            <td class="name" style="color: black;">Opening Balance</td>
+                                            <td class="number name" style="color: black;">{{getparty.gst_no}}</td>
+                                            <td class="date name" style="color: black;">{{getparty.current_date}}</td>
+                                            <td class="number" style="color: black;">{{getparty.openingbalance}}</td>
+                                            <td class="number"  style="color: black;">{{getparty.openingbalance}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+          
+        </div>
+    </div>
+</div>
+
+    {% else %}
+
+            <div class="body-wrapper ">
+                <br><br><br>
+                <div class="p-5 text-center" style="display: flex;justify-content: center;">
+                    <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <img height="500vw" src="{{'static/images/supermarketimg3.png'}}" class="card-img" alt="no img">
+                                <!-- <div class="card-img-overlay">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                    <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                                </div> -->
+                            </div>
+                            <div class="col-sm-12 col-md-6 ps-4 pe-4">
+                                <div class="p-1 rounded" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                                    <p style="margin-bottom: 4rem;"></p>
+                                    <img width="100vw" src="{{'static/images/fav.png'}}" alt="no img">
+                                    <p></p>
+                                    <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">VYAPAR</h1>
+                                    <!-- <h5 class="card-title">Card title</h5> -->
+                                    <p style="margin-bottom: 1.5rem;"></p>
+                                    <p class="card-text">Welcome to vyapar, We're committed to providing a seamless and secure online marketplace for buyers and sellers. Our platform offers a range of features.</p>
+                                    <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">Please create your first item</p>
+                                    <p class="mt-4"></p>
+                                    <a class="btn btn-lg btn-info btn-gradient" href="{% url 'add_parties' %}">Create Item</a>
+                                    <p style="margin-bottom: 4rem;"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <p>No parties available.</p>
+    {% endif %}
+
+
+<script>
+    function toggleDropdown(dotsElement) {
+        var dropdownMenu = dotsElement.nextElementSibling;
+        if (dropdownMenu.style.display === 'block' || dropdownMenu.style.display === '') {
+            dropdownMenu.style.display = 'none';
+        } else {
+            dropdownMenu.style.display = 'block';
+
+            // Close the dropdown if the user clicks outside of it
+            window.addEventListener('click', function (event) {
+                if (event.target !== dotsElement && event.target !== dropdownMenu) {
+                    dropdownMenu.style.display = 'none';
+                }
+            });
+        }
+
+        // Prevent the click event from propagating to the window
+        event.stopPropagation();
+    }
+
+    $(document).ready(function () {
+        var $rows = $('#partysearch tbody tr');
+        $('#search').keyup(function () {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.hide().filter(function () {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return ~text.indexOf(val);
+            }).show();
+        });
+    });
+
+
+    $(document).ready(function () {
+        var $rows = $('#partiessearch tbody tr');
+        $('#search1').keyup(function () {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.hide().filter(function () {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return ~text.indexOf(val);
+            }).show();
+        });
+    });
+
+</script>
+
+</script>
+
+{% endblock  %}

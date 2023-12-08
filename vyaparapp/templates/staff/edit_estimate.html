@@ -1,0 +1,1473 @@
+<!-- create by shemeem -->
+{% extends 'staff/staffbase.html' %}
+{% block content %}
+{% load static %}
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" /> -->
+<style>
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .amount_summary{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-bottom: 1rem;
+    }
+    .amt_head_label label{
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .table>:not(caption)>*>* {
+        padding: 16px 2px !important;
+    }
+    .form-control{
+        padding: 8px 7px;
+    }
+
+    /* New Party Modal */
+    .new_party_form .form-control {
+        border: 2px solid #6c757d;
+        transition: border-color 0.3s;
+    }
+
+    .new_party_form .form-control:focus {
+        border-color: #007bff;
+    }
+
+    #toPayRadio {
+        accent-color: red;
+    }
+
+    #toReceiveRadio {
+        accent-color: green;
+    }
+
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+    }
+
+  
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 3px;
+        bottom: 5px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(18px);
+    }
+
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .save-button {
+        background-color: #007bff;
+        border-color: #007bff; 
+        color: #fff; 
+        margin-right: 1rem;
+    }
+
+   
+    .save-button:hover {
+        background-color: #fff;
+        color: #007bff;
+    }
+
+</style>
+<div class="body-wrapper">
+    <div class="container-fluid">
+        <div class="row mb-4 mt-3">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 d-flex justify-content-center">
+                <a href="#" id="b1" class="btn text-white mx-2" style="background-color: rgb(252, 3, 3,0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b2" class="btn text-white mx-2" style="background-color: rgba(3, 161, 252, 0.7); border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
+                <a href="#" id="b3" class="btn text-primary mx-2" style="border-radius: 20px; border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+            <div class="row pb-0 mb-0">
+                <div class="col text-center pb-2" style="border-bottom: 3px solid rgba(0, 0, 0, 0.548);"><a class="fw-bolder fs-4 text-dark" href="#">EDIT ESTIMATE</a></div>
+            </div>
+        </div>
+
+        <div class="row pt-0 m-0 mt-3">
+            <div class="card p-0 bg-light bs">
+                <form action="{% url 'updateEstimate' estimate.id %}" method="post" class="form">
+                    {% csrf_token %}
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-md-4">
+                            <label for="party">Party</label>
+                            <div class="d-flex py-2">
+                                <select name="party_name" id="party" class="form-control fw-bolder" required>
+                                    <option value="">Select Party</option>
+                                    {% for p in parties %}
+                                    {% if estimate.party_name == p.party_name %}
+                                    <option value="{{p.id}}" selected>{{p.party_name}}</option>
+                                    {% else %}
+                                    <option value="{{p.id}}">{{p.party_name}}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn bg-warning ms-1" data-bs-target="#newParty" data-bs-toggle="modal"><i class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="party_balance mt-3 d-none" id="party_balance">
+                                <label for="p_bal">Balance: </label>
+                                <span id="p_bal" class="fs-5 fw-bold">0</span>
+                                <input type="text" name="p_state" id="p_state" value="" hidden>
+                                <input type="text" name="c_state" id="c_state" value="{{company.state}}" hidden>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group d-none" id="party_contact">
+                                <label for="p_contact">Contact</label>
+                                <input class="form-control border-dark fw-bolder text-dark" id="p_contact" type="text" autocomplete="off" name="contact" readonly>
+                            </div>
+                            <div class="form-group mt-1 d-none" id="party_address">
+                                <label for="bill_address">Billing Address</label>
+                                <textarea name="address" id="bill_address" rows="4" class="form-control border-dark text-dark"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reference_number">Ref No.</label>
+                                <input class="form-control border-dark fw-bolder text-dark" id="reference_number" type="text" autocomplete="off" name="ref_no" value="{{estimate.ref_no}}" readonly>
+                            </div>
+                            <div class="form-group mt-1">
+                                <label for="inv_date">Invoice Date</label>
+                                <input class="form-control border-dark fw-bolder text-dark" id="inv_date" type="date" name="date" value="{{estimate.date | date:'Y-m-d'}}">
+                            </div>
+                            <div class="form-group mt-1">
+                                <label for="state_of_supply">State Of Supply</label>
+                                <select name="state_supply" id="state_of_supply" class="form-control border-dark fw-bolder text-dark" required>
+                                    <!-- <option value="">Select</option> -->
+                                    {% if estimate.state_of_supply == 'State' %}
+                                    <option value="state" selected>State</option>
+                                    {%else%}
+                                    <option value="state">State</option>
+                                    {% endif %}
+                                    {% if estimate.state_of_supply == "Other State" %}
+                                    <option value="other" selected>Other State</option>
+                                    {% else %}
+                                    <option value="other">Other State</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row px-2 mt-2">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-info mt-3" id="items_table">
+                              <thead>
+                                <tr>
+                                  <th class="text-center">#</th>
+                                  <th scope="col" class="text-center col-3">Item</th>
+                                  <th scope="col" class="text-center">HSN</th>
+                                  <th scope="col" class="text-center">Qty</th>
+                                  <th scope="col" class="text-center">Price</th>
+                                  <th scope="col" class="text-center">Tax</th>
+                                  <th scope="col" class="text-center">Discount</th>
+                                  <th scope="col" class="text-center">Amount</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody id="est-items-table-body">
+                                {% for p in estItems %}
+                                <tr id='addr0{{forloop.counter}}'>
+                                    <td class="item_sl_num">{{forloop.counter}}<input type="text"  name='id[]' value="{{ p.id }}" hidden></td>
+                                    <td>
+                                        <div class="w-100">
+                                            <div class="p-0 border-0 bg-none d-flex position-relative" style="display: block;">
+                                                <input type="text" id="item{{forloop.counter}}" value="{{p.name}}" name="item[]" class="dropdown-toggle form-control item-display border-info bg-light" onkeyup="filterFunction($(this).attr('id'))"  data-bs-toggle="dropdown" aria-expanded="false" placeholder="Items.." autocomplete="off">
+                                                <ul class="dropdown-menu w-100 items-available position-absolute" id="menu1"  style="overflow-y: auto; height: 270px;"> 
+                                                {% for i in items %}
+                                                <li class="dropdown-item items-options" onclick="getItemDetails($(this).parent().prev().attr('id'),`{{i.item_name}}`)">{{i.item_name}}</li>
+                                                {% endfor %}
+                                                </ul>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" data-bs-target="#newItem" data-bs-toggle="modal"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" name='hsn[]' id="hsn{{forloop.counter}}" value="{{p.hsn}}" placeholder='HSN' class="form-control border-info bg-light" readonly/>
+                                        <input type="text" name="estItems[]" id="estitem{{forloop.counter}}" value="{{p.item.id}}" hidden>
+                                    </td>
+                                    <td><input type="number" name='qty[]'placeholder='Quantity' id="qty{{forloop.counter}}" value="{{p.quantity}}" class="form-control border-info bg-light qty" min="1" required/></td>
+                                    <td><input type="number" name='price[]' id="price{{forloop.counter}}" placeholder='Sale Price' value="{{p.price}}" class="form-control border-info bg-light price" step="0.00" min="0" readonly /></td>
+                                    <td>
+                                        <!-- <input type="text" name="tax[]" class="form-control border-info bg-light tax" placeholder="0 %" id="tax1" style="display: block;"> -->
+                                        <input type="text" name="taxgst[]" class="form-control border-info bg-light tax tax-gst" placeholder="0 %" value="{{p.item.item_gst}}" id="taxgst{{forloop.counter}}" style="display: block;" readonly>
+                                        <input type="text" name="taxigst[]" class="form-control border-info bg-light tax tax-igst" placeholder="0 %" value="{{p.item.item_igst}}" id="taxigst{{forloop.counter}}" style="display: none;" readonly>
+                                    </td>
+                                    <td><input type="number" name='discount[]' id="discount{{forloop.counter}}" value="{{p.discount}}" class="form-control border-info bg-light discount" value="0" step="any" /></td>
+                                    <td><input type="number" name='total[]' id="total{{forloop.counter}}" value="{{p.total}}" class="form-control border-info bg-light total" value="0" step="any" readonly /></td>
+                                    <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount{{forloop.counter}}" class="form-control border-info bg-light taxamount"/></td></td>
+                                    <td>
+                                        <button type="button" id="{{forloop.counter}}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row"><i class="fa fa-plus"></i></button><br>
+                                        <button type="button" id="{{forloop.counter}}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row"><i class="fa fa-minus"></i></button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                              <tr>
+                                <td><button type="button" id="add_row_btn" class="btn btn-outline-secondary" title="Add Row"><i class="fa fa-plus"></i></button></td>
+                              </tr>
+                              
+                            </table>
+              
+                          </div>
+                    </div>
+                    
+                    <div class="row mt-3 px-2">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea name="description" id="description" class="form-control border-dark fw-bolder text-dark" rows="8" placeholder="Description..">{{estimate.description}}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+                            <div class="card px-3 py-4">
+                                <div class="sub_total align-items-center amount_summary">
+                                    <div class="amt_head_label">
+                                        <label>SUB TOTAL</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.subtotal}}" class="form-control" name="subtotal" id="sub_total" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div class="cgst align-items-center amount_summary" id="cgst_val">
+                                    <div class="amt_head_label">
+                                        <label>CGST</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.cgst}}" class="form-control" name="cgst_tax" id="cgst_tax" readonly>
+                                    </div>
+                                </div>
+                                <div class="sgst align-items-center amount_summary" id="sgst_val">
+                                    <div class="amt_head_label">
+                                        <label>SGST</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.sgst}}" class="form-control" name="sgst_tax" id="sgst_tax" readonly>
+                                    </div>
+                                </div>
+                                <div class="igst align-items-center amount_summary" id="igst_val">
+                                    <div class="amt_head_label">
+                                        <label>IGST</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.igst}}" class="form-control" name="igst_tax" id="igst_tax" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="tax_total align-items-center amount_summary">
+                                    <div class="amt_head_label">
+                                        <label>TAX AMOUNT</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.tax_amount}}" class="form-control" name="tax_amount" id="tax_amount" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="adjustment align-items-center amount_summary">
+                                    <div class="amt_head_label">
+                                        <label>ADJUSTMENT</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" value="{{estimate.adjustment}}" class="form-control" step="any" name="adjustment" id="adjustment">
+                                    </div>
+                                </div>
+
+                                <div class="grand_total align-items-center amount_summary">
+                                    <div class="amt_head_label">
+                                        <label>GRAND TOTAL</label>
+                                    </div>
+                                    <div class="val">
+                                        <input type="number" placeholder="0.00" class="form-control" value="{{estimate.total_amount}}" name="grand_total" id="grand_total" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 mb-5">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <button id="save_btn" class="btn btn-primary bg-gradient w-50" type="submit">SAVE</button>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div> 
+
+
+<!-- new unit modal -->
+<div class="modal fade" id="newUnitModal" tabindex="-1" aria-labelledby="newUnitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="newUnitModalLabel">ADD UNIT</h1>
+          <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#newItem" aria-label="Close"></button>
+        </div>
+        <div class="modal-body mb-1 pb-1">
+          <!-- <form class="mb-0" action="{% url 'item_unit_create' %}" method="POST"></form> -->
+          <form class="mb-0" id="unit_form">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">UNIT</label>
+              <input type="text" class="form-control border-dark text-uppercase" id="item_unit_name_id" placeholder="ENTER UNIT HERE.." name="item_unit_name" required>
+            </div>
+            <div class="m-0 text-center">
+              <label for="message-text" class="col-form-label  text-secondary fw-lighter">Example : PCS/BOX/LITER</label>
+              <!-- <textarea class="form-control" id="message-text"></textarea> -->
+            </div>
+            <input hidden id="submit_unit_creation" type="submit">
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-center mt-1">
+          <button id="modal_cls_btn" type="button" class="btn btn-secondary ps-5 pe-5" data-bs-toggle="modal" data-bs-target="#newItem">Close</button>
+          <button id="add_btn_" type="button" class="btn btn-primary ps-5 pe-5" onclick="submit_unit_creation_fn()">ADD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- modal end -->
+  
+
+<!-- New Item modal -->
+<div class="modal fade" id="newItem">
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <!-- <div class="modal-header">
+            <h3 class="m-3">ADD ITEM</h3>
+            <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i></button>
+        </div> -->
+        <div class="modal-body">
+            <form autocomplete="off" id="newItemForm" class="new_item_form"> 
+                {% csrf_token %}
+                <div class="position-relative">
+                    <div class="position-absolute end-0">
+                      <div class="d-flex pt-3 pe-3">
+                        <span class="fa fa-cog fs-5 tb p-1 pe-3"></span>
+                        <a href="#" data-bs-dismiss="modal"><span class="fa fa-times fs-5 tb p-1"></span></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-light p-4 rounded">
+                      <div class="d-md-flex d-sm-block">
+                        <h5><strong class="fw-bolder">ADD ITEM</strong></h5>
+                        <div class="form-check form-switch d-flex">
+                          <label id="lbl1" class="form-check-label fw-bolder" for="flexSwitchCheckChecked">PRODUCTS</label>
+                          <input class="form-check-input fs-5 ms-2 me-2" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                            >
+                          <label id="lbl2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked">SERVICES</label>
+                        </div>
+                      </div>
+                    <br>
+                    <div id="main_form_div">
+                      
+                      <div class="d-flex">
+                        <input style="color: black;" class="form-control border-dark fw-bolder" type="text" placeholder="ITEM NAME" autocomplete="off" name="item_name" id="item_name" required>
+                        <input style="color: black;" class="form-control border-dark ms-2 fw-bolder" type="number" placeholder="ITEM HSN" name="item_hsn" id="item_hsn" required>
+                        <select style="color: black;" class="form-control ms-2 border-dark bg-light me-2" id="item_unit_value" name="item_unit" required>
+                          <option value="">Select a unit</option>
+                          <option value="NOS">NOS</option>
+                          <option value="BOX">BOX</option>
+                          <option value="PACKET">PACKET</option>
+                          {% if item_units %}
+                            {% for i in item_units %}
+                            <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
+                            {% endfor %}
+                          {% endif %}
+                          <option id="load_new_unit" hidden value=""></option>
+                        </select>
+                        <!-- <button class="btn bg-warning"><span class="fa fa-plus"></span></button> -->
+                        
+                        <button id="modal_closing" type="button" class="btn bg-warning" data-bs-toggle="modal" data-bs-target="#newUnitModal" data-bs-whatever="@mdo"><span class="fa fa-plus"></span></button>
+                        
+                      </div>
+                    
+                      <div>
+                          <p></p>
+                          <hr class="p-0 m-0">
+                          <div style="background-color: rgba(0, 195, 255, 0.205);" class="p-3 pb-0 mb-0">
+                            <div class="">
+                              <div class="row pb-0 mb-0">
+                                <div id="prc_" class="col text-center pb-2" ><a class="fw-bolder fs-4"
+                                    style="color: gray;" >PRICING</a></div>
+                                <div id="stk_" class="col text-center pb-2" ><a class="fw-bolder fs-4"
+                                    style="color: gray;" >STOCKS</a></div>
+                                <!-- <div id="" class="col text-center pb-2"><a class="fw-bolder fs-4"
+                                    style="color: gray;" >FIELD3</a></div>
+                                <div id="" class="col text-center pb-2"><a class="fw-bolder fs-4"
+                                    style="color: gray;" >FIELD4</a></div> -->
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- pricing template start -->
+                          <div id="pricing_template" style="background-color: rgba(144, 211, 117, 0.098);">
+                            <div class="row">
+                              <div  class="col-sm-12 col-md-1">
+
+                              </div>
+                              <div class="col-sm-12 col-md-10 pb-4">
+                                  <div class="text- pt-5">
+                                    <label style="user-select: none;" class="fs-4 tb" for="item_tax_1">Taxable</label>
+                                    <input id="item_tax_1" class="me-3" type="radio" name="item_tax_result" required>
+                                    <label style="user-select: none;" class="fs-4 tb" for="item_tax_2">Non Taxable</label>
+                                    <input id="item_tax_2" type="radio" name="item_tax_result" required>
+                                    <input id="taxable_result" type="text" name="item_taxable" hidden>
+                                  </div>
+                                  <br>
+                                  <div hidden id="taxable_hide" class="mb-3">
+                                    <div class="d-flex">
+                                      <div class="w-50 me-3">
+                                        <label class="fw-bold tb fs-3" for="">GST</label><br>
+                                        <select style="color: black;background-color: white;" class="form-control fw- border-secondary fs-3" id="item_gst" placeholder="GST" name="item_gst" >
+                                          <option value="GST0[0%]" selected>GST0[0%]</option>
+                                          <option value="GST3[3%]">GST3[3%]</option>
+                                          <option value="GST5[5%]">GST5[5%]</option>
+                                          <option value="GST12[12%]">GST12[12%]</option>
+                                          <option value="GST13[18%]">GST18[18%]</option>
+                                          <option value="GST28[28%]">GST28[28%]</option>
+                                        </select>
+                                      </div>
+                                      <div class="w-50">
+                                        <label class="fw-bold tb fs-3" for="">IGST</label><br>
+                                        <select style="color: black;background-color: white;" class="form-control fw- border-secondary tb fs-3" id="item_igst" placeholder="GST" name="item_igst" >
+                                          <option value="IGST0[0%]" selected>IGST0[0%]</option>
+                                          <option value="IGST3[3%]">IGST3[3%]</option>
+                                          <option value="IGST5[5%]">IGST5[5%]</option>
+                                          <option value="IGST12[12%]">IGST12[12%]</option>
+                                          <option value="IGST18[18%]">IGST18[18%]</option>
+                                          <option value="IGST28[28%]">IGST28[28%]</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="d-flex">
+                                    <div class="w-50 me-3">
+                                      <label class="tb fw-bold" for="pur_price">SALES PRICE</label><br>
+                                      <input style="color: black;background-color: white;" id="sal_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Sales Price here" name="item_sale_price" required>
+                                    </div>
+                                    <div class="w-50">
+                                      <label class="tb fw-bold" for="">PURCHASE PRICE</label><br>
+                                      <input style="color: black;background-color: white;" id="pur_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_purchase_price" required>
+                                    </div>
+                                  </div>
+                                  <div class="text-start mt-5">
+                                    <button id="next_btn" class="btn btn-primary bg-gradient" type="button">Next</button>
+                                  </div>
+                              </div>
+                              <div  class="col-sm-12 col-md-1">
+
+                              </div>
+                            </div>
+                          </div>
+                          <!-- pricing template end -->
+
+
+                          <!-- stock template start -->
+                          <div hidden id="stock_template"style="background-color: rgba(144, 211, 117, 0.098);">
+                            <div class="row">
+                              <div  class="col-sm-12 col-md-1">
+
+                              </div>
+                              <div class="col-sm-12 col-md-10 pb-4">
+                                <br><br>
+                                  <div class="d-flex">
+                                    <div class="w-50 me-3">
+                                      <label class="tb fw-bold" for="opn_stock_">OPENING STOCK</label><br>
+                                      <input style="color: black;background-color: white;" id="opn_stock_" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Opening Stock here" name="item_opening_stock">
+                                    </div>
+                                    <div id="at_price_div" style="visibility: hidden;" class="w-50">
+                                      <label class="tb fw-bold" for="at_price">AT PRICE</label><br>
+                                      <input style="color: black;background-color: white" id="at_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="At Price here" name="item_at_price">
+                                    </div>
+                                  </div>
+                                  <br>
+                                  <div class="d-flex">
+                                    <div class="w-50 me-3">
+                                      <label class="tb fw-bold" for="date_">DATE</label><br>
+                                      <input style="color: black;background-color: white" id="date_" class="form-control fw-normal border-secondary  fs-3" type="date" placeholder=""required name="item_date">
+                                    </div>
+                                    <div class="w-50">
+                                      <label class="tb fw-bold" for="at_price">MINIMUM STOCK TO MAINTAIN</label><br>
+                                      <input style="color: black;background-color: white" id="item_min_stock_maintain" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_min_stock_maintain">
+                                    </div>
+                                  </div>
+                                  <div class="text-start mt-5">
+                                    <button id="prev_btn" class="btn btn-primary bg-gradient  me-3" type="button">PREVIOUS</button>
+                                    <button id="saveItem" class="btn btn-primary bg-gradient" type="button" data-bs-dismiss="modal" name="save" value="save">SAVE</button>
+                                  </div>
+                              </div>
+                              <div  class="col-sm-12 col-md-1">
+
+                              </div>
+                              
+                            </div>
+                          </div>
+                          <!-- stock template end -->
+                           
+                      </div>
+
+
+                    </div>
+                  </div>
+            
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- New Party modal -->
+<div class="modal fade" id="newParty">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: rgb(213 229 233);">
+            <div class="modal-header">
+                <h3 class="m-3">ADD PARTY</h3>
+                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times" aria-hidden="true"></i></button>
+            </div>
+            <div class="modal-body">
+                <form autocomplete="off" id="newPartyForm" class="new_party_form"> 
+                    {% csrf_token %}
+                    <div class="container-fluid">
+                        <div class="col-md-9 row">
+                            <div class="col-md-4">
+                                <input type="text" style="background-color: white;" class="form-control" id="partyname" name="partyname" placeholder="Party Name" required>
+                            </div>                
+                            <div class="col-md-4" style="position: relative;">
+                                <input type="text" style="background-color: white;" class="form-control" id="gstno" name="gstno" placeholder="GSTIN" oninput="validateGSTIN(this)">
+                                <span id="gstno-validation" style="position: absolute; right: 14px; top: 8px;"></span>
+                                <label style="color: rgb(36, 206, 248);">* 32AAQFR1222B1ZS</label>
+                            </div>
+                            
+                            <div class="col-md-4" style="position: relative;">
+                                <input type="number" style="background-color: white;" class="form-control" id="contact" name="contact" placeholder="Phone Number" oninput="validatePhoneNumber(this)">
+                                <span id="contact-validation" style="position: absolute; right: 15px; top: 8px;"></span>
+                            </div>  
+                            
+                            
+                            <div class="options mt-2">
+                                <a href="javascript:void(0);" onclick="toggleSection('GST')" style="color: black;"><b>GST &
+                                        Address<b></a>
+                                <a href="javascript:void(0);" onclick="toggleSection('Credit')"
+                                    style="color: black; margin-left: 3vw;"><b>Credit & Balances<b></a>
+                                <a href="javascript:void(0);" onclick="toggleSection('additionalfield')"
+                                    style="color: black; margin-left: 3vw;">Aditional Field</a>
+                            </div>
+                        </div>
+                        <fieldset id="GST" class="GST">
+                            <div style="background-color: white;" class="col-sm-5"><select class="form-control mt-4 " id="gst" name="gst">
+                                    <option >Select GST Type</option>
+                                    <option >Registered Party</option>
+                                    <option>UnRegistered or Consumer</option>
+                                    <option>Registered Business or Combosision</option>
+                                </select>
+                            </div>
+                            <div style="background-color: white;" class="col-sm-5"> <select type="text" class="form-control mt-4" id="state" name="state"></div>
+                            <option value="" selected>Choose State</option>
+                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                            <option value="Damn anad Diu">Damn anad Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Predesh">Himachal Predesh</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Madhya Predesh">Madhya Predesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Predesh">Uttar Predesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Other Territory">Other Territory</option>
+                            </select>
+                    </div>
+            
+                    <div class="col-sm-5 ">
+                        <textarea style="background-color: white;" class="form-control mt-4" name="address" id="partyAddress" cols="56" rows="3"
+                            placeholder="&nbsp;Address"></textarea>
+                    </div>
+            
+                    <div class="col-sm-5 ">
+                        <input style="background-color: white;" type="email" class="form-control mt-4" id="email" name="email" placeholder="Email">
+                    </div>
+                    </fieldset>
+            
+                    <fieldset id="Credit" class="Credit" style="display:none;">
+                        <div class="col-sm-5">
+                            <input style="background-color: white;" type="number" class="form-control mt-4" id="balance" name="balance" placeholder="Opening Balance">
+                        </div>
+                    
+                        <div  class="col-sm-7 mt-4">
+                            <label class="radio-label">To Pay</label>
+                            <input type="radio" class="radio-input" id="toPayRadio" name="paymentType" value="To Pay" style="margin-right: 2vw; margin-left: 5px;">
+                            <label class="radio-label">To Receive</label>
+                            <input type="radio" class="radio-input" id="toReceiveRadio" name="paymentType" value="To Receive" style="margin-right: 2vw; margin-left: 5px;">
+                        </div>
+                    
+                        <label class="switchbox mt-4" style="margin-right: 1vw;">Credit Limit</label>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <div class="col-md-5 mt-4" id="text-box" style="display: none;">
+                            <input style="background-color: white;" type="number" class="form-control" name="creditlimit" placeholder="Credit Limit" id="credit_limit">
+                        </div>
+                    
+                        <div class="col-md-5 mt-4">
+                            <input  type="date" class="form-control" id="current-date" name="currentdate" placeholder="Current Date" style="background-color: white;" >
+                        </div>
+                    
+            
+                    </fieldset>
+                    
+                    <fieldset id="additionalfield" class="additionalfield" style="display:none;">
+                        <div class="col-md-5 mt-4">
+                            <input type="text" class="form-control" name="additionalfield1" id="additionalfield1" placeholder="Additional Field" style="background-color: white;">
+                        </div>
+                
+                        <div class="col-md-5 mt-4">
+                            <input type="text" class="form-control" name="additionalfield2" id="additionalfield2" placeholder="Additional Field" style="background-color: white;">
+                        </div>
+                
+                        <div class="col-md-5 mt-4">
+                            <input type="text" class="form-control" name="additionalfield3" id="additionalfield3" placeholder="Additional Field" style="background-color: white;">
+                        </div>
+                    </fieldset>
+            
+                    
+                    <div class="col-md-5 mt-4">
+                        <input type="button" id="saveParty" class="btn btn-primary save-button" data-bs-dismiss="modal" name="save" value="Save">
+                    </div>
+                
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#party').selectize({
+            sortField: 'value'
+        });
+    });
+
+    $(document).ready(function(){
+        var partyId = $("#party").val();
+
+        $.ajax({
+            url: "{% url 'getPartyDetails' %}", 
+            data: { 
+            
+                id: partyId,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            type : 'POST',
+            success: function(data) {
+                $("#party_address").addClass('d-block');
+                $("#party_contact").addClass('d-block');
+                $("#party_balance").addClass('d-block');
+                $("#party_address").removeClass('d-none');
+                $("#party_contact").removeClass('d-none');
+                $("#party_balance").removeClass('d-none');
+
+                var json_data = JSON.parse(data);
+                for (key in json_data) {
+                    document.getElementById('bill_address').value = json_data[key]['address'];
+                    $('#p_contact').val(json_data[key]['contact']);
+                    $('#p_state').val(json_data[key]['state']);
+                    if (json_data[key]['payment'] == 'To Pay'){
+                        $('#p_bal').css('color','red');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }else if (json_data[key]['payment'] == 'To Receive'){
+                        $('#p_bal').css('color','green');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }
+                    else{
+                        $('#p_bal').css('color','black');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }
+                }
+            }
+        });
+    })
+
+    $(document).ready(function() {
+        $('#party').change(function() {
+            if($('#party').val() == ""){
+                $("#party_address").addClass('d-none');
+                $("#party_contact").addClass('d-none');
+                $("#party_balance").addClass('d-none');
+                $("#party_address").removeClass('d-block');
+                $("#party_contact").removeClass('d-block');
+                $("#party_balance").removeClass('d-block');
+                // alert('Choose a Party')
+            }
+            $.ajax({
+                url: "{% url 'getPartyDetails' %}", 
+                data: { 
+                
+                    id: $('#party').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                type : 'POST',
+                success: function(data) {
+                    $("#party_address").addClass('d-block');
+                    $("#party_contact").addClass('d-block');
+                    $("#party_balance").addClass('d-block');
+                    $("#party_address").removeClass('d-none');
+                    $("#party_contact").removeClass('d-none');
+                    $("#party_balance").removeClass('d-none');
+
+                    var json_data = JSON.parse(data);
+                    for (key in json_data) {
+                        document.getElementById('bill_address').value = json_data[key]['address'];
+                        $('#p_contact').val(json_data[key]['contact']);
+                        $('#p_state').val(json_data[key]['state']);
+                        if (json_data[key]['payment'] == 'To Pay'){
+                            $('#p_bal').css('color','red');
+                            $('#p_bal').text(json_data[key]['balance']);
+                        }else if (json_data[key]['payment'] == 'To Receive'){
+                            $('#p_bal').css('color','green');
+                            $('#p_bal').text(json_data[key]['balance']);
+                        }
+                        else{
+                            $('#p_bal').css('color','black');
+                            $('#p_bal').text(json_data[key]['balance']);
+                        }
+                    }
+                }
+            });
+        });
+    });
+
+    function refreshPartyDetails(){
+        $.ajax({
+            url: "{% url 'getPartyDetails' %}", 
+            data: { 
+                id: $('#party').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            type : 'POST',
+            success: function(data) {
+                // $("#party_address").addClass('d-block');
+                // $("#party_contact").addClass('d-block');
+                // $("#party_balance").addClass('d-block');
+                // $("#party_address").removeClass('d-none');
+                // $("#party_contact").removeClass('d-none');
+                // $("#party_balance").removeClass('d-none');
+
+                var json_data = JSON.parse(data);
+                for (key in json_data) {
+                    document.getElementById('bill_address').value = json_data[key]['address'];
+                    $('#p_contact').val(json_data[key]['contact']);
+                    $('#p_state').val(json_data[key]['state']);
+                    if (json_data[key]['payment'] == 'To Pay'){
+                        $('#p_bal').css('color','red');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }else if (json_data[key]['payment'] == 'To Receive'){
+                        $('#p_bal').css('color','green');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }
+                    else{
+                        $('#p_bal').css('color','black');
+                        $('#p_bal').text(json_data[key]['balance']);
+                    }
+                }
+            }
+        });
+    }
+
+    $(function(){
+        if ($('#state_of_supply').val() == 'state'){
+            $("#igst_val").css('display','none');
+        }else{
+            $("#cgst_val").css('display','none');
+            $("#sgst_val").css('display','none');
+        }
+        
+    })
+
+    $(document).ready(function() {
+        $('#state_of_supply').change(function() {
+            if (document.getElementById("state_of_supply").value == 'state') {
+                $("#cgst_val").css('display','grid');
+                $("#sgst_val").css('display','grid');
+                $("#igst_val").css('display','none');
+                calc();
+            } else {
+                $("#cgst_val").css('display','none');
+                $("#sgst_val").css('display','none');
+                $("#igst_val").css('display','grid');
+                calc();
+            }
+
+            if($('#state_of_supply').val() == 'state'){
+                $('.tax').css('display','none');
+                $('.tax-gst').css('display','block');
+            }
+            if($('#state_of_supply').val() == 'other'){
+                $('.tax').css('display','none');
+                $('.tax-igst').css('display','block');
+            }
+        });
+    });
+
+    function refreshTax(){
+        if($('#state_of_supply').val() == 'state'){
+            $('.tax').css('display','none');
+            $('.tax-gst').css('display','block');
+        }
+        if($('#state_of_supply').val() == 'other'){
+            $('.tax').css('display','none');
+            $('.tax-igst').css('display','block');
+        }
+    }
+
+    $(document).on("click", "#saveParty", function(){
+        $.ajax({
+            type : 'POST',
+            url:"{% url 'addNewParty' %}",
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                partyname : $('#partyname').val(),
+                gstno : $('#gstno').val(),
+                contact : $('#contact').val(),
+                gst : $('#gst').text(),
+                state : $('#state').val(),
+                address : $('#partyAddress').val(),
+                email : $('#email').val(),
+                balance : $('#balance').val(),
+                paymentType : $("input[name='paymentType']:checked").val(),
+                creditlimit : $('#credit_limit').val(),
+                currentdate : $('#current-date').val(),
+                enddate : $('#current-date').val(),
+                additionalfield1 : $('#additionalfield1').val(),
+                additionalfield2 : $('#additionalfield2').val(),
+                additionalfield3 : $('#additionalfield3').val(),
+                
+            },
+            
+            success: function(response) {
+                console.log("success")
+                document.getElementById("newPartyForm").reset();
+                // $('#newParty').modal('toggle');
+                reloadParties();
+            },
+        });        
+    });
+
+
+    function reloadParties() {
+
+        $.ajax({
+            url: "{% url 'getPartyList' %}",
+            type: "GET",
+            dataType: "json",
+            data: $(this).serialize(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+
+            success: function(data) {
+                var $select = $(document.getElementById('party'));
+                // dropdown.empty();
+                // dropdown.append(`<option value="">Select Party</option>`);
+                var selectize = $select[0].selectize;
+                $.each(data, function(key, value) {
+                    selectize.addOption({value:value[0],text:value[1]});
+                    selectize.addItem(value[0]); 
+                    // dropdown.append($('<option></option>').attr('value', key).text(value[1]).val(value[0]));
+                });
+
+                // selectize.setValue("");
+            },
+            error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            }
+            
+        });
+        refreshPartyDetails();
+    }
+
+
+    function filterFunction(id){
+        var options = $('#'+ $("#"+id).next().attr('id')).children();
+        var search_text = $("#"+id).val().toLowerCase();
+        options.each(function(){
+            if($(this).text().toLowerCase().includes(search_text)){
+                $(this).show()
+            }else{
+                $(this).hide()
+            }
+        })
+    }
+    
+    function getItemDetails(inpId, value){
+        $('#'+inpId).val(value);
+
+        var n = inpId.slice(4);
+        $.ajax({
+        url: "{%  url 'getItemData' %}",
+        type : 'GET',
+        data:{
+            id : value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+        
+        success: function(response) {
+            console.log("ajax",response);
+            if (response.status){
+                document.getElementById('hsn'+n).value = response.hsn;
+                document.getElementById('price'+n).value = response.sale_rate;
+                if(!response.tax){
+                    // document.getElementById('tax'+n).value = 0;
+                    document.getElementById('taxgst'+n).value = 0;
+                    document.getElementById('taxigst'+n).value = 0;
+                }else if(response.tax){
+                    // document.getElementById('tax'+n).value = response.gst;
+                    document.getElementById('taxgst'+n).value = response.gst;
+                    document.getElementById('taxigst'+n).value = response.igst;
+                }
+                document.getElementById('estitem'+n).value = response.id;
+                refreshTax();
+            }
+        },
+        });
+
+    }
+
+    // table row clone and remove.
+    $(document).on('click','.remove_row',function(){
+        var row_id = $(this).attr("id");
+        console.log(row_id);
+        $('#addr0'+row_id+'').remove();
+        
+        calc();
+    });
+
+
+    $(document).on('click','.clone_row',function(){
+        var roinc = $("#est-items-table-body tr").length;
+        var originalRow = $(this).closest('#est-items-table-body tr'); 
+        var clonedRow = originalRow.clone();
+
+        clonedRow.attr('id', 'addr0' +(roinc+1));
+
+        clonedRow.find('.item_sl_num').text(roinc+1);
+        clonedRow.find('.item-display').attr('id', 'item'+(roinc+1));
+        clonedRow.find('.items-available').attr('id', 'menu'+(roinc+1));
+
+        // clonedRow.find('.clone_row').attr('id',roinc+1);
+
+        clonedRow.find('[id]').each(function() {
+            var oldId = $(this).attr('id');
+            var newId = oldId.replace(/\d+/, roinc+1);
+            $(this).attr('id', newId );
+        });
+        clonedRow.find('.item').each(function() {
+            $(this).val(originalRow.find('.item').val());
+        });
+        clonedRow.find('.item1').each(function() {
+            $(this).val(originalRow.find('.item1').val());
+        });
+
+        originalRow.after(clonedRow);
+        calc();
+        
+    });
+    $(document).ready(function(){
+        $('#add_row_btn').click(function(){
+            var roinc = $("#est-items-table-body tr").length;
+            roinc++;
+            $('#est-items-table-body').append(
+                `<tr id='addr0${roinc}'>
+                    <td class="item_sl_num">${roinc}<input type="text"  name='id[]' value=0 hidden></td>
+                    <td>
+                        <div class="w-100">
+                            <div class="p-0 border-0 bg-none d-flex position-relative" style="display: block;">
+                                <input type="text" id="item${roinc}" value="" name="item[]" class="dropdown-toggle form-control item-display border-info bg-light" onkeyup="filterFunction($(this).attr('id'))"  data-bs-toggle="dropdown" aria-expanded="false" placeholder="Items.." autocomplete="off">
+                                <ul class="dropdown-menu w-100 items-available position-absolute" id="menu${roinc}"  style="overflow-y: auto; height: 270px;"> 
+                                {% for i in items %}
+                                <li class="dropdown-item items-options" onclick="getItemDetails($(this).parent().prev().attr('id'),$(this).html())">{{i.item_name}}</li>
+                                {% endfor %}
+                                </ul>
+                                <button type="button" class="btn  btn-sm btn-outline-secondary ms-1" data-bs-target="#newItem" data-bs-toggle="modal"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="number" name='hsn[]' id="hsn${roinc}" placeholder='HSN Code' class="form-control border-info bg-light" readonly/>
+                        <input type="text" name="estItems[]" id="estitem${roinc}" hidden>
+                    </td>
+                    <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control border-info bg-light qty" min="1" required/></td>
+                    <td><input type="number" name='price[]' id="price${roinc}" placeholder='Sale Price' class="form-control border-info bg-light price" step="0.00" min="0" readonly /></td>
+                    <td>
+                        <input type="text" name="taxgst[]" class="form-control border-info bg-light tax tax-gst" placeholder="0 %" id="taxgst${roinc}" style="display: block;" readonly>
+                        <input type="text" name="taxigst[]" class="form-control border-info bg-light tax tax-igst" placeholder="0 %" id="taxigst${roinc}" style="display: none;" readonly>
+                    </td>
+                    <td><input type="number" name='discount[]' id="discount${roinc}" class="form-control border-info bg-light discount" value="0" step="any" /></td>
+                    <td><input type="number" name='total[]' id="total${roinc}" class="form-control border-info bg-light total" value="0" step="any" readonly /></td>
+                    <td style="display: none;"><input type="number" step="any" name='taxamount' id="taxamount${roinc}" class="form-control border-info bg-light taxamount"/></td></td>
+                    <td>
+                        <button type="button" id="${roinc}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row"><i class="fa fa-plus"></i></button><br>
+                        <button type="button" id="${roinc}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row"><i class="fa fa-minus"></i></button>
+                    </td>
+                </tr>`
+            )
+            reloadItems();
+        });
+    });
+
+    $('#est-items-table-body').on('keyup change', function () {
+        calc();
+    });
+
+    function calc() {
+        $('#items_table tbody tr').each(function () {
+            var html = $(this).html();
+            if (html != '') {
+                var qty = $(this).find('.qty').val();                
+                var price = $(this).find('.price').val();
+                var disc = $(this).find('.discount').val();
+                if (disc == ""){
+                    disc = 0
+                }
+                if($('#state_of_supply').val() == 'state'){
+                    var tax_percentage = $(this).find('.tax-gst').val();
+                }else if($('#state_of_supply').val() == 'other'){
+                    var tax_percentage = $(this).find('.tax-igst').val();
+                }
+                
+                if (tax_percentage == 'GST0[0%]' || tax_percentage == 'IGST0[0%]'){
+                    var tax = 0;
+                }else if (tax_percentage == 'GST3[3%]' || tax_percentage == 'IGST3[3%]'){
+                    var tax = 3;
+                }else if (tax_percentage == 'GST5[5%]' || tax_percentage == 'IGST5[5%]'){
+                    var tax = 5;
+                }else if (tax_percentage == 'GST12[12%]' || tax_percentage == 'IGST12[12%]'){
+                    var tax = 12;
+                }else if (tax_percentage == 'GST18[18%]' || tax_percentage == 'IGST18[18%]'){
+                    var tax = 18;
+                }else if (tax_percentage == 'GST28[28%]' || tax_percentage == 'IGST28[28%]'){
+                    var tax = 28;
+                }
+                else{
+                    var tax = 0;
+                }
+
+                $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(disc));
+                $(this).find('.taxamount').val(((qty * price)-disc) * (tax / 100));
+                calc_total();
+            }
+        });
+    }
+
+    function calc_total() {
+            
+        total = 0;
+        $('.total').each(function () {
+            total += parseFloat($(this).val());
+        });
+        taxamount = 0;
+        $('.taxamount').each(function () {
+            taxamount += parseFloat($(this).val());
+        });
+        $('#sub_total').val(total.toFixed(2));
+        if ( document.getElementById("state_of_supply").value == 'state') {
+            $('#cgst_tax').val((taxamount/2).toFixed(2));
+            $('#sgst_tax').val((taxamount/2).toFixed(2));
+        }else {
+            $('#igst_tax').val(taxamount.toFixed(2));
+        }
+        $('#tax_amount').val(taxamount.toFixed(2));
+        var adj = parseFloat($("#adjustment").val()) || 0;
+        var gtot = taxamount + total  + adj;
+        $('#grand_total').val(gtot.toFixed(2));
+
+    }
+
+    $(document).on('keyup',"#adjustment",function(){
+        var subtot = parseFloat($('#sub_total').val());
+        if(subtot != 0.0){
+            var tax = parseFloat($('#tax_amount').val()) || 0;
+            var ad = parseFloat($("#adjustment").val()) || 0;
+            $('#grand_total').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(ad)).toFixed(2));
+        }
+    });
+
+    function toggleSection(sectionId) {
+        // Get all the fieldsets
+        const fieldsets = document.querySelectorAll('fieldset');
+
+        // Hide all fieldsets
+        fieldsets.forEach(fieldset => {
+            fieldset.style.display = 'none';
+        });
+
+        // Show the selected fieldset
+        const section = document.getElementById(sectionId);
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+
+    // Function to format the date as "YYYY-MM-DD"
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Get the current date
+    const currentDateInput = document.getElementById("current-date");
+    const currentDate = new Date();
+
+    // Format the date as "YYYY-MM-DD" and set it in the input field
+    currentDateInput.value = formatDate(currentDate);
+
+
+    function validatePhoneNumber(inputElement) {
+        const phoneNumber = inputElement.value;
+        const validationSpan = document.getElementById("contact-validation");
+
+        // Regular expression to check for a 10-digit number
+        const regex = /^[0-9]{10}$/;
+
+        if (regex.test(phoneNumber)) {
+            // Valid 10-digit number, display a checkmark
+            validationSpan.innerHTML = "&#10004;"; // Checkmark symbol
+            validationSpan.style.color = "green";
+        } else {
+            // Not a valid 10-digit number, display a cross mark
+            validationSpan.innerHTML = "&#10060;"; // Cross mark symbol
+            validationSpan.style.color = "red";
+        }
+    }
+
+    function validateGSTIN(inputElement) {
+        const gstin = inputElement.value;
+        const validationSpan = document.getElementById("gstno-validation");
+
+        // Regular expression to check for a valid GSTIN pattern
+        const regex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9][A-Z][A-Z0-9]$/;
+
+        if (regex.test(gstin)) {
+            // Valid GSTIN format, display a checkmark
+            validationSpan.innerHTML = "&#10004;"; // Checkmark symbol
+            validationSpan.style.color = "green";
+        } else {
+            // Not a valid GSTIN format, display a cross mark
+            validationSpan.innerHTML = "&#10060;"; // Cross mark symbol
+            validationSpan.style.color = "red";
+        }
+    }
+     
+    const toggleButton = document.getElementById("toggle");
+    const textBox = document.getElementById("text-box");
+
+    toggleButton.addEventListener("change", function () {
+        if (toggleButton.checked) {
+            textBox.style.display = "block";
+        } else {
+            textBox.style.display = "none";
+        }
+    });
+
+    $(document).on("submit","#unit_form",function(e){
+        e.preventDefault();
+        $.ajax({
+            
+            type : 'POST',
+            url:"{% url 'item_unit_create' %}",
+
+            data:{
+            item_unit_name : $("#item_unit_name_id").val(),
+                
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                
+            },
+            
+            success: function() {
+                
+            },
+            
+        });  
+        $('#modal_cls_btn').click()
+        var a = ''+$('#item_unit_name_id').val()
+        a.toUpperCase()
+        $('#load_new_unit').val(a)
+        $('#load_new_unit').text(a) 
+        $('#load_new_unit').prop('selected',true) 
+        $('#load_new_unit').attr('hidden',false)
+    });
+
+    $(document).on("click", "#saveItem", function(){
+        $.ajax({
+            type : 'POST',
+            url:"{% url 'addNewItem' %}",
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                item_name : $('#item_name').val(),
+                item_hsn : $('#item_hsn').val(),
+                item_unit : $('#item_unit_value').val(),
+                item_taxable : $('#taxable_result').val(),
+                item_gst : $('#item_gst').val(),
+                item_igst : $('#item_igst').val(),
+                item_sale_price : $('#sal_price').val(),
+                item_purchase_price : $('#pur_price').val(),
+                item_opening_stock : $("#opn_stock_").val(),
+                item_at_price : $('#at_price').val(),
+                item_date : $('#date_').val(),
+                item_min_stock_maintain : $('#item_min_stock_maintain').val(),
+
+            },
+            
+            success: function(response) {
+                console.log("success")
+                document.getElementById("newItemForm").reset();
+                reloadItems();
+            },
+        });        
+    });
+
+    function reloadItems() {
+        $.ajax({
+            url: "{% url 'getItemList' %}",
+            type: "GET",
+            dataType: "json",
+            data: $(this).serialize(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+
+            success: function(data) {
+                var dropdown = $('.items-available');
+                dropdown.find("li").remove();
+                $.each(data, function(key, value) {
+                    var newItem = $("<li>").text(value[0]);
+                    newItem.addClass("dropdown-item items-options");
+                    newItem.attr("onclick","getItemDetails($(this).parent().prev().attr('id'),'"+value[0]+"')")
+                    dropdown.append(newItem);
+                    // dropdown.append($(`<li></li>`)).addClass('dropdown-item items-options').text(value[0]).attr('onclick',"getItemDetails($(this).parent().prev().attr('id'))")
+                });
+            },
+            error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            }
+        });
+    }
+
+  $(document).ready(function () {
+    if ($('#flexSwitchCheckChecked').prop('checked')) {
+      $('#lbl2').css({ 'color': 'blue' })
+    }
+    else{
+      $('#lbl1').css({ 'color': 'blue' })
+    }
+    $('#flexSwitchCheckChecked').on('change load', function () {
+      if ($('#flexSwitchCheckChecked').prop('checked')) {
+        $('#lbl2').css({ 'color': 'blue' })
+        $('#lbl1').css({ 'color': 'inherit' })
+      }
+      else {
+        $('#lbl1').css({ 'color': 'blue' })
+        $('#lbl2').css({ 'color': 'inherit' })
+      }
+    })
+  })
+  $(document).ready(function(){
+    $('#item_tax_1').on('click',function(){
+      if($(this).prop('checked'))
+      {
+        $('#taxable_hide').attr('hidden',false)
+      }
+    })
+  })
+  // page loading start
+  $(document).ready(function(){
+    $('#item_tax_2').on('click',function(){
+      if($(this).prop('checked'))
+      {
+        $('#taxable_hide').attr('hidden',true)
+      }
+    })
+  })
+  $(document).ready(function(){
+    $('#prc_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+    $('#stk_ a').removeClass('text-dark')
+    $('#prc_ a').addClass('text-dark')
+    $('#stk_').css({'border-bottom': 'none'})
+    $('#pricing_template').attr('hidden',false)
+
+
+    $('#prc_').on('click',function(){
+      $(this).css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+      $('#stk_ a').removeClass('text-dark')
+      $('#prc_ a').addClass('text-dark')
+      $('#stk_').css({'border-bottom': 'none'})
+      $('#pricing_template').attr('hidden',false)
+      $('#stock_template').attr('hidden',true)
+    })
+  })
+  $(document).ready(function(){
+    $('#stk_').on('click',function(){
+      $('#stk_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+      $('#prc_ a').removeClass('text-dark')
+      $('#stk_ a').addClass('text-dark')
+      $('#prc_').css({'border-bottom': 'none'})
+      $('#pricing_template').attr('hidden',true)
+      $('#stock_template').attr('hidden',false)
+    })
+  })
+  $(document).ready(function(){
+    $('#next_btn').on('click',function(){
+      $('#stk_').click()
+    })
+  })
+  $(document).ready(function(){
+    $('#prev_btn').on('click',function(){
+      $('#prc_').click()
+    })
+  })
+  // $(document).ready(function(){
+  //   $('#prc_').on('click',function(){
+  //     alert('asdsad')
+  //   })
+  // })
+  // $(document).ready(function(){
+  //   $('#prc_').on('click',function(){
+  //     alert('asdsad')
+  //   })
+  // })
+  // page loading end
+  $('#opn_stock_').on('keyup click',function(){
+    if($(this).val()>'0')
+    {
+      $('#at_price_div').css({'visibility':'visible',
+                              'transition':'all 0.2s linear'})
+    }
+    else{
+      $('#at_price_div').css({'visibility':'hidden',
+                              'transition':'all 0.2s linear'})
+      $('#at_price').val('')
+    }
+  })
+  $(document).ready(function(){
+    $('#item_tax_1').on('click',function(){
+      $('#taxable_result').val('Taxable')
+    })
+  })
+  $(document).ready(function(){
+    $('#item_tax_2').on('click',function(){
+      $('#taxable_result').val('Non Taxable')
+    })
+  })
+  function submit_unit_creation_fn()
+  {
+    $('#submit_unit_creation').click()
+  }
+  // set today start
+  $(document).ready(function(){
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        var day = String(currentDate.getDate()).padStart(2, "0");
+        var formattedDate = year + "-" + month + "-" + day;
+        $("#date_").val(formattedDate);
+    })
+    // set today end
+
+</script>
+{% endblock  %}

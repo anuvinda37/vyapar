@@ -1,0 +1,59 @@
+<!-- create by athul -->
+
+{% extends 'distributor/distributor_base.html' %}
+
+{% block content %}
+{% load static %}
+
+<style>
+  table tr td:hover {
+  cursor: pointer;
+}
+</style>
+<body  style="background-color: rgba(176, 199, 205, 0.4);">
+  
+
+
+<div class="body-wrapper">
+  <div class="container-fluid">
+
+    
+
+     <!-- <h3 class="text-center"><b style=" margin-bottom: 20px;">COMPANY REQUESTS</b></h3> -->
+      <div style="overflow-x:auto;">  
+        <table class="table table-hover  mt-5 " style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <thead>
+              <tr>
+                <th scope="col" style="color: black;"><b>ID</b></th>
+                <th scope="col" style="color: black;"><b>Company Name</b></th>
+                <th scope="col" style="color: black;"><b>Email</b></th>
+                
+                <th scope="col" style="color: black;"><b>Contact</b></th>
+                <th scope="col" style="color: black;"><b>Payment Terms</b></th>
+                <th scope="col" style="color: black;"><b>End Date</b></th>
+                <th scope="col" style="color: black;"><b>Action</b></th>
+
+              </tr>
+            </thead>
+            <tbody>
+                {% for a in data %}
+              <tr>
+                <td>{{a.id}}</th>
+                <td> <b><a href="{% url 'dcompany_request_overview' a.id %}" style="color: black;">{{a.company_name}} </a></b></td>
+                <td>{{a.user.email}}</td>
+                <td>{{a.contact}}</td>
+                <td>{{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}</td>
+                <td>{{a.End_date}}</td>
+                <td><a href="{% url 'distributor_accept_company' a.id %}" class="btn btn-primary m-1">Accept</a>
+                <a href="{% url 'distributor_reject_company' a.id %}" class="btn btn-danger m-1">Reject</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table> 
+        </div>
+
+  </div>
+</div>
+</body>
+
+{% endblock content %}

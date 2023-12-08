@@ -1,0 +1,206 @@
+<!-- create by athul -->
+
+{% extends 'company/base.html' %}
+{% block content %}
+{% load static %}
+    <style>
+         @media (max-width: 768px) {
+            .card{
+                margin-top: 40px;
+
+            }
+            .card h1{
+                font-size: 20px;
+            }
+            .row #c1{
+               margin-left: 40px !important;
+            }
+            .row h2{
+                font-size: 15px;
+                margin-top: 10px;
+            }
+            #btn{
+                width: 60% !important;
+            }
+            .container{
+                margin: 10px;
+                margin-right: 10px;
+                width: 100%;
+            }
+            .container .btn{
+                width: 100%;
+                padding: 40px;
+
+            }
+
+         }
+    </style>
+    <form method="post" action="{% url 'hide_options' %}" style="margin-top: 8%;">
+        {% csrf_token %}
+        <br>
+
+        <div class="card radius-15 h-20 " style="margin-left: 30px;margin-right: 30px;background-color: #455a81;border-radius: 10px;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
+            <div class="row" >
+                <div class="col-md-12" >
+                    <center><h1 class="mt-3  text-white" style="text-shadow: 2px 2px 4px #000000;">SETTINGS PAGE</h1></center>
+                    <hr style="width:95%; color: aliceblue;background-color: white;">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            
+            <div class="col-md-2 text-white" id="c1" style=" margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 70px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">PARTIES</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option1" style="margin-left: 20px;">Parties</label>
+                <input type="checkbox" name="selected_options" value="Parties" id="option1" style="float: right;"><br>
+
+            </div><br>
+            <div class="col-md-2 text-white" style="margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 40px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">ITEMS</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option2" style="margin-left: 20px;">Items</label>
+                <input type="checkbox" name="selected_options" value="Items" id="option2" style="float: right;"><br>
+                
+            </div><br>
+            <div class="col-md-2 text-white" style="margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 40px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">EXPENSES</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option3" style="margin-left: 20px;">Expenses</label>
+                <input type="checkbox" name="selected_options" value="Expenses" id="option3" style="float: right;"><br>
+                
+       
+            </div><br>
+            <div class="col-md-2 text-white" style="margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 40px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">REPORTS</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option4" style="margin-left: 20px;">Reports</label>
+                <input type="checkbox" name="selected_options" value="Reports" id="option4" style="float: right;"><br>
+                
+                
+            </div><br>
+        </div>
+        <div class="row mt-5">   
+
+            
+
+            <div class="col-md-3 text-white" id="c1" style="margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 70px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">SALES</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option5" style="margin-left: 20px;">sale invoice</label>
+                <input type="checkbox" name="selected_options" value="saleinvoice" id="option5" style="float: right;"><br>
+                
+                <label for="option6" style="margin-left: 20px;">Estimate</label>
+                <input type="checkbox" name="selected_options" value="Estimate" id="option6" style="float: right;"><br>
+                
+                <label for="option7" style="margin-left: 20px;">Payment in</label>
+                <input type="checkbox" name="selected_options" value="Paymentin" id="option7" style="float: right;"><br>
+                
+                <label for="option8" style="margin-left: 20px;">Sale order</label>
+                <input type="checkbox" name="selected_options" value="Saleorder" id="option8" style="float: right;"><br>
+                
+                <label for="option9" style="margin-left: 20px;">Delivery Challan</label>
+                <input type="checkbox" name="selected_options" value="DeliveryChallan" id="option9" style="float: right;"><br>
+                
+                <label for="option10" style="margin-left: 20px;">Sale Return</label>
+                <input type="checkbox" name="selected_options" value="SaleReturn" id="option10" style="float: right;"><br>
+                
+                
+            </div><br>
+            <div class="col-md-3 text-white" style="margin-left: 20px;margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 30px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">PURCHASE</h2>
+                <hr style="background-color: aliceblue;">
+                <label for="option11" style="margin-left: 20px;">Purchase Bill</label>
+                <input type="checkbox" name="selected_options" value="PurchaseBill" id="option11" style="float: right;"><br>
+                
+                <label for="option12" style="margin-left: 20px;">Payment out</label>
+                <input type="checkbox" name="selected_options" value="Paymentout" id="option12" style="float: right;"><br>
+                
+                <label for="option13" style="margin-left: 20px;">Purchase Order</label>
+                <input type="checkbox" name="selected_options" value="PurchaseOrder" id="option13" style="float: right;"><br>
+
+                <label for="option14" style="margin-left: 20px;">Purchase Return</label>
+                <input type="checkbox" name="selected_options" value="PurchaseReturn" id="option14" style="float: right;"><br>
+            </div><br>
+            <div class="col-md-3 text-white" style="margin-left: 20px; margin-right: 30px;background-color: #455a81;border-radius: 10px;margin-top: 20px; margin-left: 20px;">
+                <h2 style="text-align: center;margin-bottom: 20px;">CASH & BANK</h2>
+                <hr style="background-color: aliceblue;">
+               
+                
+                <label for="option15" style="margin-left: 20px;">Bank Account</label>
+                <input type="checkbox" name="selected_options" value="BankAccount" id="option15" style="float: right;"><br>
+                <label for="option16" style="margin-left: 20px;">Cash In Hand</label>
+                <input type="checkbox" name="selected_options" value="CashInHand" id="option16" style="float: right;"><br>
+                <label for="option17" style="margin-left: 20px;">Cheques</label>
+                <input type="checkbox" name="selected_options" value="Cheques" id="option17" style="float: right;"><br>
+                <label for="option18" style="margin-left: 20px;">Loan Amount</label>
+                <input type="checkbox" name="selected_options" value="LoanAmount" id="option18" style="float: right;"><br>
+            </div>
+        </div>
+        
+        <!-- Add more options as needed -->
+        
+        <center><input type="submit" id="btn" value="Update Options" class="btn btn-danger mt-5 mb-5" style="padding: 10px;width: 30%;border-radius: 10px;font-weight: bold;"></center>
+    </form>
+    <div class="container" style="background-color: #455a81;border-radius: 10px; padding: 10px;">
+        <h1 style="text-align: center;margin-bottom: 20px;text-shadow: 2px 2px 4px #000000;color: white; margin-top: 10px; padding-top: 10px;font-weight: bold">BACK UP</h1>
+        <hr style="background-color: aliceblue;">
+        <input type="checkbox" style="margin-left: 10%;">
+        <label for="" style="color: white;font-size: 1.5em;">Auto Backup</label><br>
+        <button class="btn btn-danger" style="margin-left: 10%;margin-top: 10px;margin-bottom: 10px;width: 20%;padding: 8px;font-weight: bold;border-radius: 10px;">Back Up Now</button>
+        <h5 style="color: white;margin-left: 40%;">Last backup: 28-09-2023</h5>
+
+
+    </div>
+
+    <script>
+        // Function to save checkbox state in local storage
+        function saveCheckboxState(checkboxId, isChecked) {
+          localStorage.setItem(checkboxId, isChecked);
+        }
+      
+        // Function to load checkbox state from local storage
+        function loadCheckboxState(checkboxId) {
+          const isChecked = localStorage.getItem(checkboxId);
+          if (isChecked === "true") {
+            document.getElementById(checkboxId).checked = true;
+          }
+        }
+      
+        // Add event listeners for checkbox changes
+        document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+          checkbox.addEventListener('change', function() {
+            saveCheckboxState(this.id, this.checked);
+          });
+        });
+      
+        // Load checkbox states when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          loadCheckboxState('option1');
+          loadCheckboxState('option2');
+          loadCheckboxState('option3');
+          loadCheckboxState('option4');
+          loadCheckboxState('option5');
+          loadCheckboxState('option6');
+          loadCheckboxState('option7');
+          loadCheckboxState('option8');
+          loadCheckboxState('option9');
+          loadCheckboxState('option10');
+          loadCheckboxState('option11');
+          loadCheckboxState('option12');
+          loadCheckboxState('option13');
+          loadCheckboxState('option14');
+          loadCheckboxState('option15');
+          loadCheckboxState('option16');
+          loadCheckboxState('option17');
+          loadCheckboxState('option18');
+        });
+      
+        // Redirect to the second page
+        document.getElementById('redirectButton').addEventListener('click', function() {
+          window.location.href = 'second_page.html';
+        });
+      </script>
+
+{% endblock %}
