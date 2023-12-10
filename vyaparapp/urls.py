@@ -164,11 +164,14 @@ urlpatterns = [
     # =========== payment out=========== Anuvinda - start =======================================
      path('view_paymentout',views.view_paymentout,name='view_paymentout'),
      path('add_paymentout',views.add_paymentout,name='add_paymentout'),
-     
-     
-     
-     
-     
+     path('create_paymentout',views.create_paymentout,name='create_paymentout'),
+     path('delete_paymentout/',views.delete_paymentout,name='delete_paymentout'), 
+     path('details_paymentout/<int:id>/', views.details_paymentout, name='details_paymentout'),
+     path('edit_paymentout/<int:id>/',views.edit_paymentout, name='edit_paymentout'),
+     path('add_pay/',views.add_pay, name='add_pay'),
+     path('create_addpaymentout',views.create_addpaymentout,name='create_addpaymentout'), 
+     path('update_paymentout/<int:id>/', views.update_paymentout, name='update_paymentout'),
+     path('paymentout/<int:pk>/history/', views.view_paymentout_history, name='view_paymentout_history'), 
     # =========== estimate & delivery challan=========== shemeem - start =======================================
     path('create_estimate',views.create_estimate, name='create_estimate'),
     path('add_new_party',views.addNewParty, name='addNewParty'),

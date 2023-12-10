@@ -170,20 +170,7 @@
 
 <div class="body-wrapper">
     <br><br><br>
-    <div class="d-flex justify-content-center pt-4">
-        <a href="" id="b1" class="btn  text-white"
-            style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add Sale <i class="fa fa-plus"></i>
-        </a>
-        <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
-            style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add Purchase <i class="fa fa-plus"></i>
-        </a>
-        <a href="" id="b3" class="btn text-primary"
-            style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add More <i class="fa fa-plus"></i>
-        </a>
-    </div>
+   
     <p></p>
     <div class="row ps-3 pe-3 m-0" >
         <div class="col-sm-12 ps-2 pe-3">
@@ -227,28 +214,7 @@
                         </div>
                     </div><br>
                     
-                    <div class="row" id="calcdiv">
-                        <div class="col-md-12 d-flex">
-                            <div class="paiddiv">
-                                <p style="margin-bottom: 5px;"> Paid</p>
-                                <p style="font-size:large;"> &#8377; <span id="paidval"></span></p>
-                            </div>
-                            <div class="tplus">
-                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: black;"></i>
-                            </div>
-                            <div class="unpaiddiv">
-                                <p style="margin-bottom: 5px;"> Unpaid</p>
-                                <p style="font-size:large;"> &#8377; <span id="unpaidval"></span></p>
-                            </div>
-                            <div class="tequal">
-                                <i class="fa-solid fa fa-equals" style="color: black;"></i>
-                            </div>
-                            <div class="totaldiv">
-                                <p style="margin-bottom: 5px;"> Total</p>
-                                <p style="font-size:large;"> &#8377; <span id="totalval"></span></p>
-                            </div>
-                        </div>
-                    </div>
+                 
                     <br>
                 </div>
             </div>
@@ -258,7 +224,7 @@
                 <div class="card p-0 bg-light bs" style="height: 36rem;">
                     <div class="row m-0 p-0 pt-3">
                         <div class="col-sm-12 col-lg-3">
-                            <h4 class="tb fw-bolder pt-2 text-secondary">PURCHASE BILLS</h4>
+                            <h4 class="tb fw-bolder pt-2 text-secondary">PAYMENT OUT</h4>
                         </div>
                     </div>
 
@@ -268,9 +234,10 @@
                         </div>
                         <div class="col-md-6"></div>
                         <div class="col-md-2">
-                            <a class="btn btn-primary bg-gradient" href="{% url 'add_purchasebill' %}" style="color: white;"> 
-                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: white;"></i> &nbsp;Add Purchase Bill
+                            <a class="btn btn-primary bg-gradient" href="{% url 'add_pay' %}" style="color: white;"> 
+                                <i class="fa fa-plus border-dark" aria-hidden="true" style="color: white;"></i> &nbsp;Add Paymentout
                             </a>
+                            
                         </div>
                     </div>
 
@@ -280,6 +247,7 @@
                                 <table class="table table-bordered table-info table-striped tb table-responsive w-100" id="billtable"  style="text-align: center;">
                                     <thead >
                                         <tr class="fs-2 tb">
+                                            
                                             <th class="bg-secondary text-white">
                                                 DATE 
                                                 <a class="extra text-white" onclick="toggleDropdown(0)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
@@ -311,7 +279,7 @@
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
-                                                PAYMENT TYPE
+                                                PARTY TYPE
                                                 <a class="extra text-white" onclick="toggleDropdown(3)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
                                                 <div class="dropdown-content" id="dropdownContent3">
                                                     <label for="filterInput3" style="color: black; text-align: left;">Equal To</label>
@@ -364,32 +332,45 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for p in pbill %}
+                                        {% for paymentout in paymentouts %}
                                         <tr>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.billdate | date:'d-m-Y'}}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.billno}}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.party.party_name}}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.pay_method}}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.grandtotal}}</td>
+                                            <td style="color: black;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.billno }}</td>
+                                            <td style="color: black;">{{ paymentout.party.party_name }}</td>
+                                            <td style="color: black;">Payment Out</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.amount }}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.balance}}</td>
-                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{% if paymentout.transaction_history.exists %}
+                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}">
+                                                {% if paymentout.transaction_history.exists %}
                                                 {% if paymentout.transaction_history.last.action == 'Updated' %}
                                                     <span class="badge bg-warning text-dark">Updated</span>
                                                 {% else %}
                                                     <span class="badge bg-success text-white">Created</span>
                                                 {% endif %}
-                                            {% endif %}</td>
-                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}"></td>
+                                            {% endif %}
+                                            <td style="color: black;">{{ paymentout.staff.first_name }} {{ paymentout.staff.last_name }}</td>
                                             <td class="pt-3 m-0 extra">
                                                 <div class="btn-group">
                                                     <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'details_purchasebill' p.id %}"><span class="fa fa-eye pe-2 tg"></span> View </a></li>
-                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'edit_purchasebill' p.id %}"><span class="fa fa-edit pe-2 tj"></span> Edit</a></li>
-                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'history_purchasebill' p.id %}"><span class="fa fa-history pe-2 th"></span> History</a></li>
-                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_d" onclick="deletepbill('{{p.id}}')"><span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete</a></li>
+                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'details_paymentout' id=paymentout.id %}"><span class="fa fa-eye pe-2 tg"></span> View </a></li>
+                                                      <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'edit_paymentout' id=paymentout.id %}"><span class="fa fa-edit pe-2 tj"></span> Edit</a></li>
+
+                                                      <li>
+                                                        <a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'view_paymentout_history' paymentout.id %}">
+                                                            <span class="fa fa-history pe-2 th"></span> History
+                                                        </a>
+                                                    </li>
+                                                    
+                                                      <li>
+                                                        <a class="dropdown-item fw-bold tb hide_table_text_d" href="javascript:void(0);" onclick="deletePaymentOut('{{ paymentout.id }}')">
+                                                           <span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete
+                                                        </a>
+                                                     </li>
+                                                     
+                                                    
                                                     </ul>
                                                 </div>
                                             </td>
@@ -404,80 +385,8 @@
                                     No Transactions to Show
                                 </p>
 
-                                <table id="excelbilltable" hidden>
-                                    <thead >
-                                        <tr class="fs-2 tb" >
-                                            <th> DATE </th>
-                                            <th> BILL NO </th>
-                                            <th> PARTY NAME </th>
-                                            <th> PAYMENT TYPE </th>
-                                            <th> AMOUNT </th>
-                                            <th> BALANCE </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for p in pbill %}
-                                        <tr>
-                                            <td>{{p.billdate | date:'d-m-Y'}}</td>
-                                            <td>{{p.billno}}</td>
-                                            <td>{{p.party.party_name}}</td>
-                                            <td>{{p.pay_method}}</td>
-                                            <td>{{p.grandtotal}}</td>
-                                            <td>{{p.balance}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-
-                                <table id="billtablemodel" hidden>
-                                    <thead>
-                                        <tr>
-                                            <th>Customer Name</th>
-                                            <th>Customer Email</th>
-                                            <th>Bill Date</th>
-                                            <th>Supply State</th>
-                                            <th>Payment Method</th>
-                                            <th>Payment No</th>
-                                            <th>Adjustment</th>
-                                            <th>Advance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>State/Other State</td>
-                                            <td>Cash/Cheque/UPI/Bank Name</td>
-                                            <td>Cheque ID/UPI ID/Bank no</td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                <table id="billtableitemmodel" hidden>
-                                    <thead>
-                                        <tr>
-                                            <th>Purchase Bill</th>
-                                            <th>Product Name</th>
-                                            <th>Product HSN</th>
-                                            <th>Quantity</th>
-                                            <th>Tax</th>
-                                            <th>Discount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Corresponding Row no from PurchaseBillModel </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>GST_[_%]/IGST_[_%]</td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                               
+                              
                             </div>
                         </div>
                     </div>                        
@@ -794,35 +703,33 @@
 </script>
 
 <script>
-    function deletepbill(Id)
-    {
-        swal({
-            title: "Confirmation !",
-            text: "Do you want to Delete this Purchase Bill?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                swal({
-                    title: "Deleted !",
-                    text: "Purchase Bill Deleted Successfully!",
-                    icon: "success",
-                    buttons: false,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        window.location.href = "{% url 'delete_purchasebill' 0 %}".replace('0', Id);
-                    } else {
-                        window.location.href = "{% url 'delete_purchasebill' 0 %}".replace('0', Id);
-                    }
-                });
-            } else {
-                swal("Action Cancelled!");
+    function deletePaymentOut(paymentOutId) {
+        console.log('Deleting Payment Out with ID:', paymentOutId);
+        // Use the paymentOutId to identify the row you want to delete
+        // Make an AJAX request to delete the payment out
+        $.ajax({
+            type: 'POST',
+            // Assuming you are using Django template syntax for the URL
+            const url = "{% url 'delete_paymentout' %}";
+
+            data: {
+                paymentOutId: parseInt(paymentOutId),  // Convert to integer
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            
+            success: function (data) {
+                // Handle success, e.g., remove the row from the table
+                $('#row_' + paymentOutId).remove();
+                // Optionally show a success message
+                alert('Payment Out deleted successfully!');
+            },
+            error: function (xhr, status, error) {
+                // Handle errors, e.g., show an error message
+                alert('Error deleting Payment Out: ' + error);
             }
         });
     }
+    
 </script>
 
 <script>

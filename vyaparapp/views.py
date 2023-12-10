@@ -24,7 +24,8 @@ from django.db.models import Sum
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from io import BytesIO
-
+from django.shortcuts import get_object_or_404
+from django.db import transaction
 # Create your views here.
 def home(request):
   return render(request, 'home.html')
@@ -2329,42 +2330,236 @@ def billhistory(request):
 
 #--------------------------------------------Anuvinda K V---------------------------------------------#
 def view_paymentout(request):
-  sid = request.session.get('staff_id')
-  staff =  staff_details.objects.get(id=sid)
-  cmp = company.objects.get(id=staff.company.id)
-  allmodules= modules_list.objects.get(company=cmp,status='New')
-  pbill = PurchaseBill.objects.filter(company=cmp)
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    allmodules = modules_list.objects.get(company=cmp, status='New')
+    
+    # Assuming you want to display the latest PaymentOut records
+    paymentouts = PaymentOut.objects.filter(company=cmp).order_by('-billdate')
 
-  if not pbill:
-    context = {'staff':staff, 'allmodules':allmodules}
-    return render(request,'company/paymentoutempty.html',context)
-  
-  context = {'staff':staff,'allmodules':allmodules,'pbill':pbill}
-  return render(request,'company/paymentoutlist.html',context)
+    if not paymentouts:
+        context = {'staff': staff, 'allmodules': allmodules}
+        return render(request, 'company/paymentoutempty.html', context)
+
+    context = {'staff': staff, 'allmodules': allmodules, 'paymentouts': paymentouts}
+    return render(request, 'company/paymentoutlist.html', context)
+
 def add_paymentout(request):
-  toda = date.today()
-  tod = toda.strftime("%Y-%m-%d")
-  
-  sid = request.session.get('staff_id')
-  staff =  staff_details.objects.get(id=sid)
-  cmp = company.objects.get(id=staff.company.id)
-  cust = party.objects.filter(company=cmp,user=cmp.user)
-  bank = BankModel.objects.filter(company=cmp,user=cmp.user)
-  allmodules= modules_list.objects.get(company=staff.company,status='New')
-  last_bill = PurchaseBill.objects.filter(company=cmp).last()
+    toda = date.today()
+    tod = toda.strftime("%Y-%m-%d")
+    
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    cust = party.objects.filter(company=cmp, user=cmp.user)
+    bank = BankModel.objects.filter(company=cmp, user=cmp.user)
+    allmodules = modules_list.objects.get(company=staff.company, status='New')
+    last_bill = PurchaseBill.objects.filter(company=cmp).last()
 
-  if last_bill:
-    bill_no = last_bill.tot_bill_no + 1 
-  else:
-    bill_no = 1
+    if last_bill:
+        # Use party id as the bill_no
+       bill_no = str(last_bill.party.id)
 
-  item = ItemModel.objects.filter(company=cmp,user=cmp.user)
-  item_units = UnitModel.objects.filter(user=cmp.user,company=staff.company)
+    else:
+        # Handle the case where there's no last_bill
+        bill_no = 1
 
-  context = {'staff':staff, 'allmodules':allmodules, 'cust':cust, 'cmp':cmp,'bill_no':bill_no, 'tod':tod, 'item':item, 'item_units':item_units,'bank':bank}
-  return render(request,'company/paymentoutadd.html',context)
+    context = {'staff': staff, 'allmodules': allmodules, 'cust': cust, 'cmp': cmp, 'bill_no': bill_no, 'tod': tod, 'bank': bank}
+    return render(request, 'company/paymentoutadd.html', context)
+
+def create_paymentout(request):
+    if request.method == 'POST':
+        sid = request.session.get('staff_id')
+        staff = staff_details.objects.get(id=sid)
+        cmp = company.objects.get(id=staff.company.id)
+        part = party.objects.get(id=request.POST.get('customername'))
+
+        pbill = PaymentOut(
+            staff=staff,
+            company=cmp,
+            party=part,
+            billno=part.id,
+            billdate=request.POST.get('billdate'),
+            pay_method=request.POST.get("method"),
+            cheque_no=request.POST.get("cheque_id"),
+            upi_no=request.POST.get("upi_id"),
+            balance=request.POST.get("balance"),
+        )
+        pbill.save()
+
+        # Create PaymentOutDetails
+        paid = request.POST.get('paid')
+        description = request.POST.get('description')
+        files = request.FILES.get('files')
+
+        paymentout_details = PaymentOutDetails(
+            paymentout=pbill,
+            paid=paid,
+            description=description,
+            files=files
+        )
+        paymentout_details.save()
+
+        PaymentOutTransactionHistory.objects.create(paymentout=pbill, action='Created')
+
+        
+        if 'Next' in request.POST:
+            return redirect('add_paymentout')
+
+        if "Save" in request.POST:
+            return redirect('view_paymentout')
+    else:
+        return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
 
 
+def delete_paymentout(request):
+    if request.method == 'POST':
+        paymentOutId = request.POST.get('paymentOutId')
+        try:
+            # Perform the deletion, e.g., using the Django ORM
+            payment_out = get_object_or_404(PaymentOut, id=paymentOutId)
+            payment_out.delete()
+            return JsonResponse({'success': True})
+        except PaymentOut.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Payment Out not found'})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+def details_paymentout(request, id):
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    allmodules = modules_list.objects.get(company=cmp, status='New')
+
+    paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
+
+    context = {'staff': staff, 'allmodules': allmodules, 'paymentout': paymentout}
+    return render(request, 'company/paymentoutdetails.html', context)
+
+def add_pay(request):
+    return render(request, 'company/add_pay.html')
+def create_addpaymentout(request):
+    if request.method == 'POST':
+        sid = request.session.get('staff_id')
+        staff = staff_details.objects.get(id=sid)
+        cmp = company.objects.get(id=staff.company.id)
+       
+
+
+        # Create PaymentOutDetails
+        paid = request.POST.get('paid')
+        description = request.POST.get('description')
+        files = request.FILES.get('files')
+
+        paymentout_details = PaymentOutDetails(
+            paid=paid,
+            description=description,
+            files=files
+        )
+        paymentout_details.save()
+        
+        
+        if 'Next' in request.POST:
+            return redirect('add_pay')
+
+        if "Save" in request.POST:
+            return redirect('view_paymentout')
+    else:
+        return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
+def edit_paymentout(request, id):
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    cust = party.objects.filter(company=cmp, user=cmp.user)
+    bank = BankModel.objects.filter(company=cmp, user=cmp.user)
+    allmodules = modules_list.objects.get(company=staff.company, status='New')
+
+    # Use get_object_or_404 to retrieve the PaymentOut object or return a 404 response if not found
+    paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
+
+    billdate = paymentout.billdate
+    pay_method = paymentout.pay_method
+
+    context = {
+        'staff': staff,
+        'allmodules': allmodules,
+        'paymentout': paymentout,
+        'cust': cust,
+        'cmp': cmp,
+        'bank': bank,
+        'phone_number': paymentout.party.contact,  # Add phone number to the context
+        'date': paymentout.billdate,  # Add date to the context
+        'billing_address': paymentout.party.address,  # Add billing address to the context
+        'paymentout': paymentout,
+        'billdate': billdate,
+        'pay_method': pay_method,
+    }
+    return render(request, 'company/paymentoutedit.html', context)
+
+def update_paymentout(request, id):
+    if request.method == 'POST':
+        sid = request.session.get('staff_id')
+        staff = staff_details.objects.get(id=sid)
+        cmp = company.objects.get(id=staff.company.id)
+        paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
+
+        # Update PaymentOut fields based on your form data
+        paymentout.billdate = request.POST.get('billdate')
+        paymentout.pay_method = request.POST.get('method')
+        paymentout.cheque_no = request.POST.get('cheque_id')
+        paymentout.upi_no = request.POST.get('upi_id')
+
+        # Add more fields as needed...
+
+        # Handle related items in a transaction to ensure consistency
+        with transaction.atomic():
+            # Update related PaymentOutDetails
+            paymentout.paymentoutdetails_set.all().delete()  # Delete existing details
+
+            # Iterate through form data to create new details
+            for i in range(int(request.POST.get('total_items', 0))):
+                paid = request.POST.get(f'paid_{i}')
+                description = request.POST.get(f'description_{i}')
+                # Handle file upload if needed
+                file = request.FILES.get(f'file_{i}')
+
+                # Create new PaymentOutDetails
+                PaymentOutDetails.objects.create(
+                    paymentout=paymentout,
+                    paid=paid,
+                    description=description,
+                    files=file
+                )
+
+        # Save the main PaymentOut object
+        paymentout.save()
+
+       # Check if there are existing history entries
+        if paymentout.transaction_history.exists():
+            # Update the last history entry to 'Updated'
+            last_history_entry = paymentout.transaction_history.last()
+            last_history_entry.action = 'Updated'
+            last_history_entry.save()
+        else:
+            # Create a new history entry for 'Created'
+            PaymentOutTransactionHistory.objects.create(
+                paymentout=paymentout,
+                staff=staff,
+                company=cmp,
+                action='Created',
+            )
+        # Redirect to the view page or list page
+        return redirect('view_paymentout')
+
+    # Handle the case where the request method is not POST
+    return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
+
+def view_paymentout_history(request, pk):
+    paymentout = PaymentOut.objects.get(pk=pk)
+    # Retrieve the transaction history for the PaymentOut instance
+    history = paymentout.paymentouttransactionhistory_set.all()
+
+    return render(request, 'company/paymentouthistory.html', {'paymentout': paymentout, 'history': history})
 #--------------------------------------------------------------------------------------------------------#
 def bankdata(request):
   bid = request.POST['id']

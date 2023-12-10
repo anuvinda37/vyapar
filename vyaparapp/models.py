@@ -99,6 +99,7 @@ class party(models.Model):
     additionalfield2 = models.CharField(max_length=100,null=True,blank=True)
     additionalfield3 = models.CharField(max_length=100,null=True,blank=True)
     
+    
 #End
 
 # ========================= ASHIKH V U (START)===========================
@@ -191,7 +192,7 @@ class PurchaseBill(models.Model):
     party = models.ForeignKey(party, on_delete=models.CASCADE)
     billdate = models.DateField()
     duedate = models.DateField(null=True,blank=True)
-    supplyplace = models.CharField(max_length=100, default='')
+    supplyplace = models.CharField(max_length=100, null=True, blank=True)
     pay_method = models.CharField(max_length=255, default='', null=True)
     cheque_no = models.CharField(max_length=255, default='', null=True)
     upi_no = models.CharField(max_length=255, default='', null=True)
@@ -205,6 +206,7 @@ class PurchaseBill(models.Model):
     advance=models.CharField(null=True,blank=True,max_length=255)
     balance=models.CharField(null=True,blank=True,max_length=255)
     tot_bill_no = models.IntegerField(default=0, null=True)
+    
 
 class PurchaseBillItem(models.Model):
     purchasebill = models.ForeignKey(PurchaseBill,on_delete=models.CASCADE)
@@ -226,9 +228,39 @@ class PurchaseBillTransactionHistory(models.Model):
     action = models.CharField(max_length=20, choices=CHOICES)
     transactiondate = models.DateField(auto_now=True)
 # ==============Anuvinda K V ============payment out=======
+class PaymentOut(models.Model):
+    purchase=models.ForeignKey(PurchaseBill,on_delete=models.CASCADE,null=True,blank=True)
+    staff = models.ForeignKey(staff_details,on_delete=models.CASCADE,null=True,blank=True)
+    company = models.ForeignKey(company,on_delete= models.CASCADE,null=True,blank=True)
+    party = models.ForeignKey(party, on_delete=models.CASCADE)
+    billno = models.IntegerField(default=0,null=True,blank=True)
+    billdate = models.DateField()
+    duedate = models.DateField(null=True,blank=True)
+    pay_method = models.CharField(max_length=255, default='', null=True)
+    cheque_no = models.CharField(max_length=255, default='', null=True)
+    upi_no = models.CharField(max_length=255, default='', null=True)
+    balance=models.CharField(null=True,blank=True,max_length=255)
+    tot_bill_no = models.IntegerField(default=0, null=True)
 
-    
-    
+
+class PaymentOutDetails(models.Model):
+    paymentout = models.ForeignKey('PaymentOut',on_delete=models.CASCADE,null=True,blank=True)
+    paid = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    description = models.TextField(null=True)
+    files = models.FileField(upload_to='paymentout_files/', null=True, blank=True)
+
+    def __str__(self):
+        return str(self.paymentout) 
+class PaymentOutTransactionHistory(models.Model):
+    paymentout = models.ForeignKey('PaymentOut', on_delete=models.CASCADE)
+    staff = models.ForeignKey('staff_details', on_delete=models.CASCADE)
+    company = models.ForeignKey('company', on_delete=models.CASCADE)
+    action = models.CharField(max_length=10, choices=[('Created', 'Created'), ('Updated', 'Updated')])
+    transactiondate = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transactiondate.strftime('%d-%m-%Y')} - {self.staff.first_name} {self.staff.last_name} - {self.action}"
+
 # ==============delivery challan & Estimate ============shemeem --start=======
 
 class Estimate(models.Model):

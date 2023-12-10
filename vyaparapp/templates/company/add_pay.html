@@ -74,7 +74,7 @@
     <div class="row p-0 m-0">
         <div class="col-12  p-0 m-0">
             <div  class=" bg-light bg-light pb-0 mb-0 p-2" style="height:100%;width:100%">
-                {% comment %} <div  class="d-flex justify-content-center pt-4">
+                 <div  class="d-flex justify-content-center pt-4">
                     <a href="" id="b1" class="btn  text-white"
                         style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                         Add Sale <i class="fa fa-plus"></i>
@@ -87,10 +87,10 @@
                         style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                         Add More <i class="fa fa-plus"></i>
                     </a>
-                </div> {% endcomment %}
+                </div> 
                 <p></p>
   
-                <form action="{% url 'create_paymentout' %}" method="post" enctype="multipart/form-data" >
+                <form action="{% url 'create_addpaymentout' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="page-content">
                         <div class="card radius-15">
@@ -109,8 +109,8 @@
                                 <div id="customer_div" style="margin-left: .1px; margin-right: .51px;">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label class="col-form-label">Party</label>
-                                            <div class="d-flex">
+                                            {% comment %} <label class="col-form-label">Paid</label> {% endcomment %}
+                                            {% comment %} <div class="d-flex">
                                                 <select name="customername" id="customer" class="form-control border-secondary" >
                                                     <option value="" selected hidden>Select</option>
                                                     {% for c in cust %}
@@ -122,18 +122,19 @@
                                                 <button id="modal_closing" type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo">
                                                     <span class="fa fa-plus"></span>
                                                 </button>
-                                            </div>
-                                            <div class="mt-1 d-flex" >
+                                            </div> {% endcomment %}
+                                            {% comment %} <div class="mt-1 d-flex" >
                                                 &nbsp;<span id="balancediv" style="display: none; color: black;"> Available Balance : <span id="balval"></span></span>
-                                            </div>
-                                            <div id="billdiv">
-                                                <label class="col-form-label">Receipt No.</label>
-                                                <input type="text" class="form-control border-secondary" name="bill_no"  id="bill_no" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
+                                            </div> {% endcomment %}
+                                            <div id="paid">
+                                                <label class="col-form-label">Paid</label>
+                                                <input type="text" class="form-control border-secondary" name="paid" id="paid" style="color: black;background-color: white;">
+
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div id="phonediv">
-                                                <label class="col-form-label" >Phone No. </label>
+                                            <div id="phonediv" style="display: none;">
+                                                <label class="col-form-label"style="display: none;" >Phone No. </label>
                                                 <input class="form-control border-secondary" name="phno"  id="cust_phno"  style="color: black;background-color: white;" readonly>
                                             </div>
                                             <div id="dbilldiv" style="display: none;">
@@ -146,23 +147,23 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4" id="addressdiv">
-                                            <label class="col-form-label">Billing Address</label>
-                                            <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black;background-color: white;" readonly></textarea>
+                                            <label class="col-form-label">Description</label>
+                                            <textarea class="form-control border-secondary mb-3" name="description" id="description" rows="6" type="text" style="color: black;background-color: white;"></textarea>
                                         </div>
-                                        <div class="col-md-4" id="ddbilldiv" style="display: none;">
-                                            <label class="col-form-label">Bill No.</label>
-                                            <input type="text" class="form-control border-secondary" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
+                                        <div class="col-md-4" id="ddbilldiv" >
+                                            <label class="col-form-label">File</label>
+                                            <input type="file" name="files">
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="row">
+                                    <div class="row" style="display: none;">
                                         <div class="col-md-4">
                                             <label class="col-form-label"> Date</label>
                                             <input type="date" class="form-control border-secondary" name="billdate" id="billdate"  style="color: black;background-color: white;" value='{{tod}}'>
                                             <br>
                                         </div>
                                         
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="display: none;">
                                             <label class="col-form-label">Payment Method</label>
                                             <select class="form-control border-secondary my-select" id="pay_method" name="method" style="color: black;background-color: white;">
                                                 <option value="" selected hidden>Select</option>
@@ -176,7 +177,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <div class="row" style="display: none;">
                                         <div class="col-md-4">
                                             <div style="display:none;"  id="chequediv">
                                                 <label class="col-form-label" >Cheque ID</label>
@@ -360,7 +361,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row" style="margin-left: 2vh;" > 
+                                        <div class="row" style="margin-left: 2vh;" style="display: none;"> 
                                             <div class="col-md-5 table-responsive-md mt-3 " id="tab_logic_total" style="color: black; border: 1px solid rgba(128, 128, 128, 0.6); margin-left: -2vh; background-color: rgba(0, 195, 255, 0.205);">
                                                 <div class="p-3">
                                                     <div class="row container-fluid p-2 m-0">

@@ -56,3 +56,37 @@
 
 
 {% endblock content %}
+
+
+
+<table class="table table-bordered table-info table-striped tb table-responsive w-100" id="billtable" style="text-align: center;">
+  <thead>
+      <tr class="fs-2 tb">
+          
+          <th class="bg-secondary text-white">DATE</th>
+          <th class="bg-secondary text-white">PARTY NAME</th>
+          <th class="bg-secondary text-white">PARTY TYPE</th>
+          <th class="bg-secondary text-white">AMOUNT</th>
+          <th class="bg-secondary text-white">BALANCE</th>
+          <th class="bg-secondary text-white">ACTION</th>
+          <th class="bg-secondary text-white">BY</th>
+          <th class="bg-secondary text-white"></th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for paymentout in paymentouts %}
+      <tr>
+          <td>{{ forloop.counter }}</td>
+          <td style="color: black;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
+          <td style="color: black;">{{ paymentout.party.party_name }}</td>
+          <td style="color: black;">Payment Out</td>
+          <td style="color: black;">{{ paymentout.amount }}</td>
+          <td style="color: black;">{{ paymentout.balance }}</td>
+          <td></td>
+          {% comment %} <td style="color: {{ 'red' if paymentout.action == 'Created' else '#154c79' }};">{{ paymentout.action }}</td> {% endcomment %}
+          <td style="color: black;">{{ paymentout.staff.first_name }} {{ paymentout.staff.last_name }}</td>
+          <td></td> <!-- Add your content for the blank column here -->
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
