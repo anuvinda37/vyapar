@@ -2401,8 +2401,8 @@ def create_paymentout(request):
         )
         paymentout_details.save()
 
-        PaymentOutTransactionHistory.objects.create(paymentout=pbill, action='Created')
-
+      # Record history for creation
+        PaymentOutHistory.objects.create(paymentout=pbill, action='created')  
         
         if 'Next' in request.POST:
             return redirect('add_paymentout')
@@ -2510,7 +2510,9 @@ def update_paymentout(request, id):
         paymentout.upi_no = request.POST.get('upi_id')
 
         # Add more fields as needed...
-
+        
+        # Record history for update
+        PaymentOutHistory.objects.create(paymentout=paymentout, action='updated')
         # Handle related items in a transaction to ensure consistency
         with transaction.atomic():
             # Update related PaymentOutDetails
@@ -2534,32 +2536,16 @@ def update_paymentout(request, id):
         # Save the main PaymentOut object
         paymentout.save()
 
-       # Check if there are existing history entries
-        if paymentout.transaction_history.exists():
-            # Update the last history entry to 'Updated'
-            last_history_entry = paymentout.transaction_history.last()
-            last_history_entry.action = 'Updated'
-            last_history_entry.save()
-        else:
-            # Create a new history entry for 'Created'
-            PaymentOutTransactionHistory.objects.create(
-                paymentout=paymentout,
-                staff=staff,
-                company=cmp,
-                action='Created',
-            )
+       
         # Redirect to the view page or list page
         return redirect('view_paymentout')
 
     # Handle the case where the request method is not POST
     return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
+def paymentout_history(request, id):
+    paymentout_history = PaymentOutHistory.objects.filter(paymentout_id=id).order_by('-timestamp')
+    return render(request, 'company/paymentout_history.html', {'paymentout_history': paymentout_history})
 
-def view_paymentout_history(request, pk):
-    paymentout = PaymentOut.objects.get(pk=pk)
-    # Retrieve the transaction history for the PaymentOut instance
-    history = paymentout.paymentouttransactionhistory_set.all()
-
-    return render(request, 'company/paymentouthistory.html', {'paymentout': paymentout, 'history': history})
 #--------------------------------------------------------------------------------------------------------#
 def bankdata(request):
   bid = request.POST['id']

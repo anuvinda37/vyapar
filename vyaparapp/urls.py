@@ -171,7 +171,7 @@ urlpatterns = [
      path('add_pay/',views.add_pay, name='add_pay'),
      path('create_addpaymentout',views.create_addpaymentout,name='create_addpaymentout'), 
      path('update_paymentout/<int:id>/', views.update_paymentout, name='update_paymentout'),
-     path('paymentout/<int:pk>/history/', views.view_paymentout_history, name='view_paymentout_history'), 
+     path('paymentout_history/<int:id>/',views.paymentout_history, name='paymentout_history'), 
     # =========== estimate & delivery challan=========== shemeem - start =======================================
     path('create_estimate',views.create_estimate, name='create_estimate'),
     path('add_new_party',views.addNewParty, name='addNewParty'),

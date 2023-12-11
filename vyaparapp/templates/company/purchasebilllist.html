@@ -372,13 +372,10 @@
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.pay_method}}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.grandtotal}}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.balance}}</td>
-                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{% if paymentout.transaction_history.exists %}
-                                                {% if paymentout.transaction_history.last.action == 'Updated' %}
-                                                    <span class="badge bg-warning text-dark">Updated</span>
-                                                {% else %}
-                                                    <span class="badge bg-success text-white">Created</span>
-                                                {% endif %}
-                                            {% endif %}</td>
+                                            <td class="clickable-row extra" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
+                                                {{ paymentout.paymentout_history.last.action }}
+                                            </td>
+                                            
                                             <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}"></td>
                                             <td class="pt-3 m-0 extra">
                                                 <div class="btn-group">

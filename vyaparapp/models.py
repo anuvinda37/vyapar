@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create by athul.
 
 
@@ -241,7 +242,8 @@ class PaymentOut(models.Model):
     upi_no = models.CharField(max_length=255, default='', null=True)
     balance=models.CharField(null=True,blank=True,max_length=255)
     tot_bill_no = models.IntegerField(default=0, null=True)
-
+    def paymentout_history(self):
+        return PaymentOutHistory.objects.filter(paymentout=self).order_by('-timestamp')
 
 class PaymentOutDetails(models.Model):
     paymentout = models.ForeignKey('PaymentOut',on_delete=models.CASCADE,null=True,blank=True)
@@ -251,16 +253,15 @@ class PaymentOutDetails(models.Model):
 
     def __str__(self):
         return str(self.paymentout) 
-class PaymentOutTransactionHistory(models.Model):
-    paymentout = models.ForeignKey('PaymentOut', on_delete=models.CASCADE)
-    staff = models.ForeignKey('staff_details', on_delete=models.CASCADE)
-    company = models.ForeignKey('company', on_delete=models.CASCADE)
-    action = models.CharField(max_length=10, choices=[('Created', 'Created'), ('Updated', 'Updated')])
-    transactiondate = models.DateTimeField(auto_now_add=True)
+
+class PaymentOutHistory(models.Model):
+    paymentout = models.ForeignKey(PaymentOut, on_delete=models.CASCADE)
+    action = models.CharField(max_length=10)  # 'created' or 'updated'
+    timestamp = models.DateTimeField(auto_now_add=True)
+    # Add any additional fields you want to track in the history
 
     def __str__(self):
-        return f"{self.transactiondate.strftime('%d-%m-%Y')} - {self.staff.first_name} {self.staff.last_name} - {self.action}"
-
+        return f"{self.paymentout.billno} - {self.action} - {self.timestamp}"
 # ==============delivery challan & Estimate ============shemeem --start=======
 
 class Estimate(models.Model):

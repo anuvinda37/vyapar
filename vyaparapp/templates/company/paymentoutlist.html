@@ -244,7 +244,7 @@
                     <div class="row">
                         <div class="col-md-12" style="margin-left: 2vh;">
                             <div class="mt-3" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
-                                <table class="table table-bordered table-info table-striped tb table-responsive w-100" id="billtable"  style="text-align: center;">
+                                <table class="table table-bordered table-info table-striped tb table-responsive w-100" id="paymentoutTable"  style="text-align: center;">
                                     <thead >
                                         <tr class="fs-2 tb">
                                             
@@ -259,7 +259,17 @@
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
-                                                BILL NO 
+                                                REF NO 
+                                                <a class="extra text-white" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent1">
+                                                    <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput1"  />
+                                                    <a class="btn btn-info" onclick="cleardropdown(1)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(1)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                CATEGORY
                                                 <a class="extra text-white" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
                                                 <div class="dropdown-content" id="dropdownContent1">
                                                     <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
@@ -289,7 +299,7 @@
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
-                                                AMOUNT
+                                                RECEIVED/PAID
                                                 <a class="extra text-white" onclick="toggleDropdown(4)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
                                                 <div class="dropdown-content" id="dropdownContent4">
                                                     <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
@@ -336,18 +346,17 @@
                                         <tr>
                                             <td style="color: black;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.billno }}</td>
+                                            <td></td>
                                             <td style="color: black;">{{ paymentout.party.party_name }}</td>
                                             <td style="color: black;">Payment Out</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.amount }}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.balance}}</td>
-                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}">
-                                                {% if paymentout.transaction_history.exists %}
-                                                {% if paymentout.transaction_history.last.action == 'Updated' %}
-                                                    <span class="badge bg-warning text-dark">Updated</span>
-                                                {% else %}
-                                                    <span class="badge bg-success text-white">Created</span>
-                                                {% endif %}
-                                            {% endif %}
+                                            <td class="clickable-row extra" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
+                                                {{ paymentout.paymentouthistory_set.last.action }}
+                                            </td>
+                                            
+                                            
+                                            
                                             <td style="color: black;">{{ paymentout.staff.first_name }} {{ paymentout.staff.last_name }}</td>
                                             <td class="pt-3 m-0 extra">
                                                 <div class="btn-group">
@@ -359,10 +368,11 @@
                                                       <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'edit_paymentout' id=paymentout.id %}"><span class="fa fa-edit pe-2 tj"></span> Edit</a></li>
 
                                                       <li>
-                                                        <a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'view_paymentout_history' paymentout.id %}">
+                                                        <a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'paymentout_history' id=paymentout.id %}">
                                                             <span class="fa fa-history pe-2 th"></span> History
                                                         </a>
                                                     </li>
+                                                    
                                                     
                                                       <li>
                                                         <a class="dropdown-item fw-bold tb hide_table_text_d" href="javascript:void(0);" onclick="deletePaymentOut('{{ paymentout.id }}')">
@@ -409,12 +419,12 @@
                     <form id="excelForm" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label for="file" style="color: black;">Choose Excel File for Purchase Bill- </label> <br>
+                            <label for="file" style="color: black;">Choose Excel File for Paymentout- </label> <br>
                             <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
                             
 
-                            <label for="file" style="color: black;">Choose Excel File for Purchase Bill Products- </label> <br>
-                            <input type="file" class="form-control-file" id="prdfile" name="prdfile" accept=".xls, .xlsx"><br>
+                            
+                            
                         </div>
                     </form>
                 </div>
@@ -710,7 +720,8 @@
         $.ajax({
             type: 'POST',
             // Assuming you are using Django template syntax for the URL
-            const url = "{% url 'delete_paymentout' %}";
+            url: "/delete_paymentout/",  // Replace with the actual URL
+
 
             data: {
                 paymentOutId: parseInt(paymentOutId),  // Convert to integer
@@ -767,7 +778,7 @@
         const ws = XLSX.utils.table_to_sheet(table);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-        XLSX.writeFile(wb, 'PurchaseBill.xlsx');
+        XLSX.writeFile(wb, 'PaymentOut.xlsx');
     }
 </script>
 
@@ -777,14 +788,25 @@
         const ws1 = XLSX.utils.table_to_sheet(table1);
         const wb1 = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb1, ws1, 'Sheet1');
-        XLSX.writeFile(wb1, 'PurchaseBillModel.xlsx');
+        XLSX.writeFile(wb1, 'PaymentOutModel.xlsx');
 
         const table2 = document.querySelector('#billtableitemmodel');
         const ws2 = XLSX.utils.table_to_sheet(table2);
         const wb2 = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
-        XLSX.writeFile(wb2, 'PurchaseBillItemModel.xlsx');
+        XLSX.writeFile(wb2, ' PaymentOutDetailsModel.xlsx');
     }
 </script>
-
+<script>
+    function ExportToExcel() {
+      const table = document.getElementById('paymentoutTable');
+      const ws = XLSX.utils.table_to_sheet(table);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.writeFile(wb, 'paymentout_data.xlsx');
+    }
+  </script>
 {% endblock  %}
+
+
+
