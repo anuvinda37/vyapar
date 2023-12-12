@@ -2337,6 +2337,7 @@ def view_paymentout(request):
     
     # Assuming you want to display the latest PaymentOut records
     paymentouts = PaymentOut.objects.filter(company=cmp).order_by('-billdate')
+    
 
     if not paymentouts:
         context = {'staff': staff, 'allmodules': allmodules}

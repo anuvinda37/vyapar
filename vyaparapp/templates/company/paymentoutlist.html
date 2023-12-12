@@ -268,16 +268,7 @@
                                                     &nbsp;<a class="btn btn-info" onclick="filterTable(1)">Apply</a>
                                                 </div>
                                             </th>
-                                            <th class="bg-secondary text-white">
-                                                CATEGORY
-                                                <a class="extra text-white" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
-                                                <div class="dropdown-content" id="dropdownContent1">
-                                                    <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
-                                                    <input type="text" id="filterInput1"  />
-                                                    <a class="btn btn-info" onclick="cleardropdown(1)">Clear</a> 
-                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(1)">Apply</a>
-                                                </div>
-                                            </th>
+                                           
                                             <th class="bg-secondary text-white">
                                                 PARTY NAME 
                                                 <a class="extra text-white" onclick="toggleDropdown(2)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
@@ -289,6 +280,16 @@
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
+                                                CATEGORY
+                                                <a class="extra text-white" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent1">
+                                                    <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput1"  />
+                                                    <a class="btn btn-info" onclick="cleardropdown(1)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(1)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
                                                 PARTY TYPE
                                                 <a class="extra text-white" onclick="toggleDropdown(3)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
                                                 <div class="dropdown-content" id="dropdownContent3">
@@ -296,6 +297,16 @@
                                                     <input type="text" id="filterInput3"  />
                                                     <a class="btn btn-info" onclick="cleardropdown(3)">Clear</a> 
                                                     &nbsp;<a class="btn btn-info" onclick="filterTable(3)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                TOTAL
+                                                <a class="extra text-white" onclick="toggleDropdown(4)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent4">
+                                                    <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput4" />
+                                                    <a class="btn btn-info" onclick="cleardropdown(4)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(4)">Apply</a>
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
@@ -345,12 +356,20 @@
                                         {% for paymentout in paymentouts %}
                                         <tr>
                                             <td style="color: black;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.billno }}</td>
-                                            <td></td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.id }}</td>
+                                            
                                             <td style="color: black;">{{ paymentout.party.party_name }}</td>
+                                            <td></td>
                                             <td style="color: black;">Payment Out</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ paymentout.id }}">{{ paymentout.amount }}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.balance}}</td>
+                                            <td></td>
+                                            {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
+                                            <!-- Adjust this part based on the actual structure of PaymentOutDetails model -->
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
+                                                {{ paymentout_detail.paid }}
+                                            </td>
+                                            <!-- Add other columns for PaymentOutDetails here -->
+                                        {% endfor %}
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ p.id }}">{{p.balance}}</td>
                                             <td class="clickable-row extra" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
                                                 {{ paymentout.paymentouthistory_set.last.action }}
                                             </td>

@@ -216,8 +216,8 @@
                                                     <section class="top-content ">
                                                         <div class="top-left">
                                                             <div class="position-relative" style="text-align: left;">
-                                                                <p> Ref Number: &nbsp; {{ paymentout.transaction_id }}</p>
-                                                                <p>Bill Date: <span>{{ paymentout.transaction_date | date:'d-m-Y' }}</span></p>
+                                                                <p> Ref Number: &nbsp; {{ paymentout.id }}</p>
+                                                                <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                             </div>
                                                         </div>
                                                     </section>
@@ -282,8 +282,8 @@
                                                     </div>  
                                                     <div class="col-md-4 d-flex justify-content-end">
                                                         <div class="text-white" >
-                                                            <p> Ref Number: &nbsp; {{ paymentout.transaction_id }}</p>
-                                                            <p>Bill Date: <span>{{ paymentout.transaction_date | date:'d-m-Y' }}</span></p>
+                                                            <p> Ref Number: &nbsp; {{ paymentout.id }}</p>
+                                                            <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -366,12 +366,13 @@
                                                             <table class="table table-borderless">
                                                                 <tbody>
                                                                     <tr >
+                                                                        
                                                                         <td style="color: #000; font-weight: bold;">Ref Number : </td>
-                                                                        <td style="color: #000; text-align: left;">{{ paymentout.transaction_id }}</td>
+                                                                        <td style="color: #000; text-align: left;">{{ paymentout.id }}</td>
                                                                     </tr>
                                                                     <tr >
                                                                         <td style="color: #000; font-weight: bold;">Bill Date : </td>
-                                                                        <td style="color: #000; text-align: left;">{{ paymentout.transaction_date | date:'d-m-Y' }}<td>
+                                                                        <td style="color: #000; text-align: left;">{{ paymentout.billdate | date:'d-m-Y' }}<td>
                                                                     </tr>
                                                                 </tbody>
                             
