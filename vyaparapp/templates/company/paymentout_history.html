@@ -36,20 +36,7 @@
 
 <div class="body-wrapper ">
     <br><br>
-    <div class="d-flex justify-content-center pt-5" style="margin-top: 5px;">
-        <a href="" id="b1" class="btn  text-white"
-            style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add Sale <i class="fa fa-plus"></i>
-        </a>
-        <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
-            style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add Purchase <i class="fa fa-plus"></i>
-        </a>
-        <a href="" id="b3" class="btn text-primary"
-            style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-            Add More <i class="fa fa-plus"></i>
-        </a>
-    </div>
+
     <div class="p-3 text-center" style="display: flex;justify-content: center;">
         <div class="card " style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
             <div class="row">
@@ -76,9 +63,7 @@
                             <th class="bg-secondary text-white">
                                 ACTION
                             </th>
-                            <th class="bg-secondary text-white">
-                                RECEIPT NUMBER
-                            </th>
+                            
                             <th class="bg-secondary text-white">
                                 NAME
                             </th>
@@ -89,11 +74,9 @@
                          {% for history in paymentout_history %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td style="color: black;">{{ history.timestamp | date:'d-m-Y H:i:s' }}</td>
+                            <td style="color: black;">{{ history.timestamp | date:'d-m-Y ' }}</td>
                             <td style="color: black;">{{ history.action }}</td>
-                            <td style="color: black;">
-                                {{ history.paymentout_id }}
-                            </td>
+                           
                             <td>{{ history.paymentout.staff.first_name }} {{ history.paymentout.staff.last_name }}</td>
                         </tr>
                         {% endfor %}

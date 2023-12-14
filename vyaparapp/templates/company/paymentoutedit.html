@@ -142,6 +142,7 @@
                                                 <label class="col-form-label">Billing Address</label>
                                                 <textarea class="form-control border-secondary mb-3" name="dbname" id="dbname" rows="6" type="text" style="color: black;background-color: white;" readonly>{{ pbill.party.address }}</textarea>
                                             </div>
+                                            
                                         </div>
                                         <div class="col-md-4" id="addressdiv">
                                             <label class="col-form-label">Billing Address</label>
@@ -150,7 +151,25 @@
                                         
                                     </div>
                                     <br>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            
+                                            {% for detail in paymentout_details %}
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <label class="col-form-label">Paid:</label>
+                                                    <input type="text" class="form-control border-secondary" name="paid_{{ forloop.counter0 }}" value="{{ detail.paid }}">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="col-form-label">Description:</label>
+                                                    <textarea class="form-control border-secondary" name="description_{{ forloop.counter0 }}" rows="3">{{ detail.description }}</textarea>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
 
+                                        </div>
+                                    </div>
+                                    <br>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="col-form-label"> Date:</label>
@@ -209,7 +228,7 @@
                                             </div>
                                         {% endif %}
                                         {% if pbill.pay_method != 'Cash' and pbill.pay_method != 'Cheque' and pbill.pay_method != 'UPI' %}
-                                            <div class="col-md-4" id="bnkdiv" >
+                                            <div class="col-md-4" id="bnkdiv"  style="display:none;">
                                                 <label class="col-form-label" >Bank Account</label>
                                                 <input type="text" class="form-control border-secondary" name="bnk_id" id="bnk_id" value="{{bankno.account_num}}" style="color: black;background-color: white;" readonly>
                                             </div>

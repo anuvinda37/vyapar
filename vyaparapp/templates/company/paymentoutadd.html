@@ -130,6 +130,7 @@
                                                 <label class="col-form-label">Receipt No.</label>
                                                 <input type="text" class="form-control border-secondary" name="bill_no"  id="bill_no" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
                                             </div>
+                                            
                                         </div>
                                         <div class="col-md-4">
                                             <div id="phonediv">
@@ -149,9 +150,24 @@
                                             <label class="col-form-label">Billing Address</label>
                                             <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black;background-color: white;" readonly></textarea>
                                         </div>
+                                       
                                         <div class="col-md-4" id="ddbilldiv" style="display: none;">
                                             <label class="col-form-label">Bill No.</label>
                                             <input type="text" class="form-control border-secondary" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
+                                        </div>
+                                        <div class="col-md-4" id="ddbilldiv" >
+                                            <label class="col-form-label">File</label>
+                                            <input type="file" name="files">
+                                        </div>
+                                        <div id="paid">
+                                            <label class="col-form-label">Paid</label>
+                                            <input type="text" class="form-control border-secondary" name="paid" id="paid" style="color: black;background-color: white;">
+
+                                        </div>
+                                        <div id="description">
+                                            <label class="col-form-label">Description</label>
+                                            <textarea class="form-control border-secondary mb-3" name="description" id="description" rows="6" type="text" style="color: black;background-color: white;"></textarea>
+
                                         </div>
                                     </div>
                                     <br>

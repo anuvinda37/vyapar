@@ -168,10 +168,9 @@ urlpatterns = [
      path('delete_paymentout/',views.delete_paymentout,name='delete_paymentout'), 
      path('details_paymentout/<int:id>/', views.details_paymentout, name='details_paymentout'),
      path('edit_paymentout/<int:id>/',views.edit_paymentout, name='edit_paymentout'),
-     path('add_pay/',views.add_pay, name='add_pay'),
-     path('create_addpaymentout',views.create_addpaymentout,name='create_addpaymentout'), 
      path('update_paymentout/<int:id>/', views.update_paymentout, name='update_paymentout'),
      path('paymentout_history/<int:id>/',views.paymentout_history, name='paymentout_history'), 
+     path('send-email/',views.send_email, name='send_email'),
     # =========== estimate & delivery challan=========== shemeem - start =======================================
     path('create_estimate',views.create_estimate, name='create_estimate'),
     path('add_new_party',views.addNewParty, name='addNewParty'),

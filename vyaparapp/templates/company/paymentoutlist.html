@@ -10,6 +10,8 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
 
 {% load my_extras %}
 
@@ -58,7 +60,7 @@
         background-color: lightgreen;
     }
 
-    #billtable tbody{
+    #paymentouttable tbody{
         cursor: pointer;
     }
 
@@ -148,17 +150,20 @@
             margin-bottom: 30vh;
         }
 
-        #billtable{
+        #paymentouttable{
             margin-top: 20vh;
             margin-bottom: 20vh;
         }
 
-        #billtable th{
+        #paymentouttable th{
             font-size: medium;
         }
 
         .extra{
             display: none;
+        }
+        td, th {
+            white-space: nowrap; /* Prevent text wrapping */
         }
     }
     
@@ -234,7 +239,7 @@
                         </div>
                         <div class="col-md-6"></div>
                         <div class="col-md-2">
-                            <a class="btn btn-primary bg-gradient" href="{% url 'add_pay' %}" style="color: white;"> 
+                            <a class="btn btn-primary bg-gradient" href="{% url 'add_paymentout' %}" style="color: white;"> 
                                 <i class="fa fa-plus border-dark" aria-hidden="true" style="color: white;"></i> &nbsp;Add Paymentout
                             </a>
                             
@@ -355,21 +360,20 @@
                                     <tbody>
                                         {% for paymentout in paymentouts %}
                                         <tr>
-                                            <td style="color: black;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.id }}</td>
+                                            <td style="color: black; text-align: left;white-space: nowrap;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.billno }}</td>
                                             
                                             <td style="color: black;">{{ paymentout.party.party_name }}</td>
                                             <td></td>
                                             <td style="color: black;">Payment Out</td>
                                             <td></td>
                                             {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
-                                            <!-- Adjust this part based on the actual structure of PaymentOutDetails model -->
                                             <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
                                                 {{ paymentout_detail.paid }}
                                             </td>
-                                            <!-- Add other columns for PaymentOutDetails here -->
-                                        {% endfor %}
-                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ p.id }}">{{p.balance}}</td>
+                                           
+                                            {% endfor %}
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ p.id }}"></td>
                                             <td class="clickable-row extra" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
                                                 {{ paymentout.paymentouthistory_set.last.action }}
                                             </td>
@@ -458,7 +462,7 @@
 
 <script>
     $(document).ready(function() {
-        var table = document.getElementById("billtable");
+        var table = document.getElementById("paymentouttable");
         var rows = table.getElementsByTagName("tr");
         for (var i = 1; i < rows.length; i++) {
             var bankid = rows[i].getElementsByTagName("td")[3].innerText;
@@ -483,7 +487,7 @@
     });
 
     $(document).ready(function() {
-        var table = document.getElementById("excelbilltable");
+        var table = document.getElementById("excelpaymentouttable");
         var rows = table.getElementsByTagName("tr");
         for (var i = 1; i < rows.length; i++) {
             var bankid = rows[i].getElementsByTagName("td")[3].innerText;
@@ -509,7 +513,7 @@
 </script>
 
 <script>
-    var table = document.getElementById('billtable');
+    var table = document.getElementById('paymentouttable');
     var rows = table.getElementsByTagName('tr');
     for (var i = 1; i < rows.length; i++) {
         var pid = rows[i].getElementsByTagName('td')[1].innerText;
@@ -569,18 +573,32 @@
 </script>
 
 <script>
-    function printfunction(){
-        print4 = document.getElementById('tablediv')
-        if (print4.style.display !== 'none'){
-            var printContents = document.getElementById("tablediv").innerHTML;
-        }else{
-            var printContents = document.getElementById("whatToPrint").innerHTML;
+    function printfunction() {
+        // Assuming the index of the "BALANCE" column is 6
+        var balanceIndex = 6;
+
+        var table = document.getElementById("paymentoutTable");
+        var newTable = document.createElement("table");
+        newTable.className = "table table-bordered table-info table-striped tb table-responsive w-100";
+
+        // Copy the header row
+        newTable.appendChild(table.rows[0].cloneNode(true));
+
+        // Copy rows up to the balance column
+        for (var i = 0; i < table.rows.length; i++) {
+            var newRow = newTable.insertRow(newTable.rows.length);
+            for (var j = 0; j <= balanceIndex; j++) {
+                var cell = newRow.insertCell(j);
+                cell.innerHTML = table.rows[i].cells[j].innerHTML;
+            }
         }
-        var $printerDiv = $('<div class="printContainer" id=printContainer></div>');
-        $printerDiv.html(printContents); 
-        $('body').append($printerDiv).addClass("printingContent"); 
+
+        var printContents = newTable.outerHTML;
+        var $printerDiv = $('<div class="printContainer" id="printContainer"></div>');
+        $printerDiv.html(printContents);
+        $('body').append($printerDiv).addClass("printingContent");
         var h1Element = document.createElement("h1");
-        h1Element.textContent = "Purchase Bills";
+        h1Element.textContent = "Payment Out";
         var head = document.getElementById("printContainer");
         head.insertBefore(h1Element, head.firstChild);
         window.print();
@@ -589,11 +607,12 @@
     }
 </script>
 
+
 <script>
     calculatetotal()
 
     function calculatetotal(){
-        var table = document.getElementById('billtable');
+        var table = document.getElementById('paymentoutTable');
         var rows = table.getElementsByTagName('tr');
         tpaid = 0;
         tunpaid = 0;
@@ -646,7 +665,7 @@
         } else {
             input = document.getElementById('filterInput' + index).value.toUpperCase();
         }
-        var table = document.getElementById('billtable');
+        var table = document.getElementById('paymentoutTable');
         var rows = table.getElementsByTagName('tr');
         var emptyMessage = document.getElementById('emptyMessage');
         var isEmpty = true;
@@ -681,7 +700,7 @@
             }
         }
         emptyMessage.style.display = isEmpty ? 'block' : 'none';
-        calculatetotal()
+        
     }
 
     function formatDateString(inputDate) {
@@ -696,31 +715,44 @@
 
 <script>
     function filterDates() {
-        var fromDate = document.getElementById("fromDate").value;
-        var selectedDate = new Date(fromDate);
-        selectedDate.setDate(selectedDate.getDate() - 1);
-        var toDate = document.getElementById("toDate").value;
-        var table = document.getElementById("billtable");
-        var rows = table.getElementsByTagName("tr");
-        var emptyMessage = document.getElementById('emptyMessage');
-        var isEmpty = true;
-        for (var i = 1; i < rows.length; i++) {
-            var currentDate = rows[i].getElementsByTagName("td")[0].innerText;
-            var date = new Date(currentDate.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2/$1/$3"));
-            if ((fromDate && date >= selectedDate) || !fromDate) {
-                if ((toDate && date <= new Date(toDate)) || !toDate) {
-                    rows[i].style.display = "table-row";
-                    isEmpty = false;
-                } else {
-                    rows[i].style.display = "none";
-                }
-            } else {
-                rows[i].style.display = "none";
-            }
-        }
-        emptyMessage.style.display = isEmpty ? 'block' : 'none';
-        calculatetotal()
+        var fromDateInput = document.getElementById("fromDate");
+        var toDateInput = document.getElementById("toDate");
+    
+        // Get the selected From Date
+        var fromDate = parseDateString(fromDateInput.value);
+        var toDate = parseDateString(toDateInput.value);
+    
+        // Set the minimum date for To Date input
+        toDateInput.min = formatDate(fromDate);
+    
+        // Your existing filterDates logic here...
+        console.log("From Date:", fromDate);
+        console.log("To Date:", toDate);
+    
+        // Calculate total after filtering
+        calculatetotal();
     }
+    
+    // Helper function to parse date in dd-mm-yyyy format
+    function parseDateString(inputDate) {
+        const parts = inputDate.split("-");
+        return new Date(parts[2], parts[1] - 1, parts[0]); // months are zero-based
+    }
+    
+    // Helper function to format date as YYYY-MM-DD
+    function formatDate(date) {
+        var day = date.getDate();
+        var month = date.getMonth() + 1; // Month is zero-based
+        var year = date.getFullYear();
+    
+        // Pad single-digit days and months with a leading zero
+        var formattedDay = day < 10 ? '0' + day : day;
+        var formattedMonth = month < 10 ? '0' + month : month;
+    
+        return `${year}-${formattedMonth}-${formattedDay}`;
+    }
+    
+    
 </script>
 
 <script>
@@ -767,7 +799,7 @@
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("search_input");
         filter = input.value.toUpperCase();
-        table = document.getElementById("billtable");
+        table = document.getElementById("paymentouttable");
         tr = table.getElementsByTagName("tr");
         var emptyMessage = document.getElementById("emptyMessage");
         var anyMatch = false;
@@ -791,25 +823,17 @@
     });
 </script>
 
-<script>
-    function ExportToExcel(){
-        const table = document.querySelector('#excelbilltable');
-        const ws = XLSX.utils.table_to_sheet(table);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-        XLSX.writeFile(wb, 'PaymentOut.xlsx');
-    }
-</script>
+
 
 <script>
     function excelmodel(){
-        const table1 = document.querySelector('#billtablemodel');
+        const table1 = document.querySelector('#paymentouttablemodel');
         const ws1 = XLSX.utils.table_to_sheet(table1);
         const wb1 = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb1, ws1, 'Sheet1');
         XLSX.writeFile(wb1, 'PaymentOutModel.xlsx');
 
-        const table2 = document.querySelector('#billtableitemmodel');
+        const table2 = document.querySelector('#paymentouttableitemmodel');
         const ws2 = XLSX.utils.table_to_sheet(table2);
         const wb2 = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
@@ -818,13 +842,39 @@
 </script>
 <script>
     function ExportToExcel() {
-      const table = document.getElementById('paymentoutTable');
-      const ws = XLSX.utils.table_to_sheet(table);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-      XLSX.writeFile(wb, 'paymentout_data.xlsx');
+        // Get the table
+        var paymentoutTable = document.getElementById("paymentoutTable");
+    
+        // Create a new worksheet
+        var ws = XLSX.utils.aoa_to_sheet([
+            ["DATE", "REF NO", "PARTY NAME", "CATEGORY", "PARTY TYPE", "TOTAL", "RECEIVED/PAID", "BALANCE"]
+        ]);
+    
+        // Loop through each row in the table and extract the specified columns
+        var rows = paymentoutTable.querySelectorAll("tbody tr");
+        rows.forEach(function (row) {
+            var rowData = [];
+            var cells = row.querySelectorAll("td");
+            // Specify the indices of the columns you want to export
+            var columnIndices = [0, 1, 2, 3, 4, 5, 6, 7];
+            columnIndices.forEach(function (index) {
+                rowData.push(cells[index].innerText.trim());
+            });
+            XLSX.utils.sheet_add_aoa(ws, [rowData], { origin: -1 });
+        });
+    
+        // Create a new workbook and add the worksheet
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    
+        // Save the workbook to an Excel file
+        XLSX.writeFile(wb, "PaymentOutExport.xlsx");
     }
-  </script>
+    
+    
+
+</script>
+
 {% endblock  %}
 
 

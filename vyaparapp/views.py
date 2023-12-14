@@ -26,6 +26,8 @@ from django.conf import settings
 from io import BytesIO
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def home(request):
   return render(request, 'home.html')
@@ -2389,19 +2391,18 @@ def create_paymentout(request):
         )
         pbill.save()
 
-        # Create PaymentOutDetails
+          # Create PaymentOutDetails
         paid = request.POST.get('paid')
         description = request.POST.get('description')
         files = request.FILES.get('files')
 
         paymentout_details = PaymentOutDetails(
-            paymentout=pbill,
+            paymentout=pbill,  # Set the foreign key relationship
             paid=paid,
             description=description,
             files=files
         )
         paymentout_details.save()
-
       # Record history for creation
         PaymentOutHistory.objects.create(paymentout=pbill, action='created')  
         
@@ -2437,36 +2438,7 @@ def details_paymentout(request, id):
     context = {'staff': staff, 'allmodules': allmodules, 'paymentout': paymentout}
     return render(request, 'company/paymentoutdetails.html', context)
 
-def add_pay(request):
-    return render(request, 'company/add_pay.html')
-def create_addpaymentout(request):
-    if request.method == 'POST':
-        sid = request.session.get('staff_id')
-        staff = staff_details.objects.get(id=sid)
-        cmp = company.objects.get(id=staff.company.id)
-       
 
-
-        # Create PaymentOutDetails
-        paid = request.POST.get('paid')
-        description = request.POST.get('description')
-        files = request.FILES.get('files')
-
-        paymentout_details = PaymentOutDetails(
-            paid=paid,
-            description=description,
-            files=files
-        )
-        paymentout_details.save()
-        
-        
-        if 'Next' in request.POST:
-            return redirect('add_pay')
-
-        if "Save" in request.POST:
-            return redirect('view_paymentout')
-    else:
-        return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
 def edit_paymentout(request, id):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
@@ -2477,6 +2449,12 @@ def edit_paymentout(request, id):
 
     # Use get_object_or_404 to retrieve the PaymentOut object or return a 404 response if not found
     paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
+    
+    # Fetch related PaymentOutDetails and enumerate them
+    # Fetch related PaymentOutDetails and enumerate them
+    paymentout_details = paymentout.paymentout_details()
+
+
 
     billdate = paymentout.billdate
     pay_method = paymentout.pay_method
@@ -2494,6 +2472,7 @@ def edit_paymentout(request, id):
         'paymentout': paymentout,
         'billdate': billdate,
         'pay_method': pay_method,
+        'paymentout_details': paymentout_details,  # Pass the details to the context
     }
     return render(request, 'company/paymentoutedit.html', context)
 
@@ -2509,6 +2488,7 @@ def update_paymentout(request, id):
         paymentout.pay_method = request.POST.get('method')
         paymentout.cheque_no = request.POST.get('cheque_id')
         paymentout.upi_no = request.POST.get('upi_id')
+        paymentout.balance = request.POST.get('balance')
 
         # Add more fields as needed...
         
@@ -2520,11 +2500,15 @@ def update_paymentout(request, id):
             paymentout.paymentoutdetails_set.all().delete()  # Delete existing details
 
             # Iterate through form data to create new details
+        
+            
+            # Iterate through form data to create new details
             for i in range(int(request.POST.get('total_items', 0))):
                 paid = request.POST.get(f'paid_{i}')
                 description = request.POST.get(f'description_{i}')
                 # Handle file upload if needed
                 file = request.FILES.get(f'file_{i}')
+                print(f'Index: {i}, Paid: {paid}, Description: {description}, File: {file}')
 
                 # Create new PaymentOutDetails
                 PaymentOutDetails.objects.create(
@@ -2546,7 +2530,29 @@ def update_paymentout(request, id):
 def paymentout_history(request, id):
     paymentout_history = PaymentOutHistory.objects.filter(paymentout_id=id).order_by('-timestamp')
     return render(request, 'company/paymentout_history.html', {'paymentout_history': paymentout_history})
+  
+@csrf_exempt  # For demonstration purposes, you might want to remove this in production and handle CSRF properly
+def send_email(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            email_ids = data.get('emailIds', '')
+            email_message = data.get('emailMessage', '')
 
+            # Your email sending logic here
+            send_mail(
+                'Subject',  # Replace with your subject
+                email_message,  # Replace with your email message
+                'your_email@example.com',  # Replace with your sender email
+                [email_ids],  # Replace with your recipient email(s)
+                fail_silently=False,
+            )
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
 #--------------------------------------------------------------------------------------------------------#
 def bankdata(request):
   bid = request.POST['id']

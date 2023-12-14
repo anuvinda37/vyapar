@@ -186,7 +186,7 @@
                                     <a class="btn ml-4" onclick="toggleDropdown()"> <img width="30px" src="{% static 'images/shareimg.png' %}" alt="no img"><br>Share</a>
                                     <div class="dropdown-content" id="myDropdown">
                                         <ul style="margin-bottom: -1px;">{% post_to_whatsapp object_or_url "WhatsApp" %}</ul>
-                                        <ul style="margin-bottom: -1px;">{% send_email object.title "{{object.title}}" object_or_url "Email" %}</ul>
+                                        <ul style="margin-bottom: -1px;"><a class="btn ml-4" onclick="toggleEmailModal()"> <img width="30px" src="{% static 'images/emailimg.png' %}" alt="no img"><br>Email</a></ul>
                                     </div>
                                     <a class="ml-5" href="{% url 'view_paymentout' %}" style="text-align: right; font-size: large; color: black;">
                                         <i class="fa fa-times mt-2" aria-hidden="true"></i>
@@ -216,7 +216,7 @@
                                                     <section class="top-content ">
                                                         <div class="top-left">
                                                             <div class="position-relative" style="text-align: left;">
-                                                                <p> Ref Number: &nbsp; {{ paymentout.id }}</p>
+                                                                <p> Ref Number: &nbsp; {{ paymentout.billno }}</p>
                                                                 <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                             </div>
                                                         </div>
@@ -282,7 +282,7 @@
                                                     </div>  
                                                     <div class="col-md-4 d-flex justify-content-end">
                                                         <div class="text-white" >
-                                                            <p> Ref Number: &nbsp; {{ paymentout.id }}</p>
+                                                            <p> Ref Number: &nbsp; {{ paymentout.billno }}</p>
                                                             <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                         </div>
                                                     </div>
@@ -368,7 +368,7 @@
                                                                     <tr >
                                                                         
                                                                         <td style="color: #000; font-weight: bold;">Ref Number : </td>
-                                                                        <td style="color: #000; text-align: left;">{{ paymentout.id }}</td>
+                                                                        <td style="color: #000; text-align: left;">{{ paymentout.billno }}</td>
                                                                     </tr>
                                                                     <tr >
                                                                         <td style="color: #000; font-weight: bold;">Bill Date : </td>
@@ -589,12 +589,70 @@
         </div> 
     </div>
 </div>
+<!-- Add the email modal -->
+<div id="emailModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEmailModal()">&times;</span>
+        <form id="share_to_email_form_page">
+            <label for="emailIds_page">Email IDs</label>
+            <textarea class="form-control text-dark" name="email_ids_page" id="emailIds_page" rows="3" style="height: 100px;" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
 
+            <label for="email_message_page">Message(optional)</label>
+            <textarea name="email_message_page" id="email_message_page" class="form-control text-dark" cols="" rows="4" style="height: 100px;" placeholder="This message will be sent along with Bill details."></textarea>
+
+            <button type="button" id="share_with_email_page" class="submitShareEmailBtn btn btn-info bg-gradient w-50 text-uppercase">SEND MAIL</button>
+        </form>
+    </div>
+</div>
 <script>
     function toggleDropdown() {
         var dropdownContent = document.getElementById("myDropdown");
         dropdownContent.style.display = (dropdownContent.style.display === "block") ? "none" : "block";
     }
+</script>
+<script>
+    // Function to open the email modal
+    function toggleEmailModal() {
+        document.getElementById("emailModal").style.display = "block";
+    }
+
+    // Function to close the email modal
+    function closeEmailModal() {
+        document.getElementById("emailModal").style.display = "none";
+    }
+
+    // Handle the submission of the email form
+    $(document).ready(function(){
+        $('#share_with_email_page').on('click', function(){
+            var emailIds = $('#emailIds_page').val();
+            var emailMessage = $('#email_message_page').val();
+    
+            $.ajax({
+                url: '/send-email/',  // Update with the correct URL
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    emailIds: emailIds,
+                    emailMessage: emailMessage
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        // Handle success, e.g., show a success message
+                        alert('Email sent successfully!');
+                        closeEmailModal();
+                    } else {
+                        // Handle error, e.g., show an error message
+                        alert('Failed to send email. Please try again.');
+                    }
+                },
+                error: function() {
+                    // Handle error, e.g., show an error message
+                    alert('Failed to send email. Please try again.');
+                }
+            });
+        });
+    });
+    
 </script>
 
 <script>

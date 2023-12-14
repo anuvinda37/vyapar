@@ -244,6 +244,8 @@ class PaymentOut(models.Model):
     tot_bill_no = models.IntegerField(default=0, null=True)
     def paymentout_history(self):
         return PaymentOutHistory.objects.filter(paymentout=self).order_by('-timestamp')
+    def paymentout_details(self):
+        return self.paymentoutdetails_set.all()
 
 class PaymentOutDetails(models.Model):
     paymentout = models.ForeignKey('PaymentOut',on_delete=models.CASCADE,null=True,blank=True)
