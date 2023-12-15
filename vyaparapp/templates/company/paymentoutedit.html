@@ -74,7 +74,7 @@
                 </div>
                 <p></p>
 
-                <form action="{% url 'update_paymentout' paymentout.id %}" method="post" enctype="multipart/form-data" onsubmit="return validatepurchasebill()" novalidate>
+                <form action="{% url 'edit_paymentout' id=paymentout.id %}" method="post" enctype="multipart/form-data" onsubmit="return validatepurchasebill()" novalidate>
                     {% csrf_token %}
                     <div class="page-content">
                         <div class="card radius-15">
@@ -94,16 +94,9 @@
                                 <div id="customer_div" style=" margin-left: .1px; margin-right: .51px;">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <label class="col-form-label">Parties</label>
-                                            <div class="d-flex">
-                                                <select name="customername" id="customer" class="form-control border-secondary" style="color: black; background-color: white;">
-                                                    <option value="{{ paymentout.party.id }}" selected>{{ paymentout.party.party_name }}</option>
-                                                    {% for c in cust %}
-                                                        {% if c.cid_id == cmp.cid %}
-                                                            <option value="{{ c.id }}">{{ c.party_name }}</option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </select>
+                                            <label for="party_name">Party Name:</label>
+                                            <input type="text" id="party_name" name="party_name" value="{{ paymentout.party.party_name }}" required onchange="toggleBillingAddress()">
+
                                                 <button id="modal_closing" type="button" class="btn btn-outline-info " data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo">
                                                     <span class="fa fa-plus"></span>
                                                 </button>    
@@ -122,13 +115,10 @@
                                                 <label class="col-form-label">Billing Address</label>
                                                 <textarea class="form-control border-secondary  mb-3" name="bname" id="bname" rows="6" type="text" style="color: black;background-color: white;">{{ billing_address }}</textarea>
                                             </div>
-                                            <div id="phonediv">
-                                                <label class="col-form-label">Phone No. </label>
-                                                <input class="form-control border-secondary" name="phno" required id="cust_phno" style="color: black;background-color: white;" value="{{ paymentout.party.contact }}" >
-                                            </div>
-                                            <div class="col-md-4" >
+                                            
+                                            <div class="col-md-4" style="display: none;>
                                                 <label class="col-form-label">Receipt No.</label>
-                                                <input type="text" class="form-control border-secondary" value="{{ paymentout.billno }}" style="color: black;background-color: white;" readonly>
+                                                <input type="hidden" class="form-control border-secondary" name="ref_no" value="{{ paymentout.ref_no }}" style="color: black;background-color: white;" readonly>
 
                                             </div>
                                         </div>
@@ -144,28 +134,27 @@
                                             </div>
                                             
                                         </div>
-                                        <div class="col-md-4" id="addressdiv">
-                                            <label class="col-form-label">Billing Address</label>
-                                            <textarea class="form-control border-secondary  mb-3" name="bname" id="bname" rows="6" type="text"style="color: black;background-color: white;">{{ paymentout.party.address }}</textarea>
-                                        </div>
+                                        {% if paymentout.party.address %}
+                                            <div class="col-md-4" id="addressdiv">
+                                                <label class="col-form-label">Billing Address</label>
+                                                <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black; background-color: white;">{{ paymentout.party.address }}</textarea>
+                                            </div>
+                                        {% else %}
+                                            <!-- If no billing address, render an invisible div -->
+                                            <div class="col-md-4" id="addressdiv" style="display: none;">
+                                                <label class="col-form-label">Billing Address</label>
+                                                <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black; background-color: white;"></textarea>
+                                            </div>
+                                        {% endif %}
+
                                         
                                     </div>
                                     <br>
                                     <div class="row">
                                         <div class="col-md-12">
                                             
-                                            {% for detail in paymentout_details %}
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <label class="col-form-label">Paid:</label>
-                                                    <input type="text" class="form-control border-secondary" name="paid_{{ forloop.counter0 }}" value="{{ detail.paid }}">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="col-form-label">Description:</label>
-                                                    <textarea class="form-control border-secondary" name="description_{{ forloop.counter0 }}" rows="3">{{ detail.description }}</textarea>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
+                                            <label for="paid">Received/Paid:</label>
+                                            <input type="text" id="paid" name="paid" value="{{ paymentout.paymentoutdetails_set.first.paid }}" required><br>
 
                                         </div>
                                     </div>
@@ -181,7 +170,7 @@
                                             {% if pbill.pay_method != 'Cash' and pbill.pay_method != 'Cheque' and pbill.pay_method != 'UPI' %}
                                             <label class="col-form-label">Payment Method</label>
                                             <select class="form-control border-secondary my-select" id="pay_method" name="method" style="color: black;background-color: white;">
-                                                <option value="{{ pay_method }}" selected hidden>{{ pay_method }}</option>
+                                                <option value="{{ paymentout.pay_method }}" selected hidden>{{ paymentout.pay_method }}</option>
                                                 <option value="Cash">Cash</option>
                                                 <option value="Cheque">Cheque</option>
                                                 <option value="UPI">UPI</option>

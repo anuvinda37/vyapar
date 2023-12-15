@@ -168,7 +168,7 @@ urlpatterns = [
      path('delete_paymentout/',views.delete_paymentout,name='delete_paymentout'), 
      path('details_paymentout/<int:id>/', views.details_paymentout, name='details_paymentout'),
      path('edit_paymentout/<int:id>/',views.edit_paymentout, name='edit_paymentout'),
-     path('update_paymentout/<int:id>/', views.update_paymentout, name='update_paymentout'),
+     
      path('paymentout_history/<int:id>/',views.paymentout_history, name='paymentout_history'), 
      path('send-email/',views.send_email, name='send_email'),
     # =========== estimate & delivery challan=========== shemeem - start =======================================

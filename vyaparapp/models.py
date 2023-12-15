@@ -242,11 +242,12 @@ class PaymentOut(models.Model):
     upi_no = models.CharField(max_length=255, default='', null=True)
     balance=models.CharField(null=True,blank=True,max_length=255)
     tot_bill_no = models.IntegerField(default=0, null=True)
+    ref_no = models.IntegerField(default=0, null=True, blank=True)
     def paymentout_history(self):
         return PaymentOutHistory.objects.filter(paymentout=self).order_by('-timestamp')
     def paymentout_details(self):
         return self.paymentoutdetails_set.all()
-
+    
 class PaymentOutDetails(models.Model):
     paymentout = models.ForeignKey('PaymentOut',on_delete=models.CASCADE,null=True,blank=True)
     paid = models.DecimalField(max_digits=10, decimal_places=2,null=True)

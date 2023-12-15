@@ -27,6 +27,7 @@ from io import BytesIO
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Max
 
 # Create your views here.
 def home(request):
@@ -2358,18 +2359,20 @@ def add_paymentout(request):
     cust = party.objects.filter(company=cmp, user=cmp.user)
     bank = BankModel.objects.filter(company=cmp, user=cmp.user)
     allmodules = modules_list.objects.get(company=staff.company, status='New')
-    last_bill = PurchaseBill.objects.filter(company=cmp).last()
+    last_paymentout = PaymentOut.objects.filter(company=cmp).last()
 
-    if last_bill:
-        # Use party id as the bill_no
-       bill_no = str(last_bill.party.id)
-
+    if last_paymentout:
+        # Use the last_paymentout ref_no + 1
+        bill_no = last_paymentout.ref_no + 1
     else:
-        # Handle the case where there's no last_bill
+        # Handle the case where there's no last_paymentout
         bill_no = 1
 
-    context = {'staff': staff, 'allmodules': allmodules, 'cust': cust, 'cmp': cmp, 'bill_no': bill_no, 'tod': tod, 'bank': bank}
+    # Debug code to print the ref_no
+    print("Last PaymentOut Ref No:", last_paymentout.ref_no if last_paymentout else None)
+    context = {'staff': staff, 'allmodules': allmodules, 'cust': cust, 'cmp': cmp, 'bill_no': bill_no, 'tod': tod, 'bank': bank,'last_paymentout': last_paymentout}
     return render(request, 'company/paymentoutadd.html', context)
+
 
 def create_paymentout(request):
     if request.method == 'POST':
@@ -2377,12 +2380,17 @@ def create_paymentout(request):
         staff = staff_details.objects.get(id=sid)
         cmp = company.objects.get(id=staff.company.id)
         part = party.objects.get(id=request.POST.get('customername'))
+        # Find the maximum ref_no in the database
+        max_ref_no = PaymentOut.objects.filter(company=cmp).aggregate(Max('ref_no'))['ref_no__max']
+
+        # Use the maximum ref_no + 1 or set to 1 if there are no existing records
+        bill_no = max_ref_no + 1 if max_ref_no is not None else 1
 
         pbill = PaymentOut(
             staff=staff,
             company=cmp,
             party=part,
-            billno=part.id,
+            ref_no=bill_no,
             billdate=request.POST.get('billdate'),
             pay_method=request.POST.get("method"),
             cheque_no=request.POST.get("cheque_id"),
@@ -2419,9 +2427,15 @@ def delete_paymentout(request):
     if request.method == 'POST':
         paymentOutId = request.POST.get('paymentOutId')
         try:
-            # Perform the deletion, e.g., using the Django ORM
-            payment_out = get_object_or_404(PaymentOut, id=paymentOutId)
-            payment_out.delete()
+            with transaction.atomic():
+                # Perform the deletion, e.g., using the Django ORM
+                payment_out = get_object_or_404(PaymentOut, id=paymentOutId)
+                ref_no = payment_out.ref_no
+                payment_out.delete()
+
+                # Update the ref_no of subsequent records sequentially
+                PaymentOut.objects.filter(ref_no__gt=ref_no).update(ref_no=models.F('ref_no') - 1)
+
             return JsonResponse({'success': True})
         except PaymentOut.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Payment Out not found'})
@@ -2440,93 +2454,30 @@ def details_paymentout(request, id):
 
 
 def edit_paymentout(request, id):
-    sid = request.session.get('staff_id')
-    staff = staff_details.objects.get(id=sid)
-    cmp = company.objects.get(id=staff.company.id)
-    cust = party.objects.filter(company=cmp, user=cmp.user)
-    bank = BankModel.objects.filter(company=cmp, user=cmp.user)
-    allmodules = modules_list.objects.get(company=staff.company, status='New')
+    paymentout = get_object_or_404(PaymentOut, id=id)
 
-    # Use get_object_or_404 to retrieve the PaymentOut object or return a 404 response if not found
-    paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
-    
-    # Fetch related PaymentOutDetails and enumerate them
-    # Fetch related PaymentOutDetails and enumerate them
-    paymentout_details = paymentout.paymentout_details()
-
-
-
-    billdate = paymentout.billdate
-    pay_method = paymentout.pay_method
-
-    context = {
-        'staff': staff,
-        'allmodules': allmodules,
-        'paymentout': paymentout,
-        'cust': cust,
-        'cmp': cmp,
-        'bank': bank,
-        'phone_number': paymentout.party.contact,  # Add phone number to the context
-        'date': paymentout.billdate,  # Add date to the context
-        'billing_address': paymentout.party.address,  # Add billing address to the context
-        'paymentout': paymentout,
-        'billdate': billdate,
-        'pay_method': pay_method,
-        'paymentout_details': paymentout_details,  # Pass the details to the context
-    }
-    return render(request, 'company/paymentoutedit.html', context)
-
-def update_paymentout(request, id):
     if request.method == 'POST':
-        sid = request.session.get('staff_id')
-        staff = staff_details.objects.get(id=sid)
-        cmp = company.objects.get(id=staff.company.id)
-        paymentout = get_object_or_404(PaymentOut, id=id, company=cmp)
-
-        # Update PaymentOut fields based on your form data
+        # Update the fields based on the form data
         paymentout.billdate = request.POST.get('billdate')
-        paymentout.pay_method = request.POST.get('method')
-        paymentout.cheque_no = request.POST.get('cheque_id')
-        paymentout.upi_no = request.POST.get('upi_id')
-        paymentout.balance = request.POST.get('balance')
-
-        # Add more fields as needed...
-        
-        # Record history for update
-        PaymentOutHistory.objects.create(paymentout=paymentout, action='updated')
-        # Handle related items in a transaction to ensure consistency
-        with transaction.atomic():
-            # Update related PaymentOutDetails
-            paymentout.paymentoutdetails_set.all().delete()  # Delete existing details
-
-            # Iterate through form data to create new details
-        
-            
-            # Iterate through form data to create new details
-            for i in range(int(request.POST.get('total_items', 0))):
-                paid = request.POST.get(f'paid_{i}')
-                description = request.POST.get(f'description_{i}')
-                # Handle file upload if needed
-                file = request.FILES.get(f'file_{i}')
-                print(f'Index: {i}, Paid: {paid}, Description: {description}, File: {file}')
-
-                # Create new PaymentOutDetails
-                PaymentOutDetails.objects.create(
-                    paymentout=paymentout,
-                    paid=paid,
-                    description=description,
-                    files=file
-                )
-
-        # Save the main PaymentOut object
+        paymentout.ref_no = request.POST.get('ref_no')
+        paymentout.party.party_name = request.POST.get('party_name')
+        # Update other fields as needed
+        paymentout.party.contact=request.POST.get('contact')
+        # Save the changes
         paymentout.save()
 
-       
-        # Redirect to the view page or list page
+        # Update PaymentOutDetails
+        paymentout_detail = paymentout.paymentoutdetails_set.first()  # Assuming there's only one PaymentOutDetails per PaymentOut
+        if paymentout_detail:
+            paymentout_detail.paid = request.POST.get('paid')
+            paymentout_detail.save()
+
         return redirect('view_paymentout')
 
-    # Handle the case where the request method is not POST
-    return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
+    context = {'paymentout': paymentout}
+    return render(request, 'company/paymentoutedit.html', context)
+
+
 def paymentout_history(request, id):
     paymentout_history = PaymentOutHistory.objects.filter(paymentout_id=id).order_by('-timestamp')
     return render(request, 'company/paymentout_history.html', {'paymentout_history': paymentout_history})

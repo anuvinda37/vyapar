@@ -128,7 +128,7 @@
                                             </div>
                                             <div id="billdiv">
                                                 <label class="col-form-label">Receipt No.</label>
-                                                <input type="text" class="form-control border-secondary" name="bill_no"  id="bill_no" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
+                                                <input type="text" class="form-control border-secondary" name="bill_no"  id="bill_no" value="{{ last_paymentout.ref_no }}"  style="color: black;background-color: white;" readonly> <br>
                                             </div>
                                             
                                         </div>
@@ -161,12 +161,12 @@
                                         </div>
                                         <div id="paid">
                                             <label class="col-form-label">Paid</label>
-                                            <input type="text" class="form-control border-secondary" name="paid" id="paid" style="color: black;background-color: white;">
+                                            <input type="text" class="form-control border-secondary" name="paid" id="paid" style="color: black;background-color: white;width: 30%;">
 
                                         </div>
                                         <div id="description">
                                             <label class="col-form-label">Description</label>
-                                            <textarea class="form-control border-secondary mb-3" name="description" id="description" rows="6" type="text" style="color: black;background-color: white;"></textarea>
+                                            <textarea class="form-control border-secondary mb-3" name="description" id="description" rows="6" type="text" style="color: black;background-color: white;width: 65%;"></textarea>
 
                                         </div>
                                     </div>

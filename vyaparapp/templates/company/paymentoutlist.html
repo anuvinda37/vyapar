@@ -197,19 +197,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
-
+                                
                                 <div class="col-md-3 text-right" style="margin-left: 6vh;">
-                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;  height: 80px;">
                                         <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
                                     </button>
 
-                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 2vh; height: 80px;">
                                         <span><img width="30px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
                                     </button>
 
-                                    <button class="btn mt-3" type="button" data-toggle="modal" data-target="#excelModal" onclick="excelmodel()">
+                                    <button class="btn mt-3" type="button" data-toggle="modal" data-target="#excelModal" onclick="excelmodel()"style="height: 80px;">
                                         <span><img width="30px" src="{% static 'images/import.png' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; font-weight: bold;">Import</span>
                                     </button>
@@ -315,7 +315,7 @@
                                                 </div>
                                             </th>
                                             <th class="bg-secondary text-white">
-                                                RECEIVED/PAID
+                                                PAID
                                                 <a class="extra text-white" onclick="toggleDropdown(4)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
                                                 <div class="dropdown-content" id="dropdownContent4">
                                                     <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
@@ -361,12 +361,17 @@
                                         {% for paymentout in paymentouts %}
                                         <tr>
                                             <td style="color: black; text-align: left;white-space: nowrap;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
-                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.billno }}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.ref_no }}</td>
                                             
                                             <td style="color: black;">{{ paymentout.party.party_name }}</td>
                                             <td></td>
                                             <td style="color: black;">Payment Out</td>
-                                            <td></td>
+                                            {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
+                                            <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
+                                                {{ paymentout_detail.paid }}
+                                            </td>
+                                           
+                                            {% endfor %}
                                             {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
                                             <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">
                                                 {{ paymentout_detail.paid }}
@@ -512,33 +517,7 @@
     });
 </script>
 
-<script>
-    var table = document.getElementById('paymentouttable');
-    var rows = table.getElementsByTagName('tr');
-    for (var i = 1; i < rows.length; i++) {
-        var pid = rows[i].getElementsByTagName('td')[1].innerText;
-        findhistory(i,pid)            
-    }
-    function findhistory( rowid,pid){
-        $.ajax({
-            type : 'POST',
-            url: "{% url 'billhistory' %}",
-            data: { 
-                id: pid ,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function(data){
-                rows[rowid].getElementsByTagName('td')[6].innerText=data.action;
-                rows[rowid].getElementsByTagName('td')[7].innerText=data.name;
-                if(data.action== 'Created'){
-                    rows[rowid].getElementsByTagName('td')[6].style.color = 'Red'
-                }else{
-                    rows[rowid].getElementsByTagName('td')[6].style.color = '#154c79'
-                }
-            }
-        });
-    }
-</script>
+
 
 <script>
     function uploadFile() {
@@ -564,7 +543,7 @@
         .catch(error => {
             swal({
                 title: "Error !",
-                text: "Purchase Bill Import Unuccessfull!",
+                text: "PaymentOut  Import Unuccessfull!",
                 icon: "warning",
                 buttons: false,
             })
@@ -606,38 +585,6 @@
         $('body').removeClass("printingContent");
     }
 </script>
-
-
-<script>
-    calculatetotal()
-
-    function calculatetotal(){
-        var table = document.getElementById('paymentoutTable');
-        var rows = table.getElementsByTagName('tr');
-        tpaid = 0;
-        tunpaid = 0;
-        ttotal = 0; 
-        for (var i = 1; i < rows.length; i++) {
-            if(rows[i].style.display !='none'){
-                var pcells = rows[i].getElementsByTagName('td')[9];
-                var ptextValue = pcells.textContent || pcells.innerText;
-                tpaid += parseFloat(ptextValue)
-
-                var ucells = rows[i].getElementsByTagName('td')[5];
-                var utextValue = ucells.textContent || ucells.innerText;
-                tunpaid += parseFloat(utextValue)
-
-                var tcells = rows[i].getElementsByTagName('td')[4];
-                var ttextValue = tcells.textContent || tcells.innerText;
-                ttotal += parseFloat(ttextValue)
-            }
-        }
-        document.getElementById('paidval').textContent = tpaid
-        document.getElementById('unpaidval').textContent = tunpaid
-        document.getElementById('totalval').textContent = ttotal
-    }
-</script>
-
 <script>
     function cleardropdown(index){
         if(index == 0){
@@ -718,9 +665,9 @@
         var fromDateInput = document.getElementById("fromDate");
         var toDateInput = document.getElementById("toDate");
     
-        // Get the selected From Date
-        var fromDate = parseDateString(fromDateInput.value);
-        var toDate = parseDateString(toDateInput.value);
+        // Get the selected From Date and To Date
+        var fromDate = new Date(fromDateInput.value);
+        var toDate = new Date(toDateInput.value);
     
         // Set the minimum date for To Date input
         toDateInput.min = formatDate(fromDate);
@@ -729,15 +676,27 @@
         console.log("From Date:", fromDate);
         console.log("To Date:", toDate);
     
-        // Calculate total after filtering
-        calculatetotal();
+        var table = document.getElementById('paymentoutTable');
+        var rows = table.getElementsByTagName('tr');
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+    
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var cellDate = new Date(cells[0].textContent); // Assuming date is in the first cell
+    
+            // Check if the cellDate is within the selected date range
+            if (cellDate >= fromDate && cellDate <= toDate) {
+                rows[i].style.display = 'table-row';
+                isEmpty = false;
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
     }
     
-    // Helper function to parse date in dd-mm-yyyy format
-    function parseDateString(inputDate) {
-        const parts = inputDate.split("-");
-        return new Date(parts[2], parts[1] - 1, parts[0]); // months are zero-based
-    }
     
     // Helper function to format date as YYYY-MM-DD
     function formatDate(date) {
@@ -751,7 +710,6 @@
     
         return `${year}-${formattedMonth}-${formattedDay}`;
     }
-    
     
 </script>
 
@@ -799,7 +757,7 @@
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("search_input");
         filter = input.value.toUpperCase();
-        table = document.getElementById("paymentouttable");
+        table = document.getElementById("paymentoutTable");
         tr = table.getElementsByTagName("tr");
         var emptyMessage = document.getElementById("emptyMessage");
         var anyMatch = false;

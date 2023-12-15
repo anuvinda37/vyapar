@@ -186,7 +186,7 @@
                                     <a class="btn ml-4" onclick="toggleDropdown()"> <img width="30px" src="{% static 'images/shareimg.png' %}" alt="no img"><br>Share</a>
                                     <div class="dropdown-content" id="myDropdown">
                                         <ul style="margin-bottom: -1px;">{% post_to_whatsapp object_or_url "WhatsApp" %}</ul>
-                                        <ul style="margin-bottom: -1px;"><a class="btn ml-4" onclick="toggleEmailModal()"> <img width="30px" src="{% static 'images/emailimg.png' %}" alt="no img"><br>Email</a></ul>
+                                        <ul style="margin-bottom: -1px;text-align:left"><a class="btn ml-4" onclick="toggleEmailModal()">Email</a></ul>
                                     </div>
                                     <a class="ml-5" href="{% url 'view_paymentout' %}" style="text-align: right; font-size: large; color: black;">
                                         <i class="fa fa-times mt-2" aria-hidden="true"></i>
@@ -216,7 +216,7 @@
                                                     <section class="top-content ">
                                                         <div class="top-left">
                                                             <div class="position-relative" style="text-align: left;">
-                                                                <p> Ref Number: &nbsp; {{ paymentout.billno }}</p>
+                                                                <p> Ref Number: &nbsp; {{ paymentout.ref_no }}</p>
                                                                 <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                             </div>
                                                         </div>
@@ -257,8 +257,9 @@
                                                               
                                                                 <tr>
                                                                     <td style="color:black; text-align: center;">PaymentOut</td>
-                                                                    <td style="color:black">{{ paymentout.total_amount }}</td >
-                                                                   
+                                                                    {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
+                                                                    <td style="color:black">{{ paymentout_detail.paid }}</td >
+                                                                    {% endfor %}
                                                                 </tr>
                                                                
                                                             </tbody>
@@ -282,7 +283,7 @@
                                                     </div>  
                                                     <div class="col-md-4 d-flex justify-content-end">
                                                         <div class="text-white" >
-                                                            <p> Ref Number: &nbsp; {{ paymentout.billno }}</p>
+                                                            <p> Ref Number: &nbsp; {{ paymentout.ref_no }}</p>
                                                             <p>Bill Date: <span>{{ paymentout.billdate | date:'d-m-Y' }}</span></p>
                                                         </div>
                                                     </div>
@@ -323,7 +324,9 @@
                                                          
                                                                     <tr>
                                                                         <td style="color:black; text-align: center;">PaymentOut</td>
-                                                                        <td style="color:black">{{ paymentout.total_amount }}</td >
+                                                                        {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
+                                                                    <td style="color:black">{{ paymentout_detail.paid }}</td >
+                                                                    {% endfor %}
                                                                     </tr>
                                                             
                                                             </tbody>
@@ -368,11 +371,11 @@
                                                                     <tr >
                                                                         
                                                                         <td style="color: #000; font-weight: bold;">Ref Number : </td>
-                                                                        <td style="color: #000; text-align: left;">{{ paymentout.billno }}</td>
+                                                                        <td style="color: #000; text-align: left;">{{ paymentout.ref_no }}</td>
                                                                     </tr>
                                                                     <tr >
                                                                         <td style="color: #000; font-weight: bold;">Bill Date : </td>
-                                                                        <td style="color: #000; text-align: left;">{{ paymentout.billdate | date:'d-m-Y' }}<td>
+                                                                        <td style="color: #000; text-align: left;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
                                                                     </tr>
                                                                 </tbody>
                             
@@ -392,7 +395,9 @@
                                                               
                                                                     <tr>
                                                                         <td style="color:black; text-align: center;">PaymentOut</td>
-                                                                        <td style="color:black">{{ paymentout.total_amount }}</td >
+                                                                        {% for paymentout_detail in paymentout.paymentoutdetails_set.all %}
+                                                                    <td style="color:black">{{ paymentout_detail.paid }}</td >
+                                                                    {% endfor %}
                                                                     </tr>
                                                        
                                                             </tbody>
