@@ -2373,7 +2373,6 @@ def add_paymentout(request):
     context = {'staff': staff, 'allmodules': allmodules, 'cust': cust, 'cmp': cmp, 'bill_no': bill_no, 'tod': tod, 'bank': bank,'last_paymentout': last_paymentout}
     return render(request, 'company/paymentoutadd.html', context)
 
-
 def create_paymentout(request):
     if request.method == 'POST':
         sid = request.session.get('staff_id')
@@ -2422,7 +2421,6 @@ def create_paymentout(request):
     else:
         return render(request, 'error_page.html', {'error_message': 'Invalid request method'})
 
-
 def delete_paymentout(request):
     if request.method == 'POST':
         paymentOutId = request.POST.get('paymentOutId')
@@ -2441,6 +2439,8 @@ def delete_paymentout(request):
             return JsonResponse({'success': False, 'error': 'Payment Out not found'})
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
 def details_paymentout(request, id):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
@@ -2452,7 +2452,38 @@ def details_paymentout(request, id):
     context = {'staff': staff, 'allmodules': allmodules, 'paymentout': paymentout}
     return render(request, 'company/paymentoutdetails.html', context)
 
+def add_pay(request):
+    return render(request, 'company/add_pay.html')    
+    
+def create_addpaymentout(request):
+    if request.method == 'POST':
+        sid = request.session.get('staff_id')
+        staff = staff_details.objects.get(id=sid)
+        cmp = company.objects.get(id=staff.company.id)
+       
 
+
+        # Create PaymentOutDetails
+        paid = request.POST.get('paid')
+        description = request.POST.get('description')
+        files = request.FILES.get('files')
+
+        paymentout_details = PaymentOutDetails(
+            paid=paid,
+            description=description,
+            files=files
+        )
+        paymentout_details.save()
+        
+        
+        if 'Next' in request.POST:
+            return redirect('add_pay')
+
+        if "Save" in request.POST:
+            return redirect('view_paymentout')
+    else:
+        return render(request, 'error_page.html', {'error_message': 'Invalid request method'})    
+    
 def edit_paymentout(request, id):
     paymentout = get_object_or_404(PaymentOut, id=id)
 
@@ -2476,12 +2507,25 @@ def edit_paymentout(request, id):
 
     context = {'paymentout': paymentout}
     return render(request, 'company/paymentoutedit.html', context)
-
-
 def paymentout_history(request, id):
     paymentout_history = PaymentOutHistory.objects.filter(paymentout_id=id).order_by('-timestamp')
     return render(request, 'company/paymentout_history.html', {'paymentout_history': paymentout_history})
-  
+def get_party_details(request):
+    party_id = request.GET.get('party_id')
+
+    try:
+        party = party.objects.get(id=party_id)
+        # Customize the fields as needed based on your Party model
+        data = {
+            'success': True,
+            'billing_address': party.billing_address,
+            'phone_number': party.phone_number,
+            'available_balance': party.available_balance,
+        }
+    except party.DoesNotExist:
+        data = {'success': False}
+
+    return JsonResponse(data)
 @csrf_exempt  # For demonstration purposes, you might want to remove this in production and handle CSRF properly
 def send_email(request):
     if request.method == 'POST':
@@ -2504,6 +2548,7 @@ def send_email(request):
             return JsonResponse({'success': False, 'error': str(e)})
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+#End
 #--------------------------------------------------------------------------------------------------------#
 def bankdata(request):
   bid = request.POST['id']

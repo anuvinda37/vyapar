@@ -1569,5 +1569,37 @@
 
     });
 </script>
-
+<script>
+    $(document).ready(function () {
+      $("#customer").change(function () {
+        var selectedCustomerId = $(this).val();
+        if (selectedCustomerId) {
+          // Make an AJAX request to fetch party details based on the selected party ID
+          $.ajax({
+            url: "{% url 'get_party_details' %}",
+            type: 'GET',
+            data: { party_id: selectedCustomerId },
+            success: function (data) {
+              if (data.success) {
+                // Display the party details
+                $("#bname").val(data.billing_address);
+                $("#cust_phno").val(data.phone_number);
+                $("#balancediv").show();
+                $("#balval").text(data.available_balance);
+              } else {
+                // Clear and hide the party details
+                $("#bname").val('');
+                $("#cust_phno").val('');
+                $("#balancediv").hide();
+              }
+            },
+            error: function (error) {
+              console.error('Error fetching party details:', error);
+            }
+          });
+        }
+      });
+    });
+  </script>
+  
 {% endblock %}

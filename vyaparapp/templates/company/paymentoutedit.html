@@ -123,10 +123,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div id="phonediv">
-                                                <label class="col-form-label">Phone No. </label>
-                                                <input class="form-control border-secondary" name="phno" required id="cust_phno" style="color: black;background-color: white;" value="{{ phone_number }}" >
-                                            </div>
+                                            
                                             
                                             <div id="daddressdiv" style="display: none;">
                                                 <label class="col-form-label">Billing Address</label>
@@ -153,11 +150,19 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             
-                                            <label for="paid">Received/Paid:</label>
+                                            <label for="paid">Paid:</label>
                                             <input type="text" id="paid" name="paid" value="{{ paymentout.paymentoutdetails_set.first.paid }}" required><br>
 
                                         </div>
+                                        
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="col-form-label">Phone Number:</label>
+                                            <input type="text" id="phno" name="phno" class="form-control border-secondary" style="color: black;background-color: white;" value="{{ paymentout.party.contact }}">
+                                        </div>
+                                    </div>
+                                    
                                     <br>
                                     <div class="row">
                                         <div class="col-md-4">
@@ -167,7 +172,7 @@
                                         </div>
                                         
                                         <div class="col-md-4">
-                                            {% if pbill.pay_method != 'Cash' and pbill.pay_method != 'Cheque' and pbill.pay_method != 'UPI' %}
+                                            {% if paymentout.pay_method != 'Cash' and paymentout.pay_method != 'Cheque' and paymentout.pay_method != 'UPI' %}
                                             <label class="col-form-label">Payment Method</label>
                                             <select class="form-control border-secondary my-select" id="pay_method" name="method" style="color: black;background-color: white;">
                                                 <option value="{{ paymentout.pay_method }}" selected hidden>{{ paymentout.pay_method }}</option>
@@ -181,7 +186,7 @@
                                             {% else %}
                                                 <label class="col-form-label">Payment Method</label>
                                                 <select class="form-control border-secondary my-select" id="pay_method" name="method" style="color: black;background-color: white;">
-                                                    <option value="{{pbill.pay_method}}" selected hidden>{{paymentout.pay_method}}</option>
+                                                    <option value="{{paymentout.pay_method}}" selected hidden>{{paymentout.pay_method}}</option>
                                                     <option value="Cash">Cash</option>
                                                     <option value="Cheque">Cheque</option>
                                                     <option value="UPI">UPI</option>
@@ -194,21 +199,23 @@
                                     </div>
                                     
                                     <div class="row">
-                                        {% if pbill.cheque_no %}
+                                        {% if paymentout.cheque_no %}
                                             <div class="col-md-4" id="chequediv">
                                                 <label class="col-form-label" >Cheque ID</label>
-                                                <input type="text" class="form-control border-secondary" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID" value="{{pbill.cheque_no}}" style="color: black;background-color: white;">
+                                                <input type="text" class="form-control border-secondary" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID" value="{{paymentout.cheque_no}}" style="color: black;background-color: white;">
                                             </div>
                                         {% else %}
                                             <div class="col-md-4" style="display:none;"  id="chequediv">
                                                 <label class="col-form-label" >Cheque ID</label>
                                                 <input type="text" class="form-control border-secondary" name="cheque_id" id="cheque_id" placeholder="Enter Cheque ID" style="color: black;background-color: white;">
                                             </div>
+                                            
+
                                         {% endif %}
-                                        {% if pbill.upi_no %}
+                                        {% if paymentout.upi_no %}
                                             <div class="col-md-4" id="upidiv">
                                                 <label class="col-form-label" >UPI ID</label>
-                                                <input type="text" class="form-control border-secondary" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{pbill.upi_no}}" style="color: black;background-color: white;">
+                                                <input type="text" class="form-control border-secondary" name="upi_id" id="upi_id" placeholder="Enter UPI ID" value="{{paymentout.upi_no}}" style="color: black;background-color: white;">
                                             </div>
                                         {% else %}
                                             <div class="col-md-4"  style="display:none;" id="upidiv">
@@ -216,7 +223,7 @@
                                                 <input type="text" class="form-control border-secondary" name="upi_id" id="upi_id" placeholder="Enter UPI ID" style="color: black;background-color: white;">
                                             </div>
                                         {% endif %}
-                                        {% if pbill.pay_method != 'Cash' and pbill.pay_method != 'Cheque' and pbill.pay_method != 'UPI' %}
+                                        {% if paymentout.pay_method != 'Cash' and paymentout.pay_method != 'Cheque' and paymentout.pay_method != 'UPI' %}
                                             <div class="col-md-4" id="bnkdiv"  style="display:none;">
                                                 <label class="col-form-label" >Bank Account</label>
                                                 <input type="text" class="form-control border-secondary" name="bnk_id" id="bnk_id" value="{{bankno.account_num}}" style="color: black;background-color: white;" readonly>
@@ -411,7 +418,38 @@
         return true; 
     }
 </script>
-
+<script>
+    $(document).ready(function () {
+      // Function to show/hide fields based on payment method
+      function togglePaymentFields() {
+        var selectedMethod = $("#pay_method").val();
+  
+        // Show/hide fields based on the selected payment method
+        if (selectedMethod === "Cheque") {
+          $("#chequediv").show();
+          $("#upidiv").hide();
+          $("#bnkdiv").hide();
+        } else if (selectedMethod === "UPI") {
+          $("#chequediv").hide();
+          $("#upidiv").show();
+          $("#bnkdiv").hide();
+        } else {
+          $("#chequediv").hide();
+          $("#upidiv").hide();
+          $("#bnkdiv").hide();
+        }
+      }
+  
+      // Initial toggle based on the pre-loaded value
+      togglePaymentFields();
+  
+      // Event listener for changes in the payment method
+      $("#pay_method").change(function () {
+        togglePaymentFields();
+      });
+    });
+  </script>
+  
 <script>
     $(document).ready(function () {
         cust_name = '{{cust_name}}'
