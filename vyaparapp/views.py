@@ -28,7 +28,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max
-
+from django.db.models import Count
 # Create your views here.
 def home(request):
   return render(request, 'home.html')
@@ -2332,6 +2332,7 @@ def billhistory(request):
   return JsonResponse({'name':name,'action':action,'pid':pid})
 
 #--------------------------------------------Anuvinda K V---------------------------------------------#
+@login_required
 def view_paymentout(request):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
@@ -2339,7 +2340,7 @@ def view_paymentout(request):
     allmodules = modules_list.objects.get(company=cmp, status='New')
     
     # Assuming you want to display the latest PaymentOut records
-    paymentouts = PaymentOut.objects.filter(company=cmp).order_by('-billdate')
+    paymentouts = PaymentOut.objects.filter(company=cmp).order_by('ref_no')
     
 
     if not paymentouts:
@@ -2502,7 +2503,8 @@ def edit_paymentout(request, id):
         if paymentout_detail:
             paymentout_detail.paid = request.POST.get('paid')
             paymentout_detail.save()
-
+        # Record history for update
+        PaymentOutHistory.objects.create(paymentout=paymentout, action='updated')
         return redirect('view_paymentout')
 
     context = {'paymentout': paymentout}

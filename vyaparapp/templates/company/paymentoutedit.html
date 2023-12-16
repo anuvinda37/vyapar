@@ -94,14 +94,16 @@
                                 <div id="customer_div" style=" margin-left: .1px; margin-right: .51px;">
                                     <div class="row">
                                         <div class="col-md-4">
+                                            
                                             <label for="party_name">Party Name:</label>
-                                            <input type="text" id="party_name" name="party_name" value="{{ paymentout.party.party_name }}" required onchange="toggleBillingAddress()">
+                                            <div class="input-group">
+                                            <input type="text" id="party_name" class="form-control border-secondary" name="party_name" value="{{ paymentout.party.party_name }}" required onchange="toggleBillingAddress()">
 
                                                 <button id="modal_closing" type="button" class="btn btn-outline-info " data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo">
                                                     <span class="fa fa-plus"></span>
-                                                </button>    
+                                                </button> 
                                             </div>
-                                            {% if pbill.party.payment == 'To Pay' %}
+                                                {% if pbill.party.payment == 'To Pay' %}
                                                 <div class="mt-1 d-flex" >
                                                     &nbsp;<span id="balancediv" style=" color: black;"> Available Balance : <span id="balval" style="color: red;">{{pbill.party.openingbalance}}</span></span>
                                                 </div> 
@@ -109,29 +111,13 @@
                                                 <div class="mt-1 d-flex" >
                                                     &nbsp;<span id="balancediv" style=" color: black;"> Available Balance : <span id="balval" style="color: green;">{{pbill.party.openingbalance}}</span></span>
                                                 </div> 
-                                            {% endif %}
-                                           
-                                            <div class="col-md-4" id="addressdiv">
-                                                <label class="col-form-label">Billing Address</label>
-                                                <textarea class="form-control border-secondary  mb-3" name="bname" id="bname" rows="6" type="text" style="color: black;background-color: white;">{{ billing_address }}</textarea>
+                                            {% endif %}   
                                             </div>
-                                            
-                                            <div class="col-md-4" style="display: none;>
-                                                <label class="col-form-label">Receipt No.</label>
-                                                <input type="hidden" class="form-control border-secondary" name="ref_no" value="{{ paymentout.ref_no }}" style="color: black;background-color: white;" readonly>
-
+                                            <div class="col-md-4">
+                                                <label class="col-form-label">Phone Number:</label>
+                                                <input type="text" id="phno" name="phno" class="form-control border-secondary" style="color: black;background-color: white;" value="{{ paymentout.party.contact }}">
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            
-                                            
-                                            <div id="daddressdiv" style="display: none;">
-                                                <label class="col-form-label">Billing Address</label>
-                                                <textarea class="form-control border-secondary mb-3" name="dbname" id="dbname" rows="6" type="text" style="color: black;background-color: white;" readonly>{{ pbill.party.address }}</textarea>
-                                            </div>
-                                            
-                                        </div>
-                                        {% if paymentout.party.address %}
+                                            {% if paymentout.party.address %}
                                             <div class="col-md-4" id="addressdiv">
                                                 <label class="col-form-label">Billing Address</label>
                                                 <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black; background-color: white;">{{ paymentout.party.address }}</textarea>
@@ -143,24 +129,30 @@
                                                 <textarea class="form-control border-secondary mb-3" name="bname" id="bname" rows="6" type="text" style="color: black; background-color: white;"></textarea>
                                             </div>
                                         {% endif %}
+                                            <div class="col-md-4" >
+                                                <label class="col-form-label">Receipt No.</label>
+                                                <input type="text" class="form-control border-secondary" name="ref_no" value="{{ paymentout.ref_no }}" style="color: black;background-color: white;" >
+
+                                            </div>
+                                        </div>
+                                        
+                                        
 
                                         
                                     </div>
+                                    
                                     <br>
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
                                             
                                             <label for="paid">Paid:</label>
-                                            <input type="text" id="paid" name="paid" value="{{ paymentout.paymentoutdetails_set.first.paid }}" required><br>
+                                            <input type="text" class="form-control border-secondary"id="paid" name="paid" value="{{ paymentout.paymentoutdetails_set.first.paid }}" required><br>
 
                                         </div>
                                         
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="col-form-label">Phone Number:</label>
-                                            <input type="text" id="phno" name="phno" class="form-control border-secondary" style="color: black;background-color: white;" value="{{ paymentout.party.contact }}">
-                                        </div>
+                                      
                                     </div>
                                     
                                     <br>

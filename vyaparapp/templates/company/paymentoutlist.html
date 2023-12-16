@@ -199,7 +199,7 @@
                                 <div class="col-md-2"></div>
                                 
                                 <div class="col-md-3 text-right" style="margin-left: 6vh;">
-                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;  height: 80px;">
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh;   height: 80px;">
                                         <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
                                         <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
                                     </button>
@@ -359,7 +359,7 @@
                                     </thead>
                                     <tbody>
                                         {% for paymentout in paymentouts %}
-                                        <tr>
+                                        <tr id="row_{{ paymentout.id }}">
                                             <td style="color: black; text-align: left;white-space: nowrap;">{{ paymentout.billdate | date:'d-m-Y' }}</td>
                                             <td class="clickable-row" style="color: black;" data-href="details_paymentout/{{ paymentout.id }}">{{ paymentout.ref_no }}</td>
                                             
@@ -554,14 +554,13 @@
 <script>
     function printfunction() {
         // Assuming the index of the "BALANCE" column is 6
-        var balanceIndex = 6;
+        var balanceIndex = 7;
 
         var table = document.getElementById("paymentoutTable");
         var newTable = document.createElement("table");
         newTable.className = "table table-bordered table-info table-striped tb table-responsive w-100";
 
-        // Copy the header row
-        newTable.appendChild(table.rows[0].cloneNode(true));
+       
 
         // Copy rows up to the balance column
         for (var i = 0; i < table.rows.length; i++) {
